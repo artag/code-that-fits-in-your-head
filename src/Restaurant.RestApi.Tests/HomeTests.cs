@@ -16,16 +16,20 @@ public class HomeTests
         "Usage",
         "CA2234:Pass system uri objects instead of strings",
         Justification = "URL isn't passed as variable, but as literal.")]
-    public async Task HomeIsOk()
+    public async Task HomeReturnsJson()
     {
         await using var factory = new WebApplicationFactory<Program>();
         var client = factory.CreateClient();
 
-        var response = await client
-            .GetAsync("");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "");
+        request.Headers.Accept.ParseAdd("application/json");
+        var response = await client.SendAsync(request);
 
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
+        Assert.Equal(
+            "application/json",
+            response.Content.Headers.ContentType?.MediaType);
     }
 }

@@ -16,9 +16,11 @@ public class Program
     internal static Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        var app = builder.Build();
+        builder.Services.AddControllers();
 
-        app.MapGet("/", () => "Hello World!");
+        var app = builder.Build();
+        app.UseRouting();
+        app.MapControllers();
 
         return app.RunAsync();
     }
