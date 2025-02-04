@@ -17,4 +17,10 @@
     <Version>1.0.0.0</Version>
   </PropertyGroup>
 
+  <!-- Threat warnings as errors -->
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
 </Project>
