@@ -5,13 +5,6 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
-  <!-- Disable warnings for rules -->
-  <PropertyGroup>
-    <NoWarn>
-      CA2007; <!-- Consider calling ConfigureAwait on the awaited task -->
-    </NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.12" />
