@@ -26,6 +26,30 @@ public class ReservationsTests
             );
     }
 
+    [Fact]
+    public async Task PostValidReservationWhenDatabaseIsEmpty()
+    {
+        var db = new FakeDatabase();
+        var sut = new ReservationsController(db);
+
+        var dto = new ReservationDto
+        {
+            At = "2023-11-24 19:00",
+            Email = "juliad@example.net",
+            Name = "Julia Domna",
+            Quantity = 5
+        };
+
+        await sut.Post(dto);
+
+        var expected = new Reservation(
+            new DateTime(2023, 11, 24, 19, 0, 0),
+            dto.Email,
+            dto.Name,
+            dto.Quantity);
+        Assert.Contains(expected, db);
+    }
+
     [SuppressMessage(
         "Usage",
         "CA2234:Pass system uri objects instead of strings",

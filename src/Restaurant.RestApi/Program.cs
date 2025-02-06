@@ -17,6 +17,7 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
+        builder.Services.AddSingleton<IReservationsRepository, NullRepository>();
 
         var app = builder.Build();
         app.UseRouting();
