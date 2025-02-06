@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Restaurant.RestApi.Tests;
@@ -22,14 +23,14 @@ public class HomeTests
         var client = factory.CreateClient();
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "");
-        request.Headers.Accept.ParseAdd("application/json");
+        request.Headers.Accept.ParseAdd(MediaTypeNames.Application.Json);
         var response = await client.SendAsync(request);
 
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
         Assert.Equal(
-            "application/json",
+            MediaTypeNames.Application.Json,
             response.Content.Headers.ContentType?.MediaType);
     }
 }
