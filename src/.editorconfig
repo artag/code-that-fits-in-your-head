@@ -282,6 +282,9 @@ dotnet_style_qualification_for_method = false:silent
 dotnet_style_qualification_for_property = false:silent
 dotnet_style_qualification_for_event = false:silent
 
+# Missing XML comment for publicly visible type or member 'Type_or_Member'
+dotnet_diagnostic.CS1591.severity = none
+
 #### Roslynator
 
 # Set severity for all analyzers that are enabled by default
