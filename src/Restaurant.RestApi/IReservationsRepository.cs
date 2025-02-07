@@ -2,5 +2,5 @@
 
 public interface IReservationsRepository
 {
-    Task Create(Reservation reservation);
+    Task Create(Reservation reservation, CancellationToken ct = default);
 }

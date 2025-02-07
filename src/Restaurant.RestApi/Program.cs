@@ -17,7 +17,12 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
-        builder.Services.AddSingleton<IReservationsRepository, NullRepository>();
+        builder.Services.AddSingleton<IReservationsRepository>(p =>
+        {
+            var config = p.GetRequiredService<IConfiguration>();
+            var connStr = config.GetConnectionString("Restaurant");
+            return new SqliteReservationsRepository(connStr!);
+        });
 
         var app = builder.Build();
         app.UseRouting();

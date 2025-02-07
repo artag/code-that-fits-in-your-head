@@ -56,7 +56,7 @@ public class ReservationsTests
         Justification = "URL isn't passed as variable, but as literal.")]
     private static async Task<HttpResponseMessage> PostReservation(object reservation)
     {
-        await using var factory = new WebApplicationFactory<Program>();
+        await using var factory = new RestaurantApiFactory();
         var client = factory.CreateClient();
         var json = JsonSerializer.Serialize(reservation);
         using var content = new StringContent(json);
