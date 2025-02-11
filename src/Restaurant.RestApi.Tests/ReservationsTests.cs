@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Net.Mime;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Restaurant.RestApi.Tests;
 
@@ -13,12 +13,11 @@ public class ReservationsTests
         var response = await PostReservation(
             new
             {
-                date = "2023-03-10 19:00",
+                at = "2023-03-10 19:00",
                 email = "katinka@example.com",
                 name = "Katinka Ingabogovna",
                 quantity = 2,
-            }
-        );
+            });
 
         Assert.True(
             response.IsSuccessStatusCode,
@@ -26,24 +25,27 @@ public class ReservationsTests
             );
     }
 
-    [Fact]
-    public async Task PostValidReservationWhenDatabaseIsEmpty()
+    [Theory]
+    [InlineData("2023-11-24 19:00", "juliad@example.net", "Julia Domna", 5)]
+    [InlineData("2024-02-13 18:15", "x@example.com", "Xenia Ng", 9)]
+    public async Task PostValidReservationWhenDatabaseIsEmpty(
+        string at, string email, string name, int quantity)
     {
         var db = new FakeDatabase();
         var sut = new ReservationsController(db);
 
         var dto = new ReservationDto
         {
-            At = "2023-11-24 19:00",
-            Email = "juliad@example.net",
-            Name = "Julia Domna",
-            Quantity = 5
+            At = at,
+            Email = email,
+            Name = name,
+            Quantity = quantity,
         };
 
         await sut.Post(dto);
 
         var expected = new Reservation(
-            new DateTime(2023, 11, 24, 19, 0, 0),
+            DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
             dto.Email,
             dto.Name,
             dto.Quantity);

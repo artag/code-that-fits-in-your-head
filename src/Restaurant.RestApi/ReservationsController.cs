@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Restaurant.RestApi;
 
@@ -13,15 +14,16 @@ public class ReservationsController : ControllerBase
         _repository = repository;
     }
 
-    public Task Post(ReservationDto dto)
+    public Task Post([FromBody] ReservationDto dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
 
-        return _repository.Create(
-            new Reservation(
-                new DateTime(2023, 11, 24, 19, 0, 0),
-                "juliad@example.net",
-                "Julia Domna",
-                5));
+        var r = new Reservation(
+            DateTime.Parse(dto.At!, CultureInfo.InvariantCulture),
+            dto.Email!,
+            dto.Name!,
+            dto.Quantity);
+
+        return _repository.Create(r);
     }
 }
