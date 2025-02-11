@@ -286,3 +286,6 @@ roslynator_refactorings.enabled = true
 
 # Enable/disable all compiler diagnostic fixes
 roslynator_compiler_diagnostic_fixes.enabled = true
+
+# RCS1001: Add braces (when expression spans over multiple lines)
+dotnet_diagnostic.RCS1001.severity = suggestion
