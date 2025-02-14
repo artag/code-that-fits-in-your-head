@@ -2,7 +2,7 @@
 
 namespace Restaurant.RestApi;
 
-public class SqliteReservationsRepository : IReservationsRepository
+internal sealed class SqliteReservationsRepository : IReservationsRepository
 {
     private readonly string _connectionString;
 
