@@ -23,6 +23,12 @@ public class ReservationsController : ControllerBase
         if (dto.Quantity < 1)
             return new BadRequestResult();
 
+        var reservations = await _repository.ReadReservations(d).ConfigureAwait(false);
+        var reservedSeats = reservations.Sum(r => r.Quantity);
+        if (10 < reservedSeats + dto.Quantity)
+            return new StatusCodeResult(
+                StatusCodes.Status500InternalServerError);
+
         var r = new Reservation(d, dto.Email, dto.Name ?? string.Empty, dto.Quantity);
         await _repository.Create(r).ConfigureAwait(false);
 

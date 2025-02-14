@@ -11,7 +11,8 @@ public class SqliteReservationsRepository : IReservationsRepository
         _connectionString = connectionString;
     }
 
-    public async Task Create(Reservation reservation, CancellationToken ct = default)
+    public async Task Create(
+        Reservation reservation, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(reservation);
 
@@ -34,6 +35,35 @@ public class SqliteReservationsRepository : IReservationsRepository
         await cmd2.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        DateTime dateTime, CancellationToken ct = default)
+    {
+        var result = new List<Reservation>();
+
+        var conn = new SqliteConnection(_connectionString);
+        await using var disposeConn = conn.ConfigureAwait(false);
+        await conn.OpenAsync(ct).ConfigureAwait(false);
+
+        var cmd = new SqliteCommand(readByRangeSql, conn);
+        await using var disposeCmd = cmd.ConfigureAwait(false);
+        cmd.Parameters.AddWithValue("@At", dateTime.Date);
+
+        var rdr = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
+        await using var disposeRdr = rdr.ConfigureAwait(false);
+        while (await rdr.ReadAsync(ct).ConfigureAwait(false))
+        {
+            var r = new Reservation(
+                (DateTime)rdr["At"],
+                (string)rdr["Name"],
+                (string)rdr["Email"],
+                (int)rdr["Quantity"]);
+
+            result.Add(r);
+        }
+
+        return result.AsReadOnly();
+    }
+
     private const string createReservationTableSql =
 @"
 CREATE TABLE IF NOT EXISTS Reservations (
@@ -49,5 +79,12 @@ CREATE TABLE IF NOT EXISTS Reservations (
 @"
 INSERT INTO Reservations (At, Name, Email, Quantity)
 VALUES (@At, @Name, @Email, @Quantity)
+";
+
+    private const string readByRangeSql =
+@"
+SELECT At, Name, Email, Quantity
+FROM Reservations
+WHERE CONVERT(DATE, At) = @At
 ";
 }
