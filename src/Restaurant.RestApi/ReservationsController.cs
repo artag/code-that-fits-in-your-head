@@ -18,7 +18,7 @@ public class ReservationsController : ControllerBase
         ArgumentNullException.ThrowIfNull(dto);
         if (!DateTime.TryParse(dto.At, out var d))
             return new BadRequestResult();
-        if (!IsValid(dto))
+        if (!dto.IsValid)
             return new BadRequestResult();
 
         var reservations = await _repository.ReadReservations(d).ConfigureAwait(false);
@@ -31,12 +31,5 @@ public class ReservationsController : ControllerBase
         await _repository.Create(r).ConfigureAwait(false);
 
         return new CreatedResult();
-    }
-
-    private static bool IsValid(ReservationDto dto)
-    {
-        return DateTime.TryParse(dto.At, out var _)
-               && dto.Email is not null
-               && 0 < dto.Quantity;
     }
 }
