@@ -7,11 +7,15 @@ public class ReservationDto
     public string? Name { get; set; }
     public int Quantity { get; set; }
 
-    internal bool IsValid
+    internal Reservation? Validate()
     {
-        get =>
-            DateTime.TryParse(At, out var _)
-            && Email is not null
-            && 0 < Quantity;
+        if (!DateTime.TryParse(At, out var d))
+            return null;
+        if (Email is null)
+            return null;
+        if (Quantity < 1)
+            return null;
+
+        return new Reservation(d, Email, Name ?? string.Empty, Quantity);
     }
 }
