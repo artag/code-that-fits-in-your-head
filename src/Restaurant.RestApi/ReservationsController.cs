@@ -18,9 +18,7 @@ public class ReservationsController : ControllerBase
         ArgumentNullException.ThrowIfNull(dto);
         if (!DateTime.TryParse(dto.At, out var d))
             return new BadRequestResult();
-        if (dto.Email is null)
-            return new BadRequestResult();
-        if (dto.Quantity < 1)
+        if (!IsValid(dto))
             return new BadRequestResult();
 
         var reservations = await _repository.ReadReservations(d).ConfigureAwait(false);
@@ -29,9 +27,16 @@ public class ReservationsController : ControllerBase
             return new StatusCodeResult(
                 StatusCodes.Status500InternalServerError);
 
-        var r = new Reservation(d, dto.Email, dto.Name ?? string.Empty, dto.Quantity);
+        var r = new Reservation(d, dto.Email!, dto.Name ?? string.Empty, dto.Quantity);
         await _repository.Create(r).ConfigureAwait(false);
 
         return new CreatedResult();
+    }
+
+    private static bool IsValid(ReservationDto dto)
+    {
+        return DateTime.TryParse(dto.At, out var _)
+               && dto.Email is not null
+               && 0 < dto.Quantity;
     }
 }
