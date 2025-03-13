@@ -2,13 +2,12 @@
 
 public class Table
 {
-    private readonly TableType _tableType;
-
     public Table(TableType tableType, int seats)
     {
-        _tableType = tableType;
+        TableType = tableType;
         Seats = seats;
     }
 
+    public TableType TableType { get; }
     public int Seats { get; }
 }
