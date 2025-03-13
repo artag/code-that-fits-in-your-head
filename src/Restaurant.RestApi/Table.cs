@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.RestApi;
 
-public class Table
+public record Table
 {
     public Table(TableType tableType, int seats)
     {
