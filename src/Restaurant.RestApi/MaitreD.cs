@@ -2,7 +2,7 @@
 
 public class MaitreD
 {
-    private readonly Table _table;
+    private readonly int _capacity;
 
     public MaitreD(IEnumerable<Table> tables)
         : this(tables.ToArray())
@@ -12,7 +12,7 @@ public class MaitreD
     public MaitreD(params Table[] tables)
     {
         ArgumentNullException.ThrowIfNull(tables);
-        _table = tables[0];
+        _capacity = tables.Sum(t => t.Seats);
     }
 
     public bool WillAccept(
@@ -21,6 +21,6 @@ public class MaitreD
     {
         ArgumentNullException.ThrowIfNull(candidate);
         var reservedSeats = existingReservations.Sum(r => r.Quantity);
-        return reservedSeats + candidate.Quantity <= _table.Seats;
+        return reservedSeats + candidate.Quantity <= _capacity;
     }
 }

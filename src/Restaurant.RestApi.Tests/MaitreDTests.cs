@@ -4,6 +4,7 @@ public class MaitreDTests
 {
     [Theory]
     [InlineData(new[] { 12 })]
+    [InlineData(new[] { 8, 11 })]
     public void Accept(int[] tableSeats)
     {
         var tables = tableSeats.Select(s => new Table(TableType.Communal, s));
