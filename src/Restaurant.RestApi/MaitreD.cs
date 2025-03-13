@@ -1,12 +1,20 @@
 ﻿namespace Restaurant.RestApi;
 
-internal static class MaitreD
+public class MaitreD
 {
-    internal static bool WillAccept(
+    private readonly Table _table;
+
+    public MaitreD(Table table)
+    {
+        _table = table ?? throw new ArgumentNullException(nameof(table));
+    }
+
+    public bool WillAccept(
         IEnumerable<Reservation> existingReservations,
         Reservation candidate)
     {
+        ArgumentNullException.ThrowIfNull(candidate);
         var reservedSeats = existingReservations.Sum(r => r.Quantity);
-        return reservedSeats + candidate.Quantity <= 10;
+        return reservedSeats + candidate.Quantity <= _table.Seats;
     }
 }

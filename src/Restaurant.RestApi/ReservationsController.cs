@@ -25,7 +25,8 @@ public class ReservationsController : ControllerBase
             .ReadReservations(reservation.At)
             .ConfigureAwait(false);
 
-        if (!MaitreD.WillAccept(reservations, reservation))
+        var maitreD = new MaitreD(new Table(TableType.Communal, 10));
+        if (!maitreD.WillAccept(reservations, reservation))
             return new StatusCodeResult(
                 StatusCodes.Status500InternalServerError);
 
