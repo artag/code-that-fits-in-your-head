@@ -2,7 +2,7 @@
 
 public class MaitreD
 {
-    private readonly int _capacity;
+    private readonly int _largestTableSize;
 
     public MaitreD(IEnumerable<Table> tables)
         : this(tables.ToArray())
@@ -12,7 +12,7 @@ public class MaitreD
     public MaitreD(params Table[] tables)
     {
         ArgumentNullException.ThrowIfNull(tables);
-        _capacity = tables.Sum(t => t.Seats);
+        _largestTableSize = tables.Max(t => t.Seats);
     }
 
     public bool WillAccept(
@@ -21,6 +21,6 @@ public class MaitreD
     {
         ArgumentNullException.ThrowIfNull(candidate);
         var reservedSeats = existingReservations.Sum(r => r.Quantity);
-        return reservedSeats + candidate.Quantity <= _capacity;
+        return reservedSeats + candidate.Quantity <= _largestTableSize;
     }
 }
