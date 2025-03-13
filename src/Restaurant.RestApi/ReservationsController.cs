@@ -5,12 +5,14 @@ namespace Restaurant.RestApi;
 [Route("[controller]")]
 public class ReservationsController : ControllerBase
 {
+    private readonly MaitreD _maitreD;
     private readonly IReservationsRepository _repository;
 
     public ReservationsController(
         IReservationsRepository repository)
     {
         _repository = repository;
+        _maitreD = new MaitreD(new Table(TableType.Communal, 10));
     }
 
     public async Task<ActionResult> Post([FromBody] ReservationDto dto)
@@ -25,8 +27,7 @@ public class ReservationsController : ControllerBase
             .ReadReservations(reservation.At)
             .ConfigureAwait(false);
 
-        var maitreD = new MaitreD(new Table(TableType.Communal, 10));
-        if (!maitreD.WillAccept(reservations, reservation))
+        if (!_maitreD.WillAccept(reservations, reservation))
             return new StatusCodeResult(
                 StatusCodes.Status500InternalServerError);
 
