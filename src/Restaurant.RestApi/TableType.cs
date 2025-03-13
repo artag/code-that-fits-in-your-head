@@ -2,5 +2,6 @@
 
 public enum TableType
 {
-    Communal = 0
+    Standard = 0,
+    Communal = 1
 }
