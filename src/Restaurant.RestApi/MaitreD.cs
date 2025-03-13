@@ -4,9 +4,15 @@ public class MaitreD
 {
     private readonly Table _table;
 
-    public MaitreD(Table table)
+    public MaitreD(IEnumerable<Table> tables)
+        : this(tables.ToArray())
     {
-        _table = table ?? throw new ArgumentNullException(nameof(table));
+    }
+
+    public MaitreD(params Table[] tables)
+    {
+        ArgumentNullException.ThrowIfNull(tables);
+        _table = tables[0];
     }
 
     public bool WillAccept(

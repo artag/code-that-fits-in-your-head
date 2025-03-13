@@ -2,10 +2,12 @@
 
 public class MaitreDTests
 {
-    [Fact]
-    public void Accept()
+    [Theory]
+    [InlineData(new[] { 12 })]
+    public void Accept(int[] tableSeats)
     {
-        var sut = new MaitreD(new Table(TableType.Communal, 12));
+        var tables = tableSeats.Select(s => new Table(TableType.Communal, s));
+        var sut = new MaitreD(tables);
         var r = new Reservation(
             new DateTime(2022, 4, 1, 20, 15, 0),
             "x@example.net",
