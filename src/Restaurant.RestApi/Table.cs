@@ -9,5 +9,8 @@ public record Table
     }
 
     public TableType TableType { get; }
-    public int Seats { get; }
+    public int Seats { get; init; }
+
+    public Table WithSeats(int newSeats) =>
+        this with { Seats = newSeats };
 }

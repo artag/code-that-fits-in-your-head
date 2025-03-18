@@ -30,9 +30,7 @@ public class MaitreD
                 availableTables.Remove(table);
                 if (table.TableType == TableType.Communal)
                     availableTables.Add(
-                    new Table(
-                        table.TableType,
-                        table.Seats - r.Quantity));
+                    table.WithSeats(table.Seats - r.Quantity));
             }
         }
 
