@@ -28,8 +28,11 @@ public class MaitreD
             if (table is { })
             {
                 availableTables.Remove(table);
-                availableTables.Add(
-                    new Table(table.TableType, table.Seats - r.Quantity));
+                if (table.TableType == TableType.Communal)
+                    availableTables.Add(
+                    new Table(
+                        table.TableType,
+                        table.Seats - r.Quantity));
             }
         }
 
