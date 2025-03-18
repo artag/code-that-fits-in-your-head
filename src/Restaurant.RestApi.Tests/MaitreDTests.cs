@@ -5,9 +5,7 @@ namespace Restaurant.RestApi.Tests;
 public class MaitreDTests
 {
     [Theory]
-    [InlineData(new[] { 12 }, new int[0])]
-    [InlineData(new[] { 8, 11 }, new int[0])]
-    [InlineData(new[] { 8, 11 }, new int[] { 2 })]
+    [ClassData(typeof(AcceptTestCases))]
     public void Accept(int[] tableSeats, int[] reservedSeats)
     {
         var tables = tableSeats.Select(Table.Communal);
@@ -32,6 +30,23 @@ public class MaitreDTests
         var actual = sut.WillAccept(reservations, r);
 
         Assert.False(actual);
+    }
+
+    [SuppressMessage(
+        "Performance",
+        "CA1812: Avoid uninstantiated internal classes",
+        Justification = "This class is instantiated via Reflection.")]
+    [SuppressMessage(
+        "Performance",
+        "CA1861: Avoid constant arrays as arguments")]
+    private sealed class AcceptTestCases : TheoryData<IEnumerable<int>, IEnumerable<int>>
+    {
+        public AcceptTestCases()
+        {
+            Add(new[] { 12 }, Array.Empty<int>());
+            Add(new[] { 8, 11 }, Array.Empty<int>());
+            Add(new[] { 8, 11 }, new int[] { 2 });
+        }
     }
 
     [SuppressMessage(
