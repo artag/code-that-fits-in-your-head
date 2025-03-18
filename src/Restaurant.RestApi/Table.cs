@@ -22,6 +22,9 @@ public record Table
     public Table WithSeats(int newSeats) =>
         this with { Seats = newSeats };
 
+    internal bool Fits(int quantity) =>
+        quantity <= Seats;
+
     internal Table Reserve(int seatsToReserve) =>
         WithSeats(Seats - seatsToReserve);
 }
