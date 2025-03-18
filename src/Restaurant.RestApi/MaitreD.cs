@@ -21,8 +21,11 @@ public class MaitreD
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
 
+        var relevantReservations = existingReservations
+            .Where(r => candidate.At <= r.At);
+
         var availableTables = Tables.ToList();
-        foreach (var r in existingReservations)
+        foreach (var r in relevantReservations)
         {
             var table = availableTables.Find(t => r.Quantity <= t.Seats);
             if (table is { })

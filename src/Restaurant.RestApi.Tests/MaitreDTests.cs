@@ -50,6 +50,8 @@ public class MaitreDTests
                 Array.Empty<Reservation>());
             Add(new[] { Table.Communal(2), Table.Communal(11) },
                 new[] { Some.Reservation.WithQuantity(2) });
+            Add(new[] { Table.Communal(11) },
+                new[] { Some.Reservation.WithQuantity(11).TheDayBefore() });
         }
     }
 
