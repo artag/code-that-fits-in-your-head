@@ -21,8 +21,8 @@ public class MaitreD
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
 
-        var relevantReservations = existingReservations
-            .Where(r => candidate.At.Date == r.At.Date);
+        var relevantReservations =
+            existingReservations.Where(candidate.Overlaps);
 
         var availableTables = Allocate(relevantReservations);
 
