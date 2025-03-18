@@ -22,9 +22,8 @@ public class MaitreDTests
 
     [Theory]
     [ClassData(typeof(RejectTestCases))]
-    public void Reject(int[] tableSeats)
+    public void Reject(IEnumerable<Table> tables)
     {
-        var tables = tableSeats.Select(s => new Table(TableType.Communal, s));
         var sut = new MaitreD(tables);
         var r = Some.Reservation.WithQuantity(11);
 
@@ -37,12 +36,15 @@ public class MaitreDTests
         "Performance",
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
-    private sealed class RejectTestCases : TheoryData<IEnumerable<int>>
+    private sealed class RejectTestCases : TheoryData<IEnumerable<Table>>
     {
         public RejectTestCases()
         {
-            var seats = new[] { 6, 6 };
-            Add(seats);
+            Add(new[]
+            {
+                new Table(TableType.Communal, 6),
+                new Table(TableType.Communal, 6),
+            });
         }
     }
 }
