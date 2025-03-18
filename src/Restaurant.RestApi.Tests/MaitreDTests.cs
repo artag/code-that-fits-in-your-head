@@ -1,4 +1,6 @@
-﻿namespace Restaurant.RestApi.Tests;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Restaurant.RestApi.Tests;
 
 public class MaitreDTests
 {
@@ -18,16 +20,29 @@ public class MaitreDTests
         Assert.True(actual);
     }
 
-    [Fact]
-    public void Reject()
+    [Theory]
+    [ClassData(typeof(RejectTestCases))]
+    public void Reject(int[] tableSeats)
     {
-        var sut = new MaitreD(
-            new Table(TableType.Communal, 6),
-            new Table(TableType.Communal, 6));
+        var tables = tableSeats.Select(s => new Table(TableType.Communal, s));
+        var sut = new MaitreD(tables);
         var r = Some.Reservation.WithQuantity(11);
 
         var actual = sut.WillAccept(Array.Empty<Reservation>(), r);
 
         Assert.False(actual);
+    }
+
+    [SuppressMessage(
+        "Performance",
+        "CA1812: Avoid uninstantiated internal classes",
+        Justification = "This class is instantiated via Reflection.")]
+    private sealed class RejectTestCases : TheoryData<IEnumerable<int>>
+    {
+        public RejectTestCases()
+        {
+            var seats = new[] { 6, 6 };
+            Add(seats);
+        }
     }
 }
