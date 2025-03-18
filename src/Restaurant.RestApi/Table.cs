@@ -2,21 +2,19 @@
 
 public record Table
 {
-    private Table(TableType tableType, int seats)
+    private Table(bool isStandard, int seats)
     {
-        TableType = tableType;
         Seats = seats;
-        IsStandard = tableType == TableType.Standard;
-        IsCommunal = tableType == TableType.Communal;
+        IsStandard = isStandard;
+        IsCommunal = !isStandard;
     }
 
     public static Table Standard(int seats) =>
-        new Table(TableType.Standard, seats);
+        new Table(true, seats);
 
     public static Table Communal(int seats) =>
-        new Table(TableType.Communal, seats);
+        new Table(false, seats);
 
-    public TableType TableType { get; }
     public int Seats { get; init; }
     public bool IsStandard { get; }
     public bool IsCommunal { get; }
