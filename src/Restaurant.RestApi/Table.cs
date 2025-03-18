@@ -2,11 +2,17 @@
 
 public record Table
 {
-    public Table(TableType tableType, int seats)
+    private Table(TableType tableType, int seats)
     {
         TableType = tableType;
         Seats = seats;
     }
+
+    public static Table Standard(int seats) =>
+        new Table(TableType.Standard, seats);
+
+    public static Table Communal(int seats) =>
+        new Table(TableType.Communal, seats);
 
     public TableType TableType { get; }
     public int Seats { get; init; }

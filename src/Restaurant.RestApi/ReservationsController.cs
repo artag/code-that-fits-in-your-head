@@ -12,7 +12,7 @@ public class ReservationsController : ControllerBase
         IReservationsRepository repository)
     {
         _repository = repository;
-        _maitreD = new MaitreD(new Table(TableType.Communal, 10));
+        _maitreD = new MaitreD(Table.Communal(10));
     }
 
     public async Task<ActionResult> Post([FromBody] ReservationDto dto)
