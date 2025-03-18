@@ -6,13 +6,14 @@ public class MaitreDTests
 {
     [Theory]
     [ClassData(typeof(AcceptTestCases))]
-    public void Accept(IEnumerable<Table> tables, int[] reservedSeats)
+    public void Accept(
+        IEnumerable<Table> tables,
+        IEnumerable<Reservation> reservations)
     {
         var sut = new MaitreD(tables);
-        var rs = reservedSeats.Select(Some.Reservation.WithQuantity);
         var r = Some.Reservation.WithQuantity(11);
 
-        var actual = sut.WillAccept(rs, r);
+        var actual = sut.WillAccept(reservations, r);
 
         Assert.True(actual);
     }
@@ -38,16 +39,17 @@ public class MaitreDTests
     [SuppressMessage(
         "Performance",
         "CA1861: Avoid constant arrays as arguments")]
-    private sealed class AcceptTestCases : TheoryData<IEnumerable<Table>, IEnumerable<int>>
+    private sealed class AcceptTestCases
+        : TheoryData<IEnumerable<Table>, IEnumerable<Reservation>>
     {
         public AcceptTestCases()
         {
             Add(new[] { Table.Communal(12) },
-                Array.Empty<int>());
+                Array.Empty<Reservation>());
             Add(new[] { Table.Communal(8), Table.Communal(11) },
-                Array.Empty<int>());
+                Array.Empty<Reservation>());
             Add(new[] { Table.Communal(2), Table.Communal(11) },
-                new int[] { 2 });
+                new[] { Some.Reservation.WithQuantity(2) });
         }
     }
 
@@ -55,7 +57,8 @@ public class MaitreDTests
         "Performance",
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
-    private sealed class RejectTestCases : TheoryData<IEnumerable<Table>, IEnumerable<Reservation>>
+    private sealed class RejectTestCases
+        : TheoryData<IEnumerable<Table>, IEnumerable<Reservation>>
     {
         public RejectTestCases()
         {
