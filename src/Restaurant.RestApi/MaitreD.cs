@@ -22,7 +22,7 @@ public class MaitreD
         ArgumentNullException.ThrowIfNull(candidate);
 
         var relevantReservations = existingReservations
-            .Where(r => candidate.At <= r.At);
+            .Where(r => candidate.At <= r.At && r.At <= candidate.At);
 
         var availableTables = Tables.ToList();
         foreach (var r in relevantReservations)

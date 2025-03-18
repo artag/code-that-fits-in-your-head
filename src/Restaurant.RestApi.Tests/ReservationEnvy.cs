@@ -12,4 +12,7 @@ internal static class ReservationEnvy
 
     public static Reservation TheDayBefore(this Reservation reservation) =>
         reservation.AddDate(TimeSpan.FromDays(-1));
+
+    public static Reservation TheDayAfter(this Reservation reservation) =>
+        reservation.AddDate(TimeSpan.FromDays(1));
 }
