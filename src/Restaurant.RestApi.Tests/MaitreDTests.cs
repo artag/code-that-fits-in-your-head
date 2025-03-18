@@ -6,9 +6,8 @@ public class MaitreDTests
 {
     [Theory]
     [ClassData(typeof(AcceptTestCases))]
-    public void Accept(int[] tableSeats, int[] reservedSeats)
+    public void Accept(IEnumerable<Table> tables, int[] reservedSeats)
     {
-        var tables = tableSeats.Select(Table.Communal);
         var sut = new MaitreD(tables);
         var rs = reservedSeats.Select(Some.Reservation.WithQuantity);
         var r = Some.Reservation.WithQuantity(11);
@@ -39,13 +38,16 @@ public class MaitreDTests
     [SuppressMessage(
         "Performance",
         "CA1861: Avoid constant arrays as arguments")]
-    private sealed class AcceptTestCases : TheoryData<IEnumerable<int>, IEnumerable<int>>
+    private sealed class AcceptTestCases : TheoryData<IEnumerable<Table>, IEnumerable<int>>
     {
         public AcceptTestCases()
         {
-            Add(new[] { 12 }, Array.Empty<int>());
-            Add(new[] { 8, 11 }, Array.Empty<int>());
-            Add(new[] { 8, 11 }, new int[] { 2 });
+            Add(new[] { Table.Communal(12) },
+                Array.Empty<int>());
+            Add(new[] { Table.Communal(8), Table.Communal(11) },
+                Array.Empty<int>());
+            Add(new[] { Table.Communal(2), Table.Communal(11) },
+                new int[] { 2 });
         }
     }
 
@@ -59,7 +61,6 @@ public class MaitreDTests
         {
             Add(new[] { Table.Communal(6), Table.Communal(6) },
                 Array.Empty<Reservation>());
-
             Add(new[] { Table.Standard(12) },
                 new[] { Some.Reservation.WithQuantity(1) });
         }
