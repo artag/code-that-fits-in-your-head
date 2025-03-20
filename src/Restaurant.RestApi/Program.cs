@@ -18,7 +18,10 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
         builder.Services.AddSingleton<MaitreD>(
-            new MaitreD(TimeSpan.FromHours(6), Table.Communal(10)));
+            new MaitreD(
+                TimeSpan.FromHours(18),
+                TimeSpan.FromHours(6),
+                Table.Communal(10)));
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {
             var config = p.GetRequiredService<IConfiguration>();

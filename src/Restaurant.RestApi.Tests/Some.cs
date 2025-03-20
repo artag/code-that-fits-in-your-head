@@ -10,5 +10,8 @@ public static class Some
             1);
 
     public readonly static MaitreD MaitreD =
-        new MaitreD(TimeSpan.FromHours(6), Table.Communal(10));
+        new MaitreD(
+            TimeSpan.FromHours(16),
+            TimeSpan.FromHours(6),
+            Table.Communal(10));
 }

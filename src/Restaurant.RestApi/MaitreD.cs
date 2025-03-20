@@ -2,23 +2,27 @@
 
 public class MaitreD
 {
+    private readonly TimeSpan _opensAt;
+    private readonly TimeSpan _seatingDuration;
+    private readonly IEnumerable<Table> _tables;
+
     public MaitreD(
+        TimeSpan opensAt,
         TimeSpan seatingDuration,
         params Table[] tables)
-        : this(seatingDuration, tables.AsEnumerable())
+        : this(opensAt, seatingDuration, tables.AsEnumerable())
     {
     }
 
     public MaitreD(
+        TimeSpan opensAt,
         TimeSpan seatingDuration,
         IEnumerable<Table> tables)
     {
-        SeatingDuration = seatingDuration;
-        Tables = tables;
+        _opensAt = opensAt;
+        _seatingDuration = seatingDuration;
+        _tables = tables;
     }
-
-    public TimeSpan SeatingDuration { get; }
-    public IEnumerable<Table> Tables { get; }
 
     public bool WillAccept(
         IEnumerable<Reservation> existingReservations,
@@ -27,7 +31,7 @@ public class MaitreD
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
 
-        var seating = new Seating(SeatingDuration, candidate);
+        var seating = new Seating(_seatingDuration, candidate);
         var relevantReservations =
             existingReservations.Where(seating.Overlaps);
         var availableTables = Allocate(relevantReservations);
@@ -37,7 +41,7 @@ public class MaitreD
     private List<Table> Allocate(
         IEnumerable<Reservation> reservations)
     {
-        var availableTables = Tables.ToList();
+        var availableTables = _tables.ToList();
         foreach (var r in reservations)
         {
             var table = availableTables.Find(t => t.Fits(r.Quantity));
