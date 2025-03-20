@@ -46,31 +46,37 @@ public class MaitreDTests
         {
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(12) }),
                 Array.Empty<Reservation>());
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(8), Table.Communal(11) }),
                 Array.Empty<Reservation>());
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(2), Table.Communal(11) }),
                 new[] { Some.Reservation.WithQuantity(2) });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(11) }),
                 new[] { Some.Reservation.WithQuantity(11).TheDayBefore() });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(11) }),
                 new[] { Some.Reservation.WithQuantity(11).TheDayAfter() });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(2.5),
                 new[] { Table.Standard(12) }),
                 new [] { Some.Reservation
@@ -78,6 +84,7 @@ public class MaitreDTests
                     .AddDate(TimeSpan.FromHours(-2.5)) });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(1),
                 new[] { Table.Standard(14) }),
                 new[] { Some.Reservation
@@ -97,20 +104,24 @@ public class MaitreDTests
         {
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(6), Table.Communal(6) }),
                 Array.Empty<Reservation>());
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Standard(12) }),
                 new[] { Some.Reservation.WithQuantity(1) });
             Add(new MaitreD(TimeSpan.FromHours(18),
                 TimeSpan.FromHours(6),
+                TimeSpan.FromHours(21),
                 new[] { Table.Standard(11) }),
                 new[] { Some.Reservation.WithQuantity(1).OneHourBefore() });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Standard(12) }),
                 new[] { Some.Reservation.WithQuantity(2).OneHourLater() });
@@ -119,9 +130,21 @@ public class MaitreDTests
              * that the restaurant opens 30 minutes later than the desired
              * reservation time, and therefore must be rejected. */
             Add(new MaitreD(
-                Some.Reservation.At.AddMinutes(30).TimeOfDay,
-                TimeSpan.FromHours(6),
-                new[] { Table.Standard(12) }),
+                    Some.Reservation.At.AddMinutes(30).TimeOfDay,
+                    TimeSpan.FromHours(21),
+                    TimeSpan.FromHours(6),
+                    new[] { Table.Standard(12) }),
+                Array.Empty<Reservation>());
+            /* Some.Reservation.At is the time of the 'hard-coded'
+             * reservation in the test below. Subtracting 30 minutes from
+             * it means that the restaurant's last seating is 30 minutes
+             * before the reservation time, and therefore the reservation
+             * must be rejected. */
+            Add(new MaitreD(
+                    TimeSpan.FromHours(18),
+                    Some.Reservation.At.AddMinutes(-30).TimeOfDay,
+                    TimeSpan.FromHours(6),
+                    new[] { Table.Standard(12) }),
                 Array.Empty<Reservation>());
         }
     }

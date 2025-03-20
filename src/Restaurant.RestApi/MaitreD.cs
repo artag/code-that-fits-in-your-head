@@ -3,23 +3,27 @@
 public class MaitreD
 {
     private readonly TimeSpan _opensAt;
+    private readonly TimeSpan _lastSeating;
     private readonly TimeSpan _seatingDuration;
     private readonly IEnumerable<Table> _tables;
 
     public MaitreD(
         TimeSpan opensAt,
+        TimeSpan lastSeating,
         TimeSpan seatingDuration,
         params Table[] tables)
-        : this(opensAt, seatingDuration, tables.AsEnumerable())
+        : this(opensAt, lastSeating, seatingDuration, tables.AsEnumerable())
     {
     }
 
     public MaitreD(
         TimeSpan opensAt,
+        TimeSpan lastSeating,
         TimeSpan seatingDuration,
         IEnumerable<Table> tables)
     {
         _opensAt = opensAt;
+        _lastSeating = lastSeating;
         _seatingDuration = seatingDuration;
         _tables = tables;
     }
@@ -30,7 +34,8 @@ public class MaitreD
     {
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
-        if (candidate.At.TimeOfDay < _opensAt)
+        if (candidate.At.TimeOfDay < _opensAt ||
+            _lastSeating < candidate.At.TimeOfDay)
             return false;
 
         var seating = new Seating(_seatingDuration, candidate);

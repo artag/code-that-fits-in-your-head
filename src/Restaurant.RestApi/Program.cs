@@ -20,6 +20,7 @@ public class Program
         builder.Services.AddSingleton<MaitreD>(
             new MaitreD(
                 TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 Table.Communal(10)));
         builder.Services.AddSingleton<IReservationsRepository>(p =>
