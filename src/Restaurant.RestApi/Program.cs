@@ -17,12 +17,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
-        builder.Services.AddSingleton<MaitreD>(
-            new MaitreD(
-                TimeSpan.FromHours(18),
-                TimeSpan.FromHours(21),
-                TimeSpan.FromHours(6),
-                Table.Communal(10)));
+
+        var settings = new Settings.RestaurantSettings();
+        builder.Configuration.Bind("Restaurant", settings);
+        builder.Services.AddSingleton<MaitreD>(settings.ToMaitreD());
+
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {
             var config = p.GetRequiredService<IConfiguration>();
