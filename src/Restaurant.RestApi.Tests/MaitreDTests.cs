@@ -7,10 +7,11 @@ public class MaitreDTests
     [Theory]
     [ClassData(typeof(AcceptTestCases))]
     public void Accept(
+        TimeSpan seatingDuration,
         IEnumerable<Table> tables,
         IEnumerable<Reservation> reservations)
     {
-        var sut = new MaitreD(TimeSpan.FromHours(6), tables);
+        var sut = new MaitreD(seatingDuration, tables);
         var r = Some.Reservation.WithQuantity(11);
 
         var actual = sut.WillAccept(reservations, r);
@@ -21,10 +22,11 @@ public class MaitreDTests
     [Theory]
     [ClassData(typeof(RejectTestCases))]
     public void Reject(
+        TimeSpan seatingDuration,
         IEnumerable<Table> tables,
         IEnumerable<Reservation> reservations)
     {
-        var sut = new MaitreD(TimeSpan.FromHours(6), tables);
+        var sut = new MaitreD(seatingDuration, tables);
         var r = Some.Reservation.WithQuantity(11);
 
         var actual = sut.WillAccept(reservations, r);
@@ -40,19 +42,24 @@ public class MaitreDTests
         "Performance",
         "CA1861: Avoid constant arrays as arguments")]
     private sealed class AcceptTestCases
-        : TheoryData<IEnumerable<Table>, IEnumerable<Reservation>>
+        : TheoryData<TimeSpan, IEnumerable<Table>, IEnumerable<Reservation>>
     {
         public AcceptTestCases()
         {
-            Add(new[] { Table.Communal(12) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Communal(12) },
                 Array.Empty<Reservation>());
-            Add(new[] { Table.Communal(8), Table.Communal(11) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Communal(8), Table.Communal(11) },
                 Array.Empty<Reservation>());
-            Add(new[] { Table.Communal(2), Table.Communal(11) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Communal(2), Table.Communal(11) },
                 new[] { Some.Reservation.WithQuantity(2) });
-            Add(new[] { Table.Communal(11) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Communal(11) },
                 new[] { Some.Reservation.WithQuantity(11).TheDayBefore() });
-            Add(new[] { Table.Communal(11) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Communal(11) },
                 new[] { Some.Reservation.WithQuantity(11).TheDayAfter() });
         }
     }
@@ -62,17 +69,21 @@ public class MaitreDTests
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
     private sealed class RejectTestCases
-        : TheoryData<IEnumerable<Table>, IEnumerable<Reservation>>
+        : TheoryData<TimeSpan, IEnumerable<Table>, IEnumerable<Reservation>>
     {
         public RejectTestCases()
         {
-            Add(new[] { Table.Communal(6), Table.Communal(6) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Communal(6), Table.Communal(6) },
                 Array.Empty<Reservation>());
-            Add(new[] { Table.Standard(12) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Standard(12) },
                 new[] { Some.Reservation.WithQuantity(1) });
-            Add(new[] { Table.Standard(11) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Standard(11) },
                 new[] { Some.Reservation.WithQuantity(1).OneHourBefore() });
-            Add(new[] { Table.Standard(12) },
+            Add(TimeSpan.FromHours(6),
+                new[] { Table.Standard(12) },
                 new[] { Some.Reservation.WithQuantity(2).OneHourLater() });
         }
     }
