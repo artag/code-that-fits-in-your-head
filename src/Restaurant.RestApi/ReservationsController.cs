@@ -9,10 +9,11 @@ public class ReservationsController : ControllerBase
     private readonly IReservationsRepository _repository;
 
     public ReservationsController(
-        IReservationsRepository repository)
+        IReservationsRepository repository,
+        MaitreD maitreD)
     {
         _repository = repository;
-        _maitreD = new MaitreD(TimeSpan.FromHours(6), Table.Communal(10));
+        _maitreD = maitreD;
     }
 
     public async Task<ActionResult> Post([FromBody] ReservationDto dto)

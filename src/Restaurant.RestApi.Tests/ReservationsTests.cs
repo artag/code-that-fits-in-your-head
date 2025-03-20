@@ -33,7 +33,7 @@ public class ReservationsTests
         string at, string email, string name, int quantity)
     {
         var db = new FakeDatabase();
-        var sut = new ReservationsController(db);
+        var sut = new ReservationsController(db, Some.MaitreD);
 
         var dto = new ReservationDto
         {
