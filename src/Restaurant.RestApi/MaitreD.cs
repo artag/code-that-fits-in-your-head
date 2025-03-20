@@ -30,6 +30,8 @@ public class MaitreD
     {
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
+        if (candidate.At.TimeOfDay < _opensAt)
+            return false;
 
         var seating = new Seating(_seatingDuration, candidate);
         var relevantReservations =
