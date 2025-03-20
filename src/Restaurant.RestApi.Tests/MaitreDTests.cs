@@ -61,6 +61,16 @@ public class MaitreDTests
             Add(TimeSpan.FromHours(6),
                 new[] { Table.Communal(11) },
                 new[] { Some.Reservation.WithQuantity(11).TheDayAfter() });
+            Add(TimeSpan.FromHours(2.5),
+                new[] { Table.Standard(12) },
+                new [] { Some.Reservation
+                    .WithQuantity(11)
+                    .AddDate(TimeSpan.FromHours(-2.5)) });
+            Add(TimeSpan.FromHours(2.5),
+                new[] { Table.Standard(12) },
+                new[] { Some.Reservation
+                    .WithQuantity(11)
+                    .AddDate(TimeSpan.FromHours(-2.5)) });
         }
     }
 

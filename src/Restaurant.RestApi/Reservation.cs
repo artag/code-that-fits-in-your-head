@@ -35,7 +35,4 @@ public record Reservation
 
     public Reservation WithQuantity(int newQuantity) =>
         this with { Quantity = newQuantity };
-
-    internal bool Overlaps(Reservation other) =>
-        other.At.Date == At.Date;
 }

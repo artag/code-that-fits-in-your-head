@@ -27,8 +27,9 @@ public class MaitreD
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
 
+        var seating = new Seating(SeatingDuration, candidate);
         var relevantReservations =
-            existingReservations.Where(candidate.Overlaps);
+            existingReservations.Where(seating.Overlaps);
         var availableTables = Allocate(relevantReservations);
         return availableTables.Any(t => t.Fits(candidate.Quantity));
     }
