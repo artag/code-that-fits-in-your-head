@@ -2,14 +2,14 @@
 
 public class MaitreD
 {
-    private readonly TimeSpan _opensAt;
-    private readonly TimeSpan _lastSeating;
+    private readonly TimeOfDay _opensAt;
+    private readonly TimeOfDay _lastSeating;
     private readonly TimeSpan _seatingDuration;
     private readonly IEnumerable<Table> _tables;
 
     public MaitreD(
-        TimeSpan opensAt,
-        TimeSpan lastSeating,
+        TimeOfDay opensAt,
+        TimeOfDay lastSeating,
         TimeSpan seatingDuration,
         params Table[] tables)
         : this(opensAt, lastSeating, seatingDuration, tables.AsEnumerable())
@@ -17,8 +17,8 @@ public class MaitreD
     }
 
     public MaitreD(
-        TimeSpan opensAt,
-        TimeSpan lastSeating,
+        TimeOfDay opensAt,
+        TimeOfDay lastSeating,
         TimeSpan seatingDuration,
         IEnumerable<Table> tables)
     {
