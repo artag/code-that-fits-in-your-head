@@ -9,6 +9,7 @@ public class ReservationTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(
             () => new Reservation(
+                Guid.NewGuid(),
                 new DateTime(2024, 8, 19, 11, 30, 0),
                 "mail@example.com",
                 "Marie Petrovich",

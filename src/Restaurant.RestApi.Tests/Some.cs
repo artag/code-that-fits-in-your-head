@@ -7,6 +7,7 @@ public static class Some
 
     public static readonly Reservation Reservation =
         new Reservation(
+            Guid.NewGuid(),
             Now,
             "x@example.net",
             "",

@@ -1,1 +1,1 @@
-curl -v http://localhost:5000/reservations -H "Content-Type: application/json" -d "{ \"at\": \"2022-10-21 19:00\", \"email\": \"caravan@example.com\", \"name\": \"Cara van Palace\", \"quantity\": 3 }"
+curl -v http://localhost:5000/reservations -H "Content-Type: application/json" -d "{ \"at\": \"2025-10-21 19:00\", \"email\": \"caravan@example.com\", \"name\": \"Cara van Palace\", \"quantity\": 3 }"

@@ -1,19 +1,23 @@
 ﻿using System.Globalization;
 using System.Net;
+using System.Text.Json;
 
 namespace Restaurant.RestApi.Tests;
 
 public class ReservationsTests
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions =
+        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
     [Fact]
     public async Task PostValidReservation()
     {
-        var now = DateTime.Now.AddDays(1);
+        var at = CreateAt("19:00");
         await using var service = new RestaurantApiFactory();
         var response = await service.PostReservation(
             new
             {
-                at = now,
+                at = at,
                 email = "katinka@example.com",
                 name = "Katinka Ingabogovna",
                 quantity = 2,
@@ -26,19 +30,20 @@ public class ReservationsTests
     }
 
     [Theory]
-    [InlineData(1, "juliad@example.net", "Julia Domna", 5)]
-    [InlineData(2, "x@example.com", "Xenia Ng", 9)]
-    [InlineData(3, "kite@example.edu", null, 2)]
-    [InlineData(4, "shli@example.org", "Shanghai Li", 5)]
+    [InlineData("19:00", "juliad@example.net", "Julia Domna", 5)]
+    [InlineData("18:15", "x@example.com", "Xenia Ng", 9)]
+    [InlineData("16:55", "kite@example.edu", null, 2)]
+    [InlineData("17:30", "shli@example.org", "Shanghai Li", 5)]
     public async Task PostValidReservationWhenDatabaseIsEmpty(
-        int days, string email, string name, int quantity)
+        string time, string email, string name, int quantity)
     {
-        var at = DateTime.Now.AddDays(days).ToString("O");
+        var at = CreateAt(time);
         var db = new FakeDatabase();
         var sut = new ReservationsController(db, Some.MaitreD);
 
         var dto = new ReservationDto
         {
+            Id = "59D553DA-F106-42ED-864C-814F25E8753A",
             At = at,
             Email = email,
             Name = name,
@@ -48,6 +53,7 @@ public class ReservationsTests
         await sut.Post(dto);
 
         var expected = new Reservation(
+            Guid.Parse(dto.Id),
             DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
             dto.Email,
             dto.Name ?? string.Empty,
@@ -98,12 +104,12 @@ public class ReservationsTests
     [Fact]
     public async Task BoolTableWhenFreeSeatingIsAvailable()
     {
-        var now = DateTime.Now.AddDays(2);
+        var at = CreateAt("18:00");
         await using var service = new RestaurantApiFactory();
         await service.PostReservation(
             new
             {
-                at = now,
+                at = at,
                 email = "net@example.net",
                 name = "Ned Tucker",
                 quantity = 2
@@ -112,7 +118,7 @@ public class ReservationsTests
         var response = await service.PostReservation(
             new
             {
-                at = now,
+                at = at,
                 email = "kant@example.edu",
                 name = "Katrine Troelsen",
                 quantity = 4
@@ -121,5 +127,53 @@ public class ReservationsTests
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
+    }
+
+    [Theory]
+    [InlineData("19:10", "adur@example.net", "Adrienne Ursa", 2)]
+    [InlineData("18:55", "emol@example.gov", "Emma Olsen", 5)]
+    public async Task ReadSuccessfulReservation(
+        string time, string email, string name, int quantity)
+    {
+        var at = CreateAt(time);
+        await using var service = new RestaurantApiFactory();
+        var expected = new ReservationDto
+        {
+            At = at,
+            Email = email,
+            Name = name,
+            Quantity = quantity
+        };
+        var postResp = await service.PostReservation(expected);
+        var address = FindReservationAddress(postResp);
+
+        var getResp = await service.CreateClient().GetAsync(address);
+
+        Assert.True(
+            getResp.IsSuccessStatusCode,
+            $"Actual status code: {postResp.StatusCode}.");
+        var actual = await ParseReservationContent(getResp);
+
+        Assert.NotNull(actual);
+        Assert.Equal(expected, actual, new ReservationDtoComparer());
+    }
+
+    private static Uri? FindReservationAddress(HttpResponseMessage response)
+    {
+        return response.Headers.Location;
+    }
+
+    private static async Task<ReservationDto?> ParseReservationContent(
+        HttpResponseMessage actual)
+    {
+        var json = await actual.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<ReservationDto>(json, JsonSerializerOptions);
+    }
+
+    private static string CreateAt(string time)
+    {
+        var dateNow = DateTime.Now.Date.AddDays(1);
+        var timeAt = TimeSpan.Parse(time, CultureInfo.InvariantCulture);
+        return dateNow.Add(timeAt).ToString("O");
     }
 }

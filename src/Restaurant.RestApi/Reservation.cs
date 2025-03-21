@@ -3,6 +3,7 @@
 public record Reservation
 {
     public Reservation(
+        Guid id,
         DateTime at,
         string email,
         string name,
@@ -13,12 +14,14 @@ public record Reservation
                 nameof(quantity),
                 "The value must be a positive (non-zero) number.");
 
+        Id = id;
         At = at;
         Email = email;
         Name = name;
         Quantity = quantity;
     }
 
+    public Guid Id { get; init; }
     public DateTime At { get; init; }
     public string Email { get; init; }
     public string Name { get; init; }

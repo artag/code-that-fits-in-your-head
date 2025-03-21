@@ -4,6 +4,9 @@ namespace Restaurant.RestApi.Tests;
 
 internal sealed class FakeDatabase : Collection<Reservation>, IReservationsRepository
 {
+    public Task EnsureTables(CancellationToken ct = default) =>
+        Task.CompletedTask;
+
     public Task Create(
         Reservation reservation, CancellationToken ct = default)
     {
@@ -21,5 +24,12 @@ internal sealed class FakeDatabase : Collection<Reservation>, IReservationsRepos
             .ToList();
 
         return Task.FromResult<IReadOnlyCollection<Reservation>>(reservations);
+    }
+
+    public Task<Reservation?> ReadReservation(
+        Guid id, CancellationToken ct = default)
+    {
+        var reservation = this.FirstOrDefault(r => r.Id == id);
+        return Task.FromResult(reservation);
     }
 }
