@@ -29,11 +29,18 @@ public class MaitreD
     }
 
     public bool WillAccept(
+        DateTime now,
         IEnumerable<Reservation> existingReservations,
         Reservation candidate)
     {
         ArgumentNullException.ThrowIfNull(existingReservations);
         ArgumentNullException.ThrowIfNull(candidate);
+
+        // Reject reservations in the past
+        if (candidate.At < now)
+            return false;
+
+        // Reject reservation if it's outside of opening hours
         if (candidate.At.TimeOfDay < _opensAt ||
             _lastSeating < candidate.At.TimeOfDay)
             return false;

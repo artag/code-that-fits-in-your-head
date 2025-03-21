@@ -8,12 +8,13 @@ public class MaitreDTests
     [ClassData(typeof(AcceptTestCases))]
     public void Accept(
         MaitreD sut,
+        DateTime now,
         IEnumerable<Reservation> reservations)
     {
         ArgumentNullException.ThrowIfNull(sut);
         var r = Some.Reservation.WithQuantity(11);
 
-        var actual = sut.WillAccept(reservations, r);
+        var actual = sut.WillAccept(now, reservations, r);
 
         Assert.True(actual);
     }
@@ -22,12 +23,13 @@ public class MaitreDTests
     [ClassData(typeof(RejectTestCases))]
     public void Reject(
         MaitreD sut,
+        DateTime now,
         IEnumerable<Reservation> reservations)
     {
         ArgumentNullException.ThrowIfNull(sut);
         var r = Some.Reservation.WithQuantity(11);
 
-        var actual = sut.WillAccept(reservations, r);
+        var actual = sut.WillAccept(now, reservations, r);
 
         Assert.False(actual);
     }
@@ -40,7 +42,7 @@ public class MaitreDTests
         "Performance",
         "CA1861: Avoid constant arrays as arguments")]
     private sealed class AcceptTestCases
-        : TheoryData<MaitreD, IEnumerable<Reservation>>
+        : TheoryData<MaitreD, DateTime, IEnumerable<Reservation>>
     {
         public AcceptTestCases()
         {
@@ -49,36 +51,42 @@ public class MaitreDTests
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(12) }),
+                Some.Now,
                 Array.Empty<Reservation>());
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(8), Table.Communal(11) }),
+                Some.Now,
                 Array.Empty<Reservation>());
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(2), Table.Communal(11) }),
+                Some.Now,
                 new[] { Some.Reservation.WithQuantity(2) });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(11) }),
+                Some.Now,
                 new[] { Some.Reservation.WithQuantity(11).TheDayBefore() });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(11) }),
+                Some.Now,
                 new[] { Some.Reservation.WithQuantity(11).TheDayAfter() });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(2.5),
                 new[] { Table.Standard(12) }),
+                Some.Now,
                 new [] { Some.Reservation
                     .WithQuantity(11)
                     .AddDate(TimeSpan.FromHours(-2.5)) });
@@ -87,6 +95,7 @@ public class MaitreDTests
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(1),
                 new[] { Table.Standard(14) }),
+                Some.Now,
                 new[] { Some.Reservation
                     .WithQuantity(9)
                     .AddDate(TimeSpan.FromHours(1)) });
@@ -98,7 +107,7 @@ public class MaitreDTests
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
     private sealed class RejectTestCases
-        : TheoryData<MaitreD, IEnumerable<Reservation>>
+        : TheoryData<MaitreD, DateTime, IEnumerable<Reservation>>
     {
         public RejectTestCases()
         {
@@ -107,23 +116,27 @@ public class MaitreDTests
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Communal(6), Table.Communal(6) }),
+                Some.Now,
                 Array.Empty<Reservation>());
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Standard(12) }),
+                Some.Now,
                 new[] { Some.Reservation.WithQuantity(1) });
             Add(new MaitreD(TimeSpan.FromHours(18),
                 TimeSpan.FromHours(6),
                 TimeSpan.FromHours(21),
                 new[] { Table.Standard(11) }),
+                Some.Now,
                 new[] { Some.Reservation.WithQuantity(1).OneHourBefore() });
             Add(new MaitreD(
                 TimeSpan.FromHours(18),
                 TimeSpan.FromHours(21),
                 TimeSpan.FromHours(6),
                 new[] { Table.Standard(12) }),
+                Some.Now,
                 new[] { Some.Reservation.WithQuantity(2).OneHourLater() });
             /* Some.Reservation.At is the time of the 'hard-coded'
              * reservation in the test below. Adding 30 minutes to it means
@@ -134,6 +147,7 @@ public class MaitreDTests
                     TimeSpan.FromHours(21),
                     TimeSpan.FromHours(6),
                     new[] { Table.Standard(12) }),
+                Some.Now,
                 Array.Empty<Reservation>());
             /* Some.Reservation.At is the time of the 'hard-coded'
              * reservation in the test below. Subtracting 30 minutes from
@@ -145,6 +159,14 @@ public class MaitreDTests
                     Some.Reservation.At.AddMinutes(-30).TimeOfDay,
                     TimeSpan.FromHours(6),
                     new[] { Table.Standard(12) }),
+                Some.Now,
+                Array.Empty<Reservation>());
+            Add(new MaitreD(
+                    TimeSpan.FromHours(18),
+                    TimeSpan.FromHours(21),
+                    TimeSpan.FromHours(6),
+                    Table.Standard(12)),
+                Some.Now.AddDays(30),
                 Array.Empty<Reservation>());
         }
     }

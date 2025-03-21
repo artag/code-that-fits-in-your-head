@@ -8,11 +8,12 @@ public class ReservationsTests
     [Fact]
     public async Task PostValidReservation()
     {
+        var now = DateTime.Now.AddDays(1);
         await using var service = new RestaurantApiFactory();
         var response = await service.PostReservation(
             new
             {
-                at = "2023-03-10 19:00",
+                at = now,
                 email = "katinka@example.com",
                 name = "Katinka Ingabogovna",
                 quantity = 2,
@@ -25,13 +26,14 @@ public class ReservationsTests
     }
 
     [Theory]
-    [InlineData("2023-11-24 19:00", "juliad@example.net", "Julia Domna", 5)]
-    [InlineData("2024-02-13 18:15", "x@example.com", "Xenia Ng", 9)]
-    [InlineData("2023-08-23 16:15", "kite@example.edu", null, 2)]
-    [InlineData("2022-03-18 17:30", "shli@example.org", "Shanghai Li", 5)]
+    [InlineData(1, "juliad@example.net", "Julia Domna", 5)]
+    [InlineData(2, "x@example.com", "Xenia Ng", 9)]
+    [InlineData(3, "kite@example.edu", null, 2)]
+    [InlineData(4, "shli@example.org", "Shanghai Li", 5)]
     public async Task PostValidReservationWhenDatabaseIsEmpty(
-        string at, string email, string name, int quantity)
+        int days, string email, string name, int quantity)
     {
+        var at = DateTime.Now.AddDays(days).ToString("O");
         var db = new FakeDatabase();
         var sut = new ReservationsController(db, Some.MaitreD);
 
@@ -70,11 +72,12 @@ public class ReservationsTests
     [Fact]
     public async Task OverbookAttempt()
     {
+        var now = DateTime.Now.AddDays(1);
         await using var service = new RestaurantApiFactory();
         await service.PostReservation(
             new
             {
-                at = "2022-03-18 17:30",
+                at = now,
                 email = "mars@example.edu",
                 name = "Marina Seminova",
                 quantity = 6,
@@ -83,7 +86,7 @@ public class ReservationsTests
         var response = await service.PostReservation(
             new
             {
-                at = "2022-03-18 17:30",
+                at = now,
                 email = "shli@example.org",
                 name = "Shanghai Li",
                 quantity = 5,
@@ -95,11 +98,12 @@ public class ReservationsTests
     [Fact]
     public async Task BoolTableWhenFreeSeatingIsAvailable()
     {
+        var now = DateTime.Now.AddDays(2);
         await using var service = new RestaurantApiFactory();
         await service.PostReservation(
             new
             {
-                at = "2023-01-02 18:15",
+                at = now,
                 email = "net@example.net",
                 name = "Ned Tucker",
                 quantity = 2
@@ -108,7 +112,7 @@ public class ReservationsTests
         var response = await service.PostReservation(
             new
             {
-                at = "2023-01-02 18:30",
+                at = now,
                 email = "kant@example.edu",
                 name = "Katrine Troelsen",
                 quantity = 4

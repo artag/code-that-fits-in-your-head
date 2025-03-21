@@ -28,7 +28,7 @@ public class ReservationsController : ControllerBase
             .ReadReservations(reservation.At)
             .ConfigureAwait(false);
 
-        if (!_maitreD.WillAccept(reservations, reservation))
+        if (!_maitreD.WillAccept(DateTime.Now, reservations, reservation))
             return new StatusCodeResult(
                 StatusCodes.Status500InternalServerError);
 
