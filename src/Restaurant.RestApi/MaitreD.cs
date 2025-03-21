@@ -41,8 +41,7 @@ public class MaitreD
             return false;
 
         // Reject reservation if it's outside of opening hours
-        if (candidate.At.TimeOfDay < _opensAt ||
-            _lastSeating < candidate.At.TimeOfDay)
+        if (IsOutsideOfOpeningHours(candidate))
             return false;
 
         var seating = new Seating(_seatingDuration, candidate);
@@ -50,6 +49,12 @@ public class MaitreD
             existingReservations.Where(seating.Overlaps);
         var availableTables = Allocate(relevantReservations);
         return availableTables.Any(t => t.Fits(candidate.Quantity));
+    }
+
+    private bool IsOutsideOfOpeningHours(Reservation candidate)
+    {
+        return candidate.At.TimeOfDay < _opensAt
+               || _lastSeating < candidate.At.TimeOfDay;
     }
 
     private List<Table> Allocate(
