@@ -46,7 +46,7 @@ The reviewer of your Pull Request will most likely be reviewing your contributio
 
 If you have wide lines, you force the reviewer to scroll horizontally.
 
-There are many [reasons to keep line width below 80 characters](http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-relevant); making your code easy to review just adds another reason to that list.
+There are many [reasons to keep line width below 80 characters](http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-relevant) ([Original](../097_2/original.md), [Adapted](../097_2/adapted.md)); making your code easy to review just adds another reason to that list.
 
 ## 4. Avoid re-formatting
 

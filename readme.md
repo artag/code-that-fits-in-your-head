@@ -10,7 +10,11 @@
 
 91.1. http://en.wikipedia.org/wiki/Single_responsibility_principle
 
-91.2. http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-relevant
+91.2. Is the 80 character line limit still relevant?
+
+http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-relevant
+
+[Original](/doc/097_2/original.md), [Adapted](/doc/097_2/adapted.md)
 
 91.3. http://xunitpatterns.com/Humble%20Object.html
 
