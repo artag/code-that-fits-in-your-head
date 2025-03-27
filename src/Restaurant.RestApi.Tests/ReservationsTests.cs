@@ -211,6 +211,22 @@ public class ReservationsTests
         Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
     }
 
+    [Theory]
+    [InlineData("bar")]
+    [InlineData("25FBFF44-2837-4772-91D2-3BAC7CA1DB4C")]
+    public async Task DeleteAbsentReservation(string id)
+    {
+        await using var service = new RestaurantApiFactory();
+        var url = new Uri($"/reservations/{id}", UriKind.Relative);
+        var client = service.CreateClient();
+
+        var resp = await client.DeleteAsync(url);
+
+        Assert.True(
+            resp.IsSuccessStatusCode,
+            $"Actual status code: {resp.StatusCode}.");
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;

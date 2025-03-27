@@ -77,8 +77,9 @@ public class ReservationsController : ControllerBase
     [HttpDelete("{id}")]
     public Task Delete(string id)
     {
-        var rid = new Guid(id);
-        return _repository.Delete(rid);
+        return Guid.TryParse(id, out var rid)
+            ? _repository.Delete(rid)
+            : Task.CompletedTask;
     }
 
     private static ObjectResult NoTables500InternalServerError()
