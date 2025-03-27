@@ -6,7 +6,7 @@
 
 Пост в блоге: https://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests
 
-[Original](/doc/097/original.md), [Adapted](/doc/097/adapted.md)
+[Original](/doc/091/original.md), [Adapted](/doc/091/adapted.md)
 
 91.1. http://en.wikipedia.org/wiki/Single_responsibility_principle
 
@@ -14,7 +14,7 @@
 
 http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-relevant
 
-[Original](/doc/097_2/original.md), [Adapted](/doc/097_2/adapted.md)
+[Original](/doc/091_2/original.md), [Adapted](/doc/091_2/adapted.md)
 
 91.3. http://xunitpatterns.com/Humble%20Object.html
 
