@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Net;
 using System.Text.Json;
 
@@ -156,6 +157,21 @@ public class ReservationsTests
 
         Assert.NotNull(actual);
         Assert.Equal(expected, actual, new ReservationDtoComparer());
+    }
+
+    [SuppressMessage(
+        "Usage",
+        "CA2234:Pass system uri objects instead of strings",
+        Justification = "URL isn't passed as variable, but as literal.")]
+    [Fact]
+    public async Task GetAbsentReservation()
+    {
+        await using var service = new RestaurantApiFactory();
+        var client = service.CreateClient();
+
+        var resp = await client.GetAsync($"/reservations/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
     }
 
     private static Uri? FindReservationAddress(HttpResponseMessage response)

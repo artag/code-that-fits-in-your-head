@@ -59,6 +59,9 @@ public class ReservationsController : ControllerBase
             .ReadReservation(rid)
             .ConfigureAwait(false);
 
+        if (r is null)
+            return new NotFoundResult();
+
         return new OkObjectResult(
             new ReservationDto
             {
