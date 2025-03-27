@@ -37,10 +37,7 @@ public class ReservationsController : ControllerBase
             .ConfigureAwait(false);
 
         if (!_maitreD.WillAccept(DateTime.Now, reservations, reservation))
-            return new ObjectResult("No tables available.")
-            {
-                StatusCode = StatusCodes.Status500InternalServerError,
-            };
+            return NoTables500InternalServerError();
 
         await _repository.Create(reservation).ConfigureAwait(false);
 
@@ -75,6 +72,14 @@ public class ReservationsController : ControllerBase
                 Name = r.Name,
                 Quantity = r.Quantity,
             });
+    }
+
+    private static ObjectResult NoTables500InternalServerError()
+    {
+        return new ObjectResult("No tables available.")
+        {
+            StatusCode = StatusCodes.Status500InternalServerError,
+        };
     }
 
     private CreatedAtActionResult Reservation201Created(Reservation reservation)
