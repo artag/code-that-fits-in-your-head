@@ -180,6 +180,37 @@ public class ReservationsTests
         Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
     }
 
+    [Theory]
+    [InlineData("18:47", "c@example.net", "Nick Klimenko", 2)]
+    [InlineData("18:50", "emot@example.gov", "Emma Otting", 2)]
+    public async Task DeleteReservation(
+        string time,
+        string email,
+        string name,
+        int quantity)
+    {
+        var at = CreateAt(time);
+        await using var service = new RestaurantApiFactory();
+        var dto = new ReservationDto
+        {
+            At = at,
+            Email = email,
+            Name = name,
+            Quantity = quantity
+        };
+        var postRep = await service.PostReservation(dto);
+        var address = FindReservationAddress(postRep);
+        var client = service.CreateClient();
+
+        var deleteResp = await client.DeleteAsync(address);
+
+        Assert.True(
+            deleteResp.IsSuccessStatusCode,
+            $"Actual status code: {deleteResp.StatusCode}.");
+        var getResp = await client.GetAsync(address);
+        Assert.Equal(HttpStatusCode.NotFound, getResp.StatusCode);
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;

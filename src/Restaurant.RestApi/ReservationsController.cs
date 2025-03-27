@@ -74,6 +74,13 @@ public class ReservationsController : ControllerBase
             });
     }
 
+    [HttpDelete("{id}")]
+    public Task Delete(string id)
+    {
+        var rid = new Guid(id);
+        return _repository.Delete(rid);
+    }
+
     private static ObjectResult NoTables500InternalServerError()
     {
         return new ObjectResult("No tables available.")

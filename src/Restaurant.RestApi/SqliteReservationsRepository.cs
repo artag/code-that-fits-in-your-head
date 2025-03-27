@@ -93,6 +93,19 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         return CreateReservation(id, rdr);
     }
 
+    public async Task Delete(Guid id, CancellationToken ct = default)
+    {
+        var conn = new SqliteConnection(_connectionString);
+        await using var disposeConn = conn.ConfigureAwait(false);
+
+        var cmd = new SqliteCommand(deleteSql, conn);
+        await using var disposeCmd = cmd.ConfigureAwait(false);
+        cmd.Parameters.AddWithValue("@Id", id);
+
+        await conn.OpenAsync(ct).ConfigureAwait(false);
+        await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+    }
+
     private static Reservation? CreateReservation(Guid id, SqliteDataReader rdr)
     {
         var atStr = (string)rdr["At"];
@@ -112,7 +125,7 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
     }
 
     private const string createReservationTableSql =
-@"
+        @"
 CREATE TABLE IF NOT EXISTS Reservations (
     Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     At NUMERIC NOT NULL,
@@ -125,13 +138,13 @@ CREATE TABLE IF NOT EXISTS Reservations (
 ";
 
     private const string createReservationSql =
-@"
+        @"
 INSERT INTO Reservations (PublicId, At, Name, Email, Quantity)
 VALUES (@Id, @At, @Name, @Email, @Quantity)
 ";
 
     private const string readByRangeSql =
-@"
+        @"
 SELECT PublicId, At, Name, Email, Quantity
 FROM Reservations
 WHERE DATE(At) = @At
@@ -145,8 +158,15 @@ WHERE DATE(At) = @At
 //";
 
     private const string readByIdSql =
-@"
+        @"
 SELECT At, Name, Email, Quantity
 FROM Reservations
-WHERE PublicId = @Id";
+WHERE PublicId = @Id
+";
+
+    private const string deleteSql =
+        @"
+DELETE FROM Reservations
+WHERE PublicId = @Id
+";
 }

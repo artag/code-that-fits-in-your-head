@@ -12,4 +12,7 @@ public interface IReservationsRepository
 
     Task<Reservation?> ReadReservation(
         Guid id, CancellationToken ct = default);
+
+    Task Delete(
+        Guid id, CancellationToken ct = default);
 }

@@ -32,4 +32,14 @@ internal sealed class FakeDatabase : Collection<Reservation>, IReservationsRepos
         var reservation = this.FirstOrDefault(r => r.Id == id);
         return Task.FromResult(reservation);
     }
+
+    public Task Delete(
+        Guid id, CancellationToken ct = default)
+    {
+        var reservation = this.SingleOrDefault(r => r.Id == id);
+        if (reservation is { })   // reservation != null
+            Remove(reservation);
+
+        return Task.CompletedTask;
+    }
 }
