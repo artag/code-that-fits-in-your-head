@@ -163,13 +163,15 @@ public class ReservationsTests
         "Usage",
         "CA2234:Pass system uri objects instead of strings",
         Justification = "URL isn't passed as variable, but as literal.")]
-    [Fact]
-    public async Task GetAbsentReservation()
+    [Theory]
+    [InlineData("3F749AB6-2E1C-4CAE-9988-7CA708DB9252")]
+    [InlineData("foo")]
+    public async Task GetAbsentReservation(string id)
     {
         await using var service = new RestaurantApiFactory();
         var client = service.CreateClient();
 
-        var resp = await client.GetAsync($"/reservations/{Guid.NewGuid()}");
+        var resp = await client.GetAsync($"/reservations/{id}");
 
         Assert.Equal(HttpStatusCode.NotFound, resp.StatusCode);
     }

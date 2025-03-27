@@ -48,13 +48,15 @@ public class ReservationsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult> Get(string id)
     {
+        if (!Guid.TryParse(id, out var rid))
+            return new NotFoundResult();
+
         if (!_ensuredTables)
         {
             await _repository.EnsureTables().ConfigureAwait(false);
             _ensuredTables = true;
         }
 
-        var rid = new Guid(id);
         var r = await _repository
             .ReadReservation(rid)
             .ConfigureAwait(false);
