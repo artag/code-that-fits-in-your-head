@@ -37,8 +37,10 @@ public class ReservationsController : ControllerBase
             .ConfigureAwait(false);
 
         if (!_maitreD.WillAccept(DateTime.Now, reservations, reservation))
-            return new StatusCodeResult(
-                StatusCodes.Status500InternalServerError);
+            return new ObjectResult("No tables available.")
+            {
+                StatusCode = StatusCodes.Status500InternalServerError,
+            };
 
         await _repository.Create(reservation).ConfigureAwait(false);
 
