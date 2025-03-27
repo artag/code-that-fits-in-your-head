@@ -60,7 +60,7 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         while (await rdr.ReadAsync(ct).ConfigureAwait(false))
         {
             var r = new Reservation(
-                Guid.NewGuid(),
+                (Guid)rdr["PublicId"],
                 (DateTime)rdr["At"],
                 (string)rdr["Name"],
                 (string)rdr["Email"],
@@ -132,14 +132,14 @@ VALUES (@Id, @At, @Name, @Email, @Quantity)
 
     private const string readByRangeSql =
 @"
-SELECT At, Name, Email, Quantity
+SELECT PublicId, At, Name, Email, Quantity
 FROM Reservations
 WHERE DATE(At) = @At
 ";
 
 // MSSQL
 //@"
-//SELECT At, Name, Email, Quantity
+//SELECT PublicId, At, Name, Email, Quantity
 //FROM Reservations
 //WHERE CONVERT(DATE, At) = @At
 //";
