@@ -157,6 +157,7 @@ public class ReservationsTests
 
         Assert.NotNull(actual);
         Assert.Equal(expected, actual, new ReservationDtoComparer());
+        Assert.DoesNotContain(address!.ToString(), char.IsUpper);
     }
 
     [SuppressMessage(

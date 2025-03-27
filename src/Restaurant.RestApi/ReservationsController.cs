@@ -2,7 +2,7 @@
 
 namespace Restaurant.RestApi;
 
-[Route("[controller]")]
+[Route("reservations")]
 public class ReservationsController : ControllerBase
 {
     private static bool _ensuredTables;
