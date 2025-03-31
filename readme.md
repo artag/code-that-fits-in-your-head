@@ -26,7 +26,7 @@ http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-rele
 
 Пост в блоге: https://blog.ploeh.dk/2013/06/24/a-heuristic-for-formatting-code-according-to-the-aaa-pattern/
 
-[Original](/doc/092/original.md)
+[Original](/doc/092/original.md), [Adapted](/doc/092/adapted.md)
 
 92.1. Tim Ottinger - Apologies In Code
 
