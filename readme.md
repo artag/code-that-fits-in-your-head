@@ -55,3 +55,21 @@ https://blog.ploeh.dk/2020/04/27/an-f-implementation-of-the-maitre-d-kata/
 92.3. Seemann M. C# will eventually get all F# features, right?
 
 https://blog.ploeh.dk/2015/04/15/c-will-eventually-get-all-f-features-right/
+
+[Original](/doc/092_3/original.md)
+
+92.3.1. Seemann M. SOLID: the next step is Functional
+
+https://blog.ploeh.dk/2014/03/10/solid-the-next-step-is-functional/
+
+92.3.2. Seemann M. Less is more: language features
+
+https://blog.ploeh.dk/2015/04/13/less-is-more-language-features
+
+92.3.3. Cycles and modularity in the wild
+
+https://fsharpforfunandprofit.com/posts/cycles-and-modularity-in-the-wild/
+
+92.3.4. Comparing F# and C# with dependency networks
+
+https://evelinag.com/blog/2014/06-09-comparing-dependency-networks/
