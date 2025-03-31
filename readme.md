@@ -42,6 +42,16 @@ https://wiki.c2.com/?ToNeedComments
 
 https://blog.ploeh.dk/2019/12/16/zone-of-ceremony/
 
+[Original](/doc/092_2/original.md)
+
+92.2.1. Venkat Subramaniam explains ceremony
+
+https://youtu.be/4jCjDEb9KZI
+
+92.2.2. Seemann M. An F# implementation of the Maître d' kata
+
+https://blog.ploeh.dk/2020/04/27/an-f-implementation-of-the-maitre-d-kata/
+
 92.3. Seemann M. C# will eventually get all F# features, right?
 
 https://blog.ploeh.dk/2015/04/15/c-will-eventually-get-all-f-features-right/
