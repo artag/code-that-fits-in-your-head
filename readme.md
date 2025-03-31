@@ -32,6 +32,12 @@ http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-rele
 
 http://butunclebob.com/ArticleS.TimOttinger.ApologizeIncode
 
+[Original](/doc/092_1/original.md), [Adapted](/doc/091_2/adapted.md)
+
+92.1.1. To Need Comments
+
+https://wiki.c2.com/?ToNeedComments
+
 92.2. Seemann M. Zone of Ceremony
 
 https://blog.ploeh.dk/2019/12/16/zone-of-ceremony/
