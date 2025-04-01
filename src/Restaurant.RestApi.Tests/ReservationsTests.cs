@@ -316,6 +316,27 @@ public class ReservationsTests
         Assert.IsAssignableFrom<NotFoundResult>(actual);
     }
 
+    [Fact]
+    public async Task PutConflictingIds()
+    {
+        var db = new FakeDatabase { Some.Reservation };
+        var sut = new ReservationsController(db, Some.MaitreD);
+
+        var dto = new ReservationDto
+        {
+            Id = Guid.NewGuid().ToString("N"),
+            At = Some.Reservation.At.ToString("O"),
+            Email = Some.Reservation.Email,
+            Name = "Qux",
+            Quantity = Some.Reservation.Quantity
+        };
+        var id = Some.Reservation.Id.ToString("N");
+        await sut.Put(id, dto);
+
+        var r = Assert.Single(db);
+        Assert.Equal(Some.Reservation.WithName("Qux"), r);
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;
