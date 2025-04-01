@@ -227,6 +227,41 @@ public class ReservationsTests
             $"Actual status code: {resp.StatusCode}.");
     }
 
+    [Theory]
+    [InlineData("18:47", "b@example.net", "Bjork", 2, 5)]
+    [InlineData("19:32", "e@example.gov", "Epica", 5, 4)]
+    public async Task UpdateReservation(
+        string time,
+        string email,
+        string name,
+        int quantity,
+        int newQuantity)
+    {
+        var at = CreateAt(time);
+        await using var service = new RestaurantApiFactory();
+        var dto = new ReservationDto
+        {
+            At = at,
+            Email = email,
+            Name = name,
+            Quantity = quantity
+        };
+        var postResp = await service.PostReservation(dto);
+        var address = FindReservationAddress(postResp);
+
+        dto.Quantity = newQuantity;
+        var putResp = await service.PutReservation(address!, dto);
+
+        Assert.True(
+            putResp.IsSuccessStatusCode,
+            $"Actual status code: {putResp.StatusCode}");
+        using var client = service.CreateClient();
+        var getResp = await client.GetAsync(address);
+        var actual = await ParseReservationContent(getResp);
+        Assert.NotNull(actual);
+        Assert.Equal(dto, actual, new ReservationDtoComparer());
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;

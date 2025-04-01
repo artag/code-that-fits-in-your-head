@@ -33,6 +33,15 @@ internal sealed class FakeDatabase : Collection<Reservation>, IReservationsRepos
         return Task.FromResult(reservation);
     }
 
+    public async Task Update(
+        Reservation reservation, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(reservation);
+
+        await Delete(reservation.Id, ct);
+        await Create(reservation, ct);
+    }
+
     public Task Delete(
         Guid id, CancellationToken ct = default)
     {

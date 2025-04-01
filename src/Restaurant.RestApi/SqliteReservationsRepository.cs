@@ -93,6 +93,25 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         return CreateReservation(id, rdr);
     }
 
+    public async Task Update(Reservation reservation, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(reservation);
+
+        var conn = new SqliteConnection(_connectionString);
+        await using var disposeConn = conn.ConfigureAwait(false);
+
+        var cmd = new SqliteCommand(updateSql, conn);
+        await using var disposeCmd = cmd.ConfigureAwait(false);
+        cmd.Parameters.AddWithValue("@Id", reservation.Id);
+        cmd.Parameters.AddWithValue("@At", reservation.At);
+        cmd.Parameters.AddWithValue("@Name", reservation.Name);
+        cmd.Parameters.AddWithValue("@Email", reservation.Email);
+        cmd.Parameters.AddWithValue("@Quantity", reservation.Quantity);
+
+        await conn.OpenAsync(ct).ConfigureAwait(false);
+        await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+    }
+
     public async Task Delete(Guid id, CancellationToken ct = default)
     {
         var conn = new SqliteConnection(_connectionString);
@@ -162,6 +181,16 @@ WHERE DATE(At) = @At
 SELECT At, Name, Email, Quantity
 FROM Reservations
 WHERE PublicId = @Id
+";
+
+    private const string updateSql =
+        @"
+UPDATE Reservations
+SET [At]       = @At,
+    [Name]     = @Name,
+    [Email]    = @Email,
+    [Quantity] = @Quantity
+WHERE [PublicId] = @Id
 ";
 
     private const string deleteSql =

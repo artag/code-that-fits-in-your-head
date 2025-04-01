@@ -31,4 +31,14 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
         return await client.PostAsync("reservations", content);
     }
+
+    public async Task<HttpResponseMessage> PutReservation(
+        Uri address, object reservation)
+    {
+        var client = CreateClient();
+        var json = JsonSerializer.Serialize(reservation);
+        using var content = new StringContent(json);
+        content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
+        return await client.PutAsync(address, content);
+    }
 }

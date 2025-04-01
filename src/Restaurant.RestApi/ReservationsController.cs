@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace Restaurant.RestApi;
 
@@ -72,6 +73,20 @@ public class ReservationsController : ControllerBase
                 Name = r.Name,
                 Quantity = r.Quantity,
             });
+    }
+
+    [HttpPut("{id}")]
+    public Task Put(string id, [FromBody] ReservationDto dto)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+        var r = new Reservation(
+            new Guid(id),
+            DateTime.Parse(dto.At!, CultureInfo.InvariantCulture),
+            dto.Email!,
+            dto.Name!,
+            dto.Quantity);
+
+        return _repository.Update(r);
     }
 
     [HttpDelete("{id}")]
