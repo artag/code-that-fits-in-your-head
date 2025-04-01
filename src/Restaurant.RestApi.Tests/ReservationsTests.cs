@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
@@ -292,6 +293,27 @@ public class ReservationsTests
             new { at, email, name, quantity });
 
         Assert.Equal(HttpStatusCode.BadRequest, putResp.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("bas")]
+    public async Task PutInvalidId(string invalidId)
+    {
+        var db = new FakeDatabase();
+        var sut = new ReservationsController(db, Some.MaitreD);
+
+        var dummyDto = new ReservationDto
+        {
+            At = CreateAt("18:19"),
+            Email = "thorne@example.com",
+            Name = "Tracy Thorne",
+            Quantity = 2
+        };
+        var actual = await sut.Put(invalidId, dummyDto);
+
+        Assert.IsAssignableFrom<NotFoundResult>(actual);
     }
 
     private static Uri? FindReservationAddress(HttpResponseMessage response)

@@ -80,7 +80,10 @@ public class ReservationsController : ControllerBase
         string id, [FromBody] ReservationDto dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
-        var r = dto.Validate(new Guid(id));
+        if (!Guid.TryParse(id, out var rid))
+            return new NotFoundResult();
+
+        var r = dto.Validate(rid);
         if (r is null)
             return new BadRequestResult();
 
