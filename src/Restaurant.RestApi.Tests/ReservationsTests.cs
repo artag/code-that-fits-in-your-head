@@ -337,6 +337,25 @@ public class ReservationsTests
         Assert.Equal(Some.Reservation.WithName("Qux"), r);
     }
 
+    [Fact]
+    public async Task PutAbsentReservation()
+    {
+        var db = new FakeDatabase();
+        var sut = new ReservationsController(db, Some.MaitreD);
+
+        var dto = new ReservationDto
+        {
+            At = CreateAt("18:21"),
+            Email = "tori@example.org",
+            Name = "Tori Amos",
+            Quantity = 9
+        };
+        var id = Guid.NewGuid().ToString("N");
+        var actual = await sut.Put(id, dto);
+
+        Assert.IsAssignableFrom<NotFoundResult>(actual);
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;

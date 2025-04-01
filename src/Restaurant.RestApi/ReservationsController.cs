@@ -88,6 +88,11 @@ public class ReservationsController : ControllerBase
         if (r is null)
             return new BadRequestResult();
 
+        var existing =
+            await _repository.ReadReservation(rid).ConfigureAwait(false);
+        if (existing is null)
+            return new NotFoundResult();
+
         await _repository.Update(r).ConfigureAwait(false);
         return new OkResult();
     }
