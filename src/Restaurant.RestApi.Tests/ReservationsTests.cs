@@ -262,6 +262,38 @@ public class ReservationsTests
         Assert.Equal(dto, actual, new ReservationDtoComparer());
     }
 
+    [Theory]
+    [InlineData(null, "led@example.net", "Light Expansion Dread", 2)]
+    [InlineData("not a date", "cygnet@example.edu", "Committee", 9)]
+    [InlineData("19:00", null, "Quince", 3)]
+    [InlineData("19:10", "4@example.org", "4 Beard", 0)]
+    [InlineData("18:45", "svn@example.com", "Severin", -1)]
+    public async Task PutInvalidReservation(
+        string time,
+        string email,
+        string name,
+        int quantity)
+    {
+        await using var service = new RestaurantApiFactory();
+        var dto = new ReservationDto
+        {
+            At = CreateAt("19:00"),
+            Email = "soylent@example.net",
+            Name = ":wumpscut:",
+            Quantity = 1
+        };
+        var postResp = await service.PostReservation(dto);
+        postResp.EnsureSuccessStatusCode();
+        var address = FindReservationAddress(postResp);
+
+        var at = CreateAt(time);
+        var putResp = await service.PutReservation(
+            address!,
+            new { at, email, name, quantity });
+
+        Assert.Equal(HttpStatusCode.BadRequest, putResp.StatusCode);
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;
@@ -276,6 +308,13 @@ public class ReservationsTests
 
     private static string CreateAt(string time)
     {
+        if (string.IsNullOrWhiteSpace(time))
+            return time;
+
+        var parsed = DateTime.TryParse(time, out var dt);
+        if (!parsed)
+            return time;
+
         var dateNow = DateTime.Now.Date.AddDays(1);
         var timeAt = TimeSpan.Parse(time, CultureInfo.InvariantCulture);
         return dateNow.Add(timeAt).ToString("O");

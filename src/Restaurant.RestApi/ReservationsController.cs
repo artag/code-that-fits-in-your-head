@@ -76,17 +76,16 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public Task Put(string id, [FromBody] ReservationDto dto)
+    public async Task<ActionResult> Put(
+        string id, [FromBody] ReservationDto dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
-        var r = new Reservation(
-            new Guid(id),
-            DateTime.Parse(dto.At!, CultureInfo.InvariantCulture),
-            dto.Email!,
-            dto.Name!,
-            dto.Quantity);
+        var r = dto.Validate(new Guid(id));
+        if (r is null)
+            return new BadRequestResult();
 
-        return _repository.Update(r);
+        await _repository.Update(r).ConfigureAwait(false);
+        return new OkResult();
     }
 
     [HttpDelete("{id}")]
