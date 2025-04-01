@@ -8,7 +8,14 @@ public class ReservationDto
     public string? Name { get; set; }
     public int Quantity { get; set; }
 
-    internal Reservation? Validate(Guid fallbackId)
+    internal Guid? ParseId()
+    {
+        if (Guid.TryParse(Id, out var id))
+            return id;
+        return null;
+    }
+
+    internal Reservation? Validate(Guid id)
     {
         if (!DateTime.TryParse(At, out var d))
             return null;
@@ -16,8 +23,6 @@ public class ReservationDto
             return null;
         if (Quantity < 1)
             return null;
-        if (!Guid.TryParse(Id, out var id))
-            id = fallbackId;
 
         return new Reservation(id, d, Email, Name ?? string.Empty, Quantity);
     }
