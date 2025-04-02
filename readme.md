@@ -20,7 +20,9 @@ http://richarddingwall.name/2008/05/31/is-the-80-character-line-limit-still-rele
 
 91.4. http://butunclebob.com/ArticleS.TimOttinger.ApologizeIncode
 
-91.5. https://blog.ploeh.dk/2019/03/18/the-programmer-as-decision-maker
+91.5. Seemann M. The programmer as decision maker
+
+https://blog.ploeh.dk/2019/03/18/the-programmer-as-decision-maker
 
 92. Seemann M. A heuristic for formatting code according to the AAA pattern.
 
@@ -42,7 +44,7 @@ https://wiki.c2.com/?ToNeedComments
 
 https://blog.ploeh.dk/2019/12/16/zone-of-ceremony/
 
-[Original](/doc/092_2/original.md)
+[Original](/doc/092_2/original.md), [Adapted](/doc/092_2/adapted.md)
 
 92.2.1. Venkat Subramaniam explains ceremony
 
@@ -73,3 +75,21 @@ https://fsharpforfunandprofit.com/posts/cycles-and-modularity-in-the-wild/
 92.3.4. Comparing F# and C# with dependency networks
 
 https://evelinag.com/blog/2014/06-09-comparing-dependency-networks/
+
+93. Seemann M. A red-green-refactor checklist.
+
+Пост в блоге: https://blog.ploeh.dk/2019/10/21/a-red-green-refactor-checklist
+
+[Original](/doc/093/original.md)
+
+93.1. Fizz buzz
+
+https://en.wikipedia.org/wiki/Fizz_buzz
+
+93.2. Seemann M. Tautological assertion
+
+https://blog.ploeh.dk/2019/10/14/tautological-assertion
+
+93.3. Seemann M. Devil's advocate
+
+https://blog.ploeh.dk/2019/10/07/devils-advocate/
