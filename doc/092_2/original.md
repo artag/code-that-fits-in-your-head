@@ -154,7 +154,7 @@ val it : seq<decimal> = seq [3M]
 
 Static typing still means that you can't just call it with any type of value. An expression like `consume "foo" [true;false;true]` will not compile.
 
-You can explicitly declare types in F# (like you can in C#), but my experience is that if you don't, type changes tend to just propagate throughout your code base. Change a type of a function, and upstream callers generally just 'figure it out'. If you think of functions calling other functions as a graph, you often only have to adjust leaf nodes even when you change the type of something deep in your code b
+You can explicitly declare types in F# (like you can in C#), but my experience is that if you don't, type changes tend to just propagate throughout your code base. Change a type of a function, and upstream callers generally just 'figure it out'. If you think of functions calling other functions as a graph, you often only have to adjust leaf nodes even when you change the type of something deep in your code base.
 
 ## Low ceremony of Haskell
 
