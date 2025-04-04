@@ -93,6 +93,12 @@ public class ReservationsController : ControllerBase
         if (existing is null)
             return new NotFoundResult();
 
+        var reservations = await _repository
+            .ReadReservations(r.At)
+            .ConfigureAwait(false);
+        if (!_maitreD.WillAccept(DateTime.Now, reservations, r))
+            return NoTables500InternalServerError();
+
         await _repository.Update(r).ConfigureAwait(false);
         return new OkResult();
     }

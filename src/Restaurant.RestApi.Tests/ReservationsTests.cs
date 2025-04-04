@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Net;
@@ -354,6 +355,32 @@ public class ReservationsTests
         var actual = await sut.Put(id, dto);
 
         Assert.IsAssignableFrom<NotFoundResult>(actual);
+    }
+
+    [Fact]
+    public async Task ChangeDateToSoldOutDate()
+    {
+        var r1 = Some.Reservation;
+        var r2 = Some.Reservation
+            .WithId(Guid.NewGuid())
+            .TheDayAfter()
+            .WithQuantity(10);
+        var db = new FakeDatabase { r1, r2 };
+        var sut = new ReservationsController(db, Some.MaitreD);
+
+        var dto = new ReservationDto
+        {
+            At = r2.At.ToString("o"),
+            Email = r1.Email,
+            Name = r1.Name,
+            Quantity = r1.Quantity
+        };
+        var actual = await sut.Put(r1.Id.ToString("N"), dto);
+
+        var oRes = Assert.IsAssignableFrom<ObjectResult>(actual);
+        Assert.Equal(
+            StatusCodes.Status500InternalServerError,
+            oRes.StatusCode);
     }
 
     private static Uri? FindReservationAddress(HttpResponseMessage response)
