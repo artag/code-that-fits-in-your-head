@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace Restaurant.RestApi;
 
@@ -7,14 +6,20 @@ namespace Restaurant.RestApi;
 public class ReservationsController : ControllerBase
 {
     private static bool _ensuredTables;
-    private readonly MaitreD _maitreD;
     private readonly IReservationsRepository _repository;
+    private readonly IPostOffice _postOffice;
+    private readonly IDateTimeService _dateTime;
+    private readonly MaitreD _maitreD;
 
     public ReservationsController(
         IReservationsRepository repository,
+        IPostOffice postOffice,
+        IDateTimeService dateTime,
         MaitreD maitreD)
     {
         _repository = repository;
+        _postOffice = postOffice;
+        _dateTime = dateTime;
         _maitreD = maitreD;
     }
 
@@ -38,10 +43,11 @@ public class ReservationsController : ControllerBase
             .ReadReservations(reservation.At)
             .ConfigureAwait(false);
 
-        if (!_maitreD.WillAccept(DateTime.Now, reservations, reservation))
+        if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
             return NoTables500InternalServerError();
 
         await _repository.Create(reservation).ConfigureAwait(false);
+        await _postOffice.EmailReservationCreated(reservation).ConfigureAwait(false);
 
         return Reservation201Created(reservation);
     }
@@ -99,7 +105,7 @@ public class ReservationsController : ControllerBase
         reservations = reservations
             .Where(r => r.Id != res.Id)
             .ToList();
-        if (!_maitreD.WillAccept(DateTime.Now, reservations, res))
+        if (!_maitreD.WillAccept(_dateTime.Now, reservations, res))
             return NoTables500InternalServerError();
 
         await _repository.Update(res).ConfigureAwait(false);

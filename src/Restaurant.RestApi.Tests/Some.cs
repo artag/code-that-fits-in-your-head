@@ -3,7 +3,7 @@
 public static class Some
 {
     public static readonly DateTime Now =
-        DateTime.Now.AddMinutes(5);
+        new DateTime(2022, 4, 1, 20, 15, 0);
 
     public static readonly Reservation Reservation =
         new Reservation(

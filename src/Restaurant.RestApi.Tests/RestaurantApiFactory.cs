@@ -16,6 +16,13 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IReservationsRepository>();
             services.TryAddSingleton<IReservationsRepository>(new FakeDatabase());
+            services.RemoveAll<IDateTimeService>();
+            services.TryAddSingleton<IDateTimeService>(_ =>
+            {
+                var now = DateTime.Now;
+                var date = new DateTime(now.Year, now.Month, now.Day, 19, 20, 00);
+                return new SpyDateTimeService(date);
+            });
         });
     }
 

@@ -42,7 +42,9 @@ public class ReservationsTests
     {
         var at = CreateAt(time);
         var db = new FakeDatabase();
-        var sut = new ReservationsController(db, Some.MaitreD);
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2024, 11, 10, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
         var dto = new ReservationDto
         {
@@ -62,6 +64,7 @@ public class ReservationsTests
             dto.Name ?? string.Empty,
             dto.Quantity);
         Assert.Contains(expected, db);
+        Assert.Contains(expected, postOffice);
     }
 
     [Theory]
@@ -303,7 +306,9 @@ public class ReservationsTests
     public async Task PutInvalidId(string invalidId)
     {
         var db = new FakeDatabase();
-        var sut = new ReservationsController(db, Some.MaitreD);
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2024, 11, 10, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
         var dummyDto = new ReservationDto
         {
@@ -321,7 +326,10 @@ public class ReservationsTests
     public async Task PutConflictingIds()
     {
         var db = new FakeDatabase { Some.Reservation };
-        var sut = new ReservationsController(db, Some.MaitreD);
+        var postOffice = new SpyPostOffice();
+        var dt = new DateTime(2022, 4, 1, 19, 15, 0);
+        var dateTimeService = new SpyDateTimeService(dt);
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
         var dto = new ReservationDto
         {
@@ -342,7 +350,9 @@ public class ReservationsTests
     public async Task PutAbsentReservation()
     {
         var db = new FakeDatabase();
-        var sut = new ReservationsController(db, Some.MaitreD);
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2024, 11, 10, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
         var dto = new ReservationDto
         {
@@ -366,7 +376,9 @@ public class ReservationsTests
             .TheDayAfter()
             .WithQuantity(10);
         var db = new FakeDatabase { r1, r2 };
-        var sut = new ReservationsController(db, Some.MaitreD);
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2024, 11, 10, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
         var dto = new ReservationDto
         {
