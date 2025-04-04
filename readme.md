@@ -76,7 +76,7 @@ https://fsharpforfunandprofit.com/posts/cycles-and-modularity-in-the-wild/
 
 https://evelinag.com/blog/2014/06-09-comparing-dependency-networks/
 
-93. Seemann M. A red-green-refactor checklist.
+93. Seemann M. A red-green-refactor checklist
 
 Пост в блоге: https://blog.ploeh.dk/2019/10/21/a-red-green-refactor-checklist
 
@@ -93,3 +93,77 @@ https://blog.ploeh.dk/2019/10/14/tautological-assertion
 93.3. Seemann M. Devil's advocate
 
 https://blog.ploeh.dk/2019/10/07/devils-advocate/
+
+94. Seemann M. Church-encoded Maybe
+
+Пост в блоге: https://blog.ploeh.dk/2018/06/04/church-encoded-maybe
+
+[Original](/doc/094/original.md)
+
+94.1. Seemann M. Church encoding
+
+https://blog.ploeh.dk/2018/05/22/church-encoding
+
+94.2. Seemann M. Church-encoded Boolean values
+
+https://blog.ploeh.dk/2018/05/24/church-encoded-boolean-values
+
+94.3. Seemann M. Church-encoded natural numbers
+
+https://blog.ploeh.dk/2018/05/28/church-encoded-natural-numbers
+
+94.4. Tagged union
+
+https://en.wikipedia.org/wiki/Tagged_union
+
+94.5. Tony Hoare
+
+https://en.wikipedia.org/wiki/Tony_Hoare
+
+94.6. Seemann M. The Maybe functor
+
+https://blog.ploeh.dk/2018/03/26/the-maybe-functor
+
+94.7. Parametric polymorphism
+
+https://en.wikipedia.org/wiki/Parametric_polymorphism
+
+94.8. Lambda calculus
+
+https://en.wikipedia.org/wiki/Lambda_calculus
+
+94.9. Scrap Your Constructors: Church Encoding Algebraic Types
+
+http://programmable.computer/posts/church_encoding.html
+
+94.10. Seemann M. Software design isomorphisms
+
+https://blog.ploeh.dk/2018/01/08/software-design-isomorphisms
+
+94.11. Seeman M. Null has no type, but Maybe has
+
+https://blog.ploeh.dk/2015/11/13/null-has-no-type-but-maybe-has
+
+94.12. Seeman M. Functors
+
+https://blog.ploeh.dk/2018/03/22/functors
+
+94.13. Seeman M. Church-encoded Either
+
+https://blog.ploeh.dk/2018/06/11/church-encoded-either
+
+94.14. Seeman M. Argument list isomorphisms
+
+https://blog.ploeh.dk/2018/01/29/argument-list-isomorphisms/
+
+94.15. HaskellWiki. Performance/Strictness
+
+https://wiki.haskell.org/Performance/Strictness
+
+94.16. Seeman M. The Lazy applicative functor
+
+https://blog.ploeh.dk/2018/12/17/the-lazy-applicative-functor
+
+94.17. Seeman M. The Lazy functor
+
+https://blog.ploeh.dk/2018/09/10/the-lazy-functor
