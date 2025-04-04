@@ -383,6 +383,32 @@ public class ReservationsTests
             oRes.StatusCode);
     }
 
+    [Fact]
+    public async Task EditReservationOnSameDayNearCapacity()
+    {
+        const string time = "20:01";
+        var at = CreateAt(time);
+
+        await using var service = new RestaurantApiFactory();
+        var dto = new ReservationDto
+        {
+            At = at,
+            Email = "aol@example.gov",
+            Name = "Anette Olzon",
+            Quantity = 5
+        };
+        var postResp = await service.PostReservation(dto);
+        postResp.EnsureSuccessStatusCode();
+        var address = FindReservationAddress(postResp!);
+
+        dto.Quantity++;
+        var putResp = await service.PutReservation(address!, dto);
+
+        Assert.True(
+            putResp.IsSuccessStatusCode,
+            $"Actual status code: {putResp.StatusCode}.");
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;

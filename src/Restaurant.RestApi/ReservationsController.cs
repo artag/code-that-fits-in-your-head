@@ -84,8 +84,8 @@ public class ReservationsController : ControllerBase
         if (!Guid.TryParse(id, out var rid))
             return new NotFoundResult();
 
-        var r = dto.Validate(rid);
-        if (r is null)
+        var res = dto.Validate(rid);
+        if (res is null)
             return new BadRequestResult();
 
         var existing =
@@ -94,12 +94,15 @@ public class ReservationsController : ControllerBase
             return new NotFoundResult();
 
         var reservations = await _repository
-            .ReadReservations(r.At)
+            .ReadReservations(res.At)
             .ConfigureAwait(false);
-        if (!_maitreD.WillAccept(DateTime.Now, reservations, r))
+        reservations = reservations
+            .Where(r => r.Id != res.Id)
+            .ToList();
+        if (!_maitreD.WillAccept(DateTime.Now, reservations, res))
             return NoTables500InternalServerError();
 
-        await _repository.Update(r).ConfigureAwait(false);
+        await _repository.Update(res).ConfigureAwait(false);
         return new OkResult();
     }
 
