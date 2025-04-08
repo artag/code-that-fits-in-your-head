@@ -57,13 +57,15 @@ public class ReservationsTests
 
         await sut.Post(dto);
 
-        var expected = new Reservation(
-            Guid.Parse(dto.Id),
-            DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
-            dto.Email,
-            dto.Name ?? string.Empty,
-            dto.Quantity);
-        Assert.Contains(expected, db);
+        var expected = new SpyPostOffice.Observation(
+            SpyPostOffice.Event.Created,
+            new Reservation(
+                Guid.Parse(dto.Id),
+                DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
+                dto.Email,
+                dto.Name ?? string.Empty,
+                dto.Quantity));
+        Assert.Contains(expected.Reservation, db);
         Assert.Contains(expected, postOffice);
     }
 
