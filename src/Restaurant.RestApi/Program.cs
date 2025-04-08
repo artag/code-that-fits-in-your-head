@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Restaurant.RestApi;
 
 /// <summary>
@@ -20,11 +18,13 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllers();
 
-        var settings = new Settings.RestaurantSettings();
-        builder.Configuration.Bind("Restaurant", settings);
-        builder.Services.AddSingleton<MaitreD>(settings.ToMaitreD());
-        builder.Services.AddSingleton<IPostOffice, NullPostOffice>();
-        builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
+        var restaurantSettings = new Settings.RestaurantSettings();
+        builder.Configuration.Bind("Restaurant", restaurantSettings);
+        builder.Services.AddSingleton(restaurantSettings.ToMaitreD());
+
+        var smtpSettings = new Settings.SmtpSettings();
+        builder.Configuration.Bind("Smtp", smtpSettings);
+        builder.Services.AddSingleton(smtpSettings.ToPostOffice());
 
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {
@@ -33,21 +33,12 @@ public class Program
             return new SqliteReservationsRepository(connStr!);
         });
 
+        builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
+
         var app = builder.Build();
         app.UseRouting();
         app.MapControllers();
 
         return app.RunAsync();
-    }
-}
-
-[SuppressMessage(
-    "Performance",
-    "CA1812: Avoid uninstantiated internal classes")]
-internal sealed class NullPostOffice : IPostOffice
-{
-    public Task EmailReservationCreated(Reservation reservation)
-    {
-        return Task.CompletedTask;
     }
 }
