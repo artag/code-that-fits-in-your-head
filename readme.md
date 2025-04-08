@@ -246,6 +246,8 @@ https://blog.ploeh.dk/2018/09/10/the-lazy-functor
 
 Пост в блоге: https://blog.ploeh.dk/2018/06/25/visitor-as-a-sum-type
 
+[Original](/doc/107/original.md)
+
 108. Seemann M. When properties are easier than examples
 
 Пост в блоге: https://blog.ploeh.dk/2021/02/15/when-properties-are-easier-than-examples
