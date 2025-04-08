@@ -167,3 +167,83 @@ https://blog.ploeh.dk/2018/12/17/the-lazy-applicative-functor
 94.17. Seeman M. The Lazy functor
 
 https://blog.ploeh.dk/2018/09/10/the-lazy-functor
+
+95. Seemann M. CQS versus server generated Ids
+
+Пост в блоге: https://blog.ploeh.dk/2014/08/11/cqs-versus-server-generated-ids
+
+96. Seemann M. Conway’s Law: latency versus throughput
+
+Пост в блоге: https://blog.ploeh.dk/2020/03/16/conways-law-latency-versus-throughput
+
+97. Seemann M. Curb code rot with thresholds
+
+Пост в блоге: https://blog.ploeh.dk/2020/04/13/curb-code-rot-with-thresholds
+
+98. Seemann M. Devil’s advocate
+
+Пост в блоге: https://blog.ploeh.dk/2019/10/07/devils-advocate
+
+99. Seemann M. Feedback mechanisms and tradeoffs
+
+Пост в блоге:https://blog.ploeh.dk/2011/04/29/Feedbackmechanismsandtradeoffs
+
+100. Seemann M. From interaction-based to state-based testing
+
+Пост в блоге: https://blog.ploeh.dk/2019/02/18/from-interaction-based-to-state-basedtesting
+
+101. Seemann M. Fortunately, I don’t squash my commits
+
+Пост в блоге: https://blog.ploeh.dk/2020/10/05/fortunately-i-dont-squash-my-commits
+
+102. Seemann M. Functional architecture is Ports and Adapters
+
+Пост в блоге: https://blog.ploeh.dk/2016/03/18/functional-architecture-is-ports-and-adapters
+
+103. Seemann M. Repeatable execution
+
+Пост в блоге: https://blog.ploeh.dk/2020/03/23/repeatable-execution
+
+104. Seemann M. Structural equality for better tests
+
+Пост в блоге: https://blog.ploeh.dk/2021/05/03/structural-equality-for-better-tests
+
+105. Seemann M. Tautological assertion
+
+Пост в блоге: https://blog.ploeh.dk/2019/10/14/tautological-assertion
+
+106. Seemann M. Towards better abstractions
+
+Пост в блоге: https://blog.ploeh.dk/2010/12/03/Towardsbetterabstractions
+
+107. Seemann M. Visitor as a sum type
+
+Пост в блоге: https://blog.ploeh.dk/2018/06/25/visitor-as-a-sum-type
+
+108. Seemann M. When properties are easier than examples
+
+Пост в блоге: https://blog.ploeh.dk/2021/02/15/when-properties-are-easier-than-examples
+
+109. Шоу Дж. Ложная память. Почему нельзя доверять воспоминаниям. - М .: Колибри, 2017.
+
+110. Thomas N., Murphy G. How Effective Is Modularization? / В [75], 2010 .
+
+111. Tornhill A. Your Code as a Crime Scene: Use Forensic Techniques to Arrest Defects, Bottlenecks and Bad Design in Your Programs. Pragmatic Bookshelf, 2015.
+
+112. Tornhill A. Software Design X-Rays: Fix Technical Debt with Behavioral Code Analysis. Pragmatic Bookshelf, 2018 .
+
+113. Troy C. Reviewing Pull Requests
+
+Пост в блоге: https://chelseatroy.com/2019/12/18/reviewing-pull-requests
+
+114. Webber J. Savas Parastatidis and Ian Robinson. REST in Practice: Hypermedia and Systems Architecture. O’Reilly, 2010.
+
+115. Weinberg G. M. The psychology of computer programming. Silver anniversary edition. Dorset House Publishing, 1998.
+
+116 . Williams L. Pair Programming в [75], 2010.
+
+117 . Wlaschin S. Cycles and modularity in the wild
+
+Пост в блоге: https://fsharpforfunandprofit.com/posts/cycles-and-modularity-in-the-wild
+
+118 . Woolf B. Null Object / В [62], 1997.
