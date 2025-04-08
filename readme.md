@@ -2,6 +2,32 @@
 
 ## Ссылки
 
+82. Poppendieck M., Poppendieck T. Implementing Lean Software Development: From Concept to Cash. Addison-Wesley, 2006.
+
+83. Preston-Werner T. Semantic Versioning. Спецификация по адресу https://semver.org.
+На момент написания книги (октябрь 2020 года) последней версией была Semantic Versioning 2.0.0.
+
+84. Five Years of Mob Testing, Hello to Ensemble Testing
+
+Пост в блоге: https://visible-quality.blogspot.com/2020/05/five-years-of-mob-testinghello-to.html
+
+85. Rainsberger J. B. Integration Tests Are a Scam, Agile 2009 conference talk, 2009.
+
+Запись доступна по адресу https://www.infoq.com/presentations/integration-tests-scam
+
+86. Rainsberger J. B. Твит: https://twitter.com/jbrains/status/167297606698008576
+
+87. Reeves J. What Is Software Design? // C++ Journal, 1992
+
+Статья: https://www.developerdotstar.com/mag/articles/reeves_design.html
+Также есть и в виде приложения в [60].
+
+88. Рис Э. Бизнес с нуля: Метод Lean Startup для быстрого тестирования идей и выбора бизнес-модели. - М .: Альпина Паблишер, 2022.
+
+89. Робинсон Я., Эифрем Э., Вебер Дж . Графовые базы данных . Новые возможности для работы. - М .: ДМК-Пресс, 2016.
+
+90. Scott J. C. Seeing Like a State: How Certain Schemes to Improve the Human Condition Have Failed. Yale University Press, 1998.
+
 91. Seemann M. 10 tips for better Pull Requests.
 
 Пост в блоге: https://blog.ploeh.dk/2015/01/15/10-tips-for-better-pull-requests
