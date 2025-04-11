@@ -234,6 +234,23 @@ public class ReservationsTests
             $"Actual status code: {resp.StatusCode}.");
     }
 
+    [Fact]
+    public async Task DeleteSendsEmail()
+    {
+        var r = Some.Reservation;
+        var db = new FakeDatabase { r };
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2024, 11, 10, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
+
+        await sut.Delete(r.Id.ToString("N"));
+
+        var expected = new SpyPostOffice.Observation(
+            SpyPostOffice.Event.Deleted,
+            r);
+        Assert.Contains(expected, postOffice);
+    }
+
     [Theory]
     [InlineData("18:47", "b@example.net", "Bjork", 2, 5)]
     [InlineData("19:32", "e@example.gov", "Epica", 5, 4)]

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
 
 namespace Restaurant.RestApi;
 
@@ -113,11 +114,21 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public Task Delete(string id)
+    public async Task Delete(string id)
     {
-        return Guid.TryParse(id, out var rid)
-            ? _repository.Delete(rid)
-            : Task.CompletedTask;
+        var parsed = Guid.TryParse(id, out var rid);
+        if (!parsed)
+            return;
+
+        var r = await _repository
+            .ReadReservation(rid)
+            .ConfigureAwait(false);
+        await _repository
+            .Delete(rid)
+            .ConfigureAwait(false);
+        await _postOffice
+            .EmailReservationDeleted(r!)
+            .ConfigureAwait(false);
     }
 
     private static ObjectResult NoTables500InternalServerError()

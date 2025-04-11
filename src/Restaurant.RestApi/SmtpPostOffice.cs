@@ -33,7 +33,7 @@ public sealed class SmtpPostOffice : IPostOffice
 
         using var msg = new MailMessage(_fromAddress, reservation.Email);
         msg.Subject = $"Your reservation for {reservation.Quantity}.";
-        msg.Body = CreateBody(reservation);
+        msg.Body = CreateBodyForCreated(reservation);
 
         using var client = new SmtpClient();
         client.UseDefaultCredentials = false;
@@ -45,19 +45,22 @@ public sealed class SmtpPostOffice : IPostOffice
         await client.SendMailAsync(msg).ConfigureAwait(false);
     }
 
-    private static string CreateBody(Reservation reservation)
+    public async Task EmailReservationDeleted(Reservation reservation)
     {
-        var sb = new StringBuilder();
+        ArgumentNullException.ThrowIfNull(reservation);
 
-        _ = sb.Append("Thank you for your reservation. ");
-        _ =sb.AppendLine("Here's the details about your reservation:");
-        _ =sb.AppendLine();
-        _ =sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");
-        _ =sb.AppendLine(CultureInfo.InvariantCulture, $"Party size: {reservation.Quantity}.");
-        _ =sb.AppendLine(CultureInfo.InvariantCulture, $"Name: {reservation.Name}.");
-        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Email: {reservation.Email}.");
+        using var msg = new MailMessage(_fromAddress, reservation.Email);
+        msg.Subject = $"Your reservation for {reservation.Quantity} was cancelled.";
+        msg.Body = CreateBodyForDeleted(reservation);
 
-        return sb.ToString();
+        using var client = new SmtpClient();
+        client.UseDefaultCredentials = false;
+        client.Credentials = new NetworkCredential(_userName, _password);
+        client.Host = _host;
+        client.Port = _port;
+        client.DeliveryMethod = SmtpDeliveryMethod.Network;
+        client.EnableSsl = true;
+        await client.SendMailAsync(msg).ConfigureAwait(false);
     }
 
     public override bool Equals(object? obj)
@@ -74,5 +77,35 @@ public sealed class SmtpPostOffice : IPostOffice
     {
         return HashCode.Combine(
             _host, _port, _fromAddress, _userName, _password);
+    }
+
+    private static string CreateBodyForCreated(Reservation reservation)
+    {
+        var sb = new StringBuilder();
+
+        _ = sb.Append("Thank you for your reservation. ");
+        _ = sb.AppendLine("Here's the details about your reservation:");
+        _ = sb.AppendLine();
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Party size: {reservation.Quantity}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Name: {reservation.Name}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Email: {reservation.Email}.");
+
+        return sb.ToString();
+    }
+
+    private static string CreateBodyForDeleted(Reservation reservation)
+    {
+        var sb = new StringBuilder();
+
+        _ = sb.Append("Your reservation was cancelled. ");
+        _ = sb.AppendLine("Here's the details about your reservation:");
+        _ = sb.AppendLine();
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Party size: {reservation.Quantity}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Name: {reservation.Name}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Email: {reservation.Email}.");
+
+        return sb.ToString();
     }
 }

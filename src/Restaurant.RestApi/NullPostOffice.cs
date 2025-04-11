@@ -12,4 +12,9 @@ public sealed class NullPostOffice : IPostOffice
     {
         return Task.CompletedTask;
     }
+
+    public Task EmailReservationDeleted(Reservation reservation)
+    {
+        return Task.CompletedTask;
+    }
 }
