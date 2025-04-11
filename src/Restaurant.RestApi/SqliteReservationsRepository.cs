@@ -34,11 +34,11 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
 
         var cmd = new SqliteCommand(createReservationSql, conn);
         await using var disposeCmd2 = cmd.ConfigureAwait(false);
-        cmd.Parameters.Add(new SqliteParameter("@Id", reservation.Id));
-        cmd.Parameters.Add(new SqliteParameter("@At", reservation.At));
-        cmd.Parameters.Add(new SqliteParameter("@Name", reservation.Name.Value));
-        cmd.Parameters.Add(new SqliteParameter("@Email", reservation.Email.Value));
-        cmd.Parameters.Add(new SqliteParameter("@Quantity", reservation.Quantity));
+        cmd.Parameters.AddWithValue("@Id", reservation.Id);
+        cmd.Parameters.AddWithValue("@At", reservation.At);
+        cmd.Parameters.AddWithValue("@Name", reservation.Name.Value);
+        cmd.Parameters.AddWithValue("@Email", reservation.Email.Value);
+        cmd.Parameters.AddWithValue("@Quantity", reservation.Quantity);
         await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
 
