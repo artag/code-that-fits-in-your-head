@@ -6,5 +6,7 @@ public interface IPostOffice
 
     Task EmailReservationDeleted(Reservation reservation);
 
+    Task EmailReservationUpdating(Reservation reservation);
+
     Task EmailReservationUpdated(Reservation reservation);
 }

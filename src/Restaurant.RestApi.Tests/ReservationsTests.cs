@@ -481,6 +481,36 @@ public class ReservationsTests
         Assert.Contains(expected, postOffice);
     }
 
+    [Theory]
+    [InlineData("foo@example.com")]
+    [InlineData("bar@example.gov")]
+    public async Task PutSendsEmailToOldAddresOnChange(string newEmail)
+    {
+        var r = Some.Reservation;
+        var db = new FakeDatabase { r };
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
+
+        var dto = new ReservationDto
+        {
+            At = r.At.ToString("O"),
+            Email = newEmail,
+            Name = r.Name,
+            Quantity = r.Quantity
+        };
+        await sut.Put(r.Id.ToString("N"), dto);
+
+        var expected = new[] {
+            new SpyPostOffice.Observation(
+                SpyPostOffice.Event.Updating,
+                r),
+            new SpyPostOffice.Observation(
+                SpyPostOffice.Event.Updated,
+                r.WithEmail(newEmail)) }.ToHashSet();
+        Assert.Superset(expected, postOffice.ToHashSet());
+    }
+
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;

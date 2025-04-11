@@ -109,6 +109,10 @@ public class ReservationsController : ControllerBase
         if (!_maitreD.WillAccept(_dateTime.Now, reservations, res))
             return NoTables500InternalServerError();
 
+        await _postOffice
+            .EmailReservationUpdating(existing)
+            .ConfigureAwait(false);
+
         await _repository.Update(res).ConfigureAwait(false);
         await _postOffice.EmailReservationUpdated(res).ConfigureAwait(false);
 
