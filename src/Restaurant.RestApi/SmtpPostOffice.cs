@@ -27,76 +27,42 @@ public sealed class SmtpPostOffice : IPostOffice
         _fromAddress = fromAddress;
     }
 
-    public async Task EmailReservationCreated(Reservation reservation)
+    public Task EmailReservationCreated(Reservation reservation)
     {
         ArgumentNullException.ThrowIfNull(reservation);
 
-        using var msg = new MailMessage(_fromAddress, reservation.Email);
-        msg.Subject = $"Your reservation for {reservation.Quantity}.";
-        msg.Body = CreateBodyForCreated(reservation);
-
-        using var client = new SmtpClient();
-        client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential(_userName, _password);
-        client.Host = _host;
-        client.Port = _port;
-        client.DeliveryMethod = SmtpDeliveryMethod.Network;
-        client.EnableSsl = true;
-        await client.SendMailAsync(msg).ConfigureAwait(false);
+        var subject = $"Your reservation for {reservation.Quantity}.";
+        var body = CreateBodyForCreated(reservation);
+        var email = reservation.Email;
+        return Send(subject, body, email);
     }
 
-    public async Task EmailReservationDeleted(Reservation reservation)
+    public Task EmailReservationDeleted(Reservation reservation)
     {
         ArgumentNullException.ThrowIfNull(reservation);
 
-        using var msg = new MailMessage(_fromAddress, reservation.Email);
-        msg.Subject = $"Your reservation for {reservation.Quantity} was cancelled.";
-        msg.Body = CreateBodyForDeleted(reservation);
-
-        using var client = new SmtpClient();
-        client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential(_userName, _password);
-        client.Host = _host;
-        client.Port = _port;
-        client.DeliveryMethod = SmtpDeliveryMethod.Network;
-        client.EnableSsl = true;
-        await client.SendMailAsync(msg).ConfigureAwait(false);
+        var subject = $"Your reservation for {reservation.Quantity} was cancelled.";
+        var body = CreateBodyForDeleted(reservation);
+        var email = reservation.Email;
+        return Send(subject, body, email);
     }
 
-    public async Task EmailReservationUpdated(Reservation reservation)
+    public Task EmailReservationUpdating(Reservation reservation)
     {
         ArgumentNullException.ThrowIfNull(reservation);
-
-        using var msg = new MailMessage(_fromAddress, reservation.Email);
-        msg.Subject = $"Your reservation for {reservation.Quantity} changed.";
-        msg.Body = CreateBodyForUpdated(reservation);
-
-        using var client = new SmtpClient();
-        client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential(_userName, _password);
-        client.Host = _host;
-        client.Port = _port;
-        client.DeliveryMethod = SmtpDeliveryMethod.Network;
-        client.EnableSsl = true;
-        await client.SendMailAsync(msg).ConfigureAwait(false);
+        var subject = $"Your reservation for {reservation.Quantity} is changing.";
+        var body = CreateBodyForUpdating(reservation);
+        var email = reservation.Email;
+        return Send(subject, body, email);
     }
 
-    public async Task EmailReservationUpdating(Reservation reservation)
+    public Task EmailReservationUpdated(Reservation reservation)
     {
         ArgumentNullException.ThrowIfNull(reservation);
-
-        using var msg = new MailMessage(_fromAddress, reservation.Email);
-        msg.Subject = $"Your reservation for {reservation.Quantity} is changing.";
-        msg.Body = CreateBodyForUpdating(reservation);
-
-        using var client = new SmtpClient();
-        client.UseDefaultCredentials = false;
-        client.Credentials = new NetworkCredential(_userName, _password);
-        client.Host = _host;
-        client.Port = _port;
-        client.DeliveryMethod = SmtpDeliveryMethod.Network;
-        client.EnableSsl = true;
-        await client.SendMailAsync(msg).ConfigureAwait(false);
+        var subject = $"Your reservation for {reservation.Quantity} changed.";
+        var body = CreateBodyForUpdated(reservation);
+        var email = reservation.Email;
+        return Send(subject, body, email);
     }
 
     public override bool Equals(object? obj)
@@ -113,6 +79,21 @@ public sealed class SmtpPostOffice : IPostOffice
     {
         return HashCode.Combine(
             _host, _port, _fromAddress, _userName, _password);
+    }
+
+    private async Task Send(string subject, string body, string email)
+    {
+        using var msg = new MailMessage(_fromAddress, email);
+        msg.Subject = subject;
+        msg.Body = body;
+        using var client = new SmtpClient();
+        client.UseDefaultCredentials = false;
+        client.Credentials = new NetworkCredential(_userName, _password);
+        client.Host = _host;
+        client.Port = _port;
+        client.DeliveryMethod = SmtpDeliveryMethod.Network;
+        client.EnableSsl = true;
+        await client.SendMailAsync(msg).ConfigureAwait(false);
     }
 
     private static string CreateBodyForCreated(Reservation reservation)
@@ -145,11 +126,11 @@ public sealed class SmtpPostOffice : IPostOffice
         return sb.ToString();
     }
 
-    private static string CreateBodyForUpdated(Reservation reservation)
+    private static string CreateBodyForUpdating(Reservation reservation)
     {
         var sb = new StringBuilder();
 
-        _ = sb.Append("Your reservation changed. ");
+        _ = sb.Append("Your reservation is changing. ");
         _ = sb.AppendLine("Here's the details about your reservation:");
         _ = sb.AppendLine();
         _ = sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");
@@ -160,11 +141,11 @@ public sealed class SmtpPostOffice : IPostOffice
         return sb.ToString();
     }
 
-    private static string CreateBodyForUpdating(Reservation reservation)
+    private static string CreateBodyForUpdated(Reservation reservation)
     {
         var sb = new StringBuilder();
 
-        _ = sb.Append("Your reservation is changing. ");
+        _ = sb.Append("Your reservation changed. ");
         _ = sb.AppendLine("Here's the details about your reservation:");
         _ = sb.AppendLine();
         _ = sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");
