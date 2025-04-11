@@ -62,8 +62,8 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
             var r = new Reservation(
                 (Guid)rdr["PublicId"],
                 (DateTime)rdr["At"],
-                (string)rdr["Name"],
-                (string)rdr["Email"],
+                new Email((string)rdr["Name"]),
+                new Name((string)rdr["Email"]),
                 (int)rdr["Quantity"]);
 
             result.Add(r);
@@ -138,8 +138,8 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         return new Reservation(
             id,
             at,
-            name,
-            email,
+            new Email(email),
+            new Name(name),
             quantity);
     }
 

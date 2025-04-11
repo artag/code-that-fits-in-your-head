@@ -77,8 +77,8 @@ public class ReservationsController : ControllerBase
             {
                 Id = id,
                 At = r!.At.ToString("O"),
-                Email = r.Email,
-                Name = r.Name,
+                Email = r.Email.ToString(),
+                Name = r.Name.ToString(),
                 Quantity = r.Quantity,
             });
     }

@@ -62,8 +62,8 @@ public class ReservationsTests
             new Reservation(
                 Guid.Parse(dto.Id),
                 DateTime.Parse(dto.At, CultureInfo.InvariantCulture),
-                dto.Email,
-                dto.Name ?? string.Empty,
+                new Email(dto.Email),
+                new Name(dto.Name ?? string.Empty),
                 dto.Quantity));
         Assert.Contains(expected.Reservation, db);
         Assert.Contains(expected, postOffice);
@@ -369,7 +369,7 @@ public class ReservationsTests
         {
             Id = Guid.NewGuid().ToString("N"),
             At = Some.Reservation.At.ToString("O"),
-            Email = Some.Reservation.Email,
+            Email = Some.Reservation.Email.ToString(),
             Name = "Qux",
             Quantity = Some.Reservation.Quantity
         };
@@ -377,7 +377,7 @@ public class ReservationsTests
         await sut.Put(id, dto);
 
         var r = Assert.Single(db);
-        Assert.Equal(Some.Reservation.WithName("Qux"), r);
+        Assert.Equal(Some.Reservation.WithName(new Name("Qux")), r);
     }
 
     [Fact]
@@ -417,8 +417,8 @@ public class ReservationsTests
         var dto = new ReservationDto
         {
             At = r2.At.ToString("o"),
-            Email = r1.Email,
-            Name = r1.Name,
+            Email = r1.Email.ToString(),
+            Name = r1.Name.ToString(),
             Quantity = r1.Quantity
         };
         var actual = await sut.Put(r1.Id.ToString("N"), dto);
@@ -469,7 +469,7 @@ public class ReservationsTests
         var dto = new ReservationDto
         {
             At = r.At.ToString("O"),
-            Email = r.Email,
+            Email = r.Email.ToString(),
             Name = newName,
             Quantity = r.Quantity
         };
@@ -477,7 +477,7 @@ public class ReservationsTests
 
         var expected = new SpyPostOffice.Observation(
             SpyPostOffice.Event.Updated,
-            r.WithName(newName));
+            r.WithName(new Name(newName)));
         Assert.Contains(expected, postOffice);
         Assert.DoesNotContain(
             postOffice,
@@ -499,7 +499,7 @@ public class ReservationsTests
         {
             At = r.At.ToString("O"),
             Email = newEmail,
-            Name = r.Name,
+            Name = r.Name.ToString(),
             Quantity = r.Quantity
         };
         await sut.Put(r.Id.ToString("N"), dto);
@@ -510,7 +510,7 @@ public class ReservationsTests
                 r),
             new SpyPostOffice.Observation(
                 SpyPostOffice.Event.Updated,
-                r.WithEmail(newEmail)) }.ToHashSet();
+                r.WithEmail(new Email(newEmail))) }.ToHashSet();
         Assert.Superset(expected, postOffice.ToHashSet());
     }
 

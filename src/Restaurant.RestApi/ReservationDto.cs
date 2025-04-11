@@ -24,6 +24,11 @@ public class ReservationDto
         if (Quantity < 1)
             return null;
 
-        return new Reservation(id, d, Email, Name ?? string.Empty, Quantity);
+        return new Reservation(
+            id,
+            d,
+            new Email(Email),
+            new Name(Name ?? string.Empty),
+            Quantity);
     }
 }

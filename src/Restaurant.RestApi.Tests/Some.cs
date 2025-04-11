@@ -9,8 +9,8 @@ public static class Some
         new Reservation(
             Guid.NewGuid(),
             Now,
-            "x@example.net",
-            "",
+            new Email("x@example.net"),
+            new Name(""),
             1);
 
     public readonly static MaitreD MaitreD =

@@ -11,8 +11,8 @@ public class ReservationTests
             () => new Reservation(
                 Guid.NewGuid(),
                 new DateTime(2024, 8, 19, 11, 30, 0),
-                "mail@example.com",
-                "Marie Petrovich",
+                new Email("mail@example.com"),
+                new Name("Marie Petrovich"),
                 invalidQuantity));
     }
 }

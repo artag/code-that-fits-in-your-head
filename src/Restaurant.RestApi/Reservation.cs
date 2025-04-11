@@ -5,8 +5,8 @@ public record Reservation
     public Reservation(
         Guid id,
         DateTime at,
-        string email,
-        string name,
+        Email email,
+        Name name,
         int quantity)
     {
         if (quantity < 1)
@@ -23,17 +23,17 @@ public record Reservation
 
     public Guid Id { get; init; }
     public DateTime At { get; init; }
-    public string Email { get; init; }
-    public string Name { get; init; }
+    public Email Email { get; init; }
+    public Name Name { get; init; }
     public int Quantity { get; init; }
 
     public Reservation WithDate(DateTime newAt) =>
         this with { At = newAt };
 
-    public Reservation WithEmail(string newEmail) =>
+    public Reservation WithEmail(Email newEmail) =>
         this with { Email = newEmail };
 
-    public Reservation WithName(string newName) =>
+    public Reservation WithName(Name newName) =>
         this with { Name = newName };
 
     public Reservation WithQuantity(int newQuantity) =>
