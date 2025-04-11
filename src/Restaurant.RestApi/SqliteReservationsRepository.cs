@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Restaurant.RestApi;
 
-internal sealed class SqliteReservationsRepository : IReservationsRepository
+public sealed class SqliteReservationsRepository : IReservationsRepository
 {
     private readonly string _connectionString;
 
@@ -18,7 +18,7 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         await using var disposeConn = conn.ConfigureAwait(false);
         await conn.OpenAsync(ct).ConfigureAwait(false);
 
-        var cmd = new SqliteCommand(createReservationTableSql, conn);
+        var cmd = new SqliteCommand(CreateReservationTableSql, conn);
         await using var disposeCmd = cmd.ConfigureAwait(false);
         await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
@@ -36,8 +36,8 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         await using var disposeCmd2 = cmd.ConfigureAwait(false);
         cmd.Parameters.Add(new SqliteParameter("@Id", reservation.Id));
         cmd.Parameters.Add(new SqliteParameter("@At", reservation.At));
-        cmd.Parameters.Add(new SqliteParameter("@Name", reservation.Name));
-        cmd.Parameters.Add(new SqliteParameter("@Email", reservation.Email));
+        cmd.Parameters.Add(new SqliteParameter("@Name", reservation.Name.Value));
+        cmd.Parameters.Add(new SqliteParameter("@Email", reservation.Email.Value));
         cmd.Parameters.Add(new SqliteParameter("@Quantity", reservation.Quantity));
         await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
@@ -104,8 +104,8 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
         await using var disposeCmd = cmd.ConfigureAwait(false);
         cmd.Parameters.AddWithValue("@Id", reservation.Id);
         cmd.Parameters.AddWithValue("@At", reservation.At);
-        cmd.Parameters.AddWithValue("@Name", reservation.Name);
-        cmd.Parameters.AddWithValue("@Email", reservation.Email);
+        cmd.Parameters.AddWithValue("@Name", reservation.Name.Value);
+        cmd.Parameters.AddWithValue("@Email", reservation.Email.Value);
         cmd.Parameters.AddWithValue("@Quantity", reservation.Quantity);
 
         await conn.OpenAsync(ct).ConfigureAwait(false);
@@ -143,7 +143,7 @@ internal sealed class SqliteReservationsRepository : IReservationsRepository
             quantity);
     }
 
-    private const string createReservationTableSql =
+    public const string CreateReservationTableSql =
         @"
 CREATE TABLE IF NOT EXISTS Reservations (
     Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
