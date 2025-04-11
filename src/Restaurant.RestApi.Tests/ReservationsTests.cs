@@ -251,6 +251,21 @@ public class ReservationsTests
         Assert.Contains(expected, postOffice);
     }
 
+    [Fact]
+    public async Task DeleteAbsentReservationDoesNotSendEmail()
+    {
+        var db = new FakeDatabase();
+        var postOffice = new SpyPostOffice();
+        var dateTimeService = new SpyDateTimeService(new DateTime(2024, 11, 10, 19, 37, 45));
+        var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
+
+        await sut.Delete(Guid.NewGuid().ToString("N"));
+
+        Assert.DoesNotContain(
+            postOffice,
+            o => o.Event == SpyPostOffice.Event.Deleted);
+    }
+
     [Theory]
     [InlineData("18:47", "b@example.net", "Bjork", 2, 5)]
     [InlineData("19:32", "e@example.gov", "Epica", 5, 4)]

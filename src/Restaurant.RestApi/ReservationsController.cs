@@ -126,9 +126,10 @@ public class ReservationsController : ControllerBase
         await _repository
             .Delete(rid)
             .ConfigureAwait(false);
-        await _postOffice
-            .EmailReservationDeleted(r!)
-            .ConfigureAwait(false);
+        if (r is { })
+            await _postOffice
+                .EmailReservationDeleted(r)
+                .ConfigureAwait(false);
     }
 
     private static ObjectResult NoTables500InternalServerError()
