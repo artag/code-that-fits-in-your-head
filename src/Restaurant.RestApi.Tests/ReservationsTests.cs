@@ -479,6 +479,9 @@ public class ReservationsTests
             SpyPostOffice.Event.Updated,
             r.WithName(newName));
         Assert.Contains(expected, postOffice);
+        Assert.DoesNotContain(
+            postOffice,
+            o => o.Event == SpyPostOffice.Event.Updating);
     }
 
     [Theory]
