@@ -1,1 +1,1 @@
-dotnet test --configuration Release
+dotnet test Build.sln --configuration Release
