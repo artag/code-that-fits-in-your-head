@@ -63,6 +63,24 @@ public sealed class SmtpPostOffice : IPostOffice
         await client.SendMailAsync(msg).ConfigureAwait(false);
     }
 
+    public async Task EmailReservationUpdated(Reservation reservation)
+    {
+        ArgumentNullException.ThrowIfNull(reservation);
+
+        using var msg = new MailMessage(_fromAddress, reservation.Email);
+        msg.Subject = $"Your reservation for {reservation.Quantity} changed.";
+        msg.Body = CreateBodyForUpdated(reservation);
+
+        using var client = new SmtpClient();
+        client.UseDefaultCredentials = false;
+        client.Credentials = new NetworkCredential(_userName, _password);
+        client.Host = _host;
+        client.Port = _port;
+        client.DeliveryMethod = SmtpDeliveryMethod.Network;
+        client.EnableSsl = true;
+        await client.SendMailAsync(msg).ConfigureAwait(false);
+    }
+
     public override bool Equals(object? obj)
     {
         return obj is SmtpPostOffice other &&
@@ -99,6 +117,21 @@ public sealed class SmtpPostOffice : IPostOffice
         var sb = new StringBuilder();
 
         _ = sb.Append("Your reservation was cancelled. ");
+        _ = sb.AppendLine("Here's the details about your reservation:");
+        _ = sb.AppendLine();
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Party size: {reservation.Quantity}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Name: {reservation.Name}.");
+        _ = sb.AppendLine(CultureInfo.InvariantCulture, $"Email: {reservation.Email}.");
+
+        return sb.ToString();
+    }
+
+    private static string CreateBodyForUpdated(Reservation reservation)
+    {
+        var sb = new StringBuilder();
+
+        _ = sb.Append("Your reservation changed. ");
         _ = sb.AppendLine("Here's the details about your reservation:");
         _ = sb.AppendLine();
         _ = sb.AppendLine(CultureInfo.InvariantCulture, $"At: {reservation.At}.");

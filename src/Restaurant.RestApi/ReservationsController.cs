@@ -110,6 +110,8 @@ public class ReservationsController : ControllerBase
             return NoTables500InternalServerError();
 
         await _repository.Update(res).ConfigureAwait(false);
+        await _postOffice.EmailReservationUpdated(res).ConfigureAwait(false);
+
         return new OkResult();
     }
 

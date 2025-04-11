@@ -17,10 +17,17 @@ internal sealed class SpyPostOffice
         return Task.CompletedTask;
     }
 
+    public Task EmailReservationUpdated(Reservation reservation)
+    {
+        Add(new Observation(Event.Updated, reservation));
+        return Task.CompletedTask;
+    }
+
     internal enum Event
     {
         Created = 0,
-        Deleted = 1
+        Updated = 1,
+        Deleted = 2
     }
 
     internal sealed record Observation(Event Event, Reservation Reservation);
