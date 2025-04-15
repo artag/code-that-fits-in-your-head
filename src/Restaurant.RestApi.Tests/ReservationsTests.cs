@@ -17,19 +17,21 @@ public class ReservationsTests
     {
         var at = CreateAt("19:00");
         await using var service = new RestaurantApiFactory();
-        var response = await service.PostReservation(
-            new
-            {
-                at = at,
-                email = "katinka@example.com",
-                name = "Katinka Ingabogovna",
-                quantity = 2,
-            });
+        var expected = new ReservationDto
+        {
+            At = at,
+            Email = "katinka@example.com",
+            Name = "Katinka Ingabogovinanana",
+            Quantity = 2
+        };
+        var response = await service.PostReservation(expected);
 
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}."
             );
+        var actual = await ParseReservationContent(response);
+        Assert.Equal(expected, actual, new ReservationDtoComparer()!);
     }
 
     [Theory]

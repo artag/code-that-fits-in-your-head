@@ -145,6 +145,6 @@ public class ReservationsController : ControllerBase
             actionName: nameof(Get),
             controllerName: null,
             routeValues: new { id = reservation.Id.ToString("N") },
-            value: null);
+            value: reservation.ToDto());
     }
 }
