@@ -298,9 +298,11 @@ public class ReservationsTests
             $"Actual status code: {putResp.StatusCode}");
         using var client = service.CreateClient();
         var getResp = await client.GetAsync(address);
-        var actual = await ParseReservationContent(getResp);
+        var persisted = await ParseReservationContent(getResp);
+        Assert.Equal(dto, persisted, new ReservationDtoComparer()!);
+        var actual = await ParseReservationContent(putResp);
         Assert.NotNull(actual);
-        Assert.Equal(dto, actual, new ReservationDtoComparer());
+        Assert.Equal(persisted, actual, new ReservationDtoComparer()!);
     }
 
     [Theory]

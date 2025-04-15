@@ -109,7 +109,7 @@ public class ReservationsController : ControllerBase
         await _repository.Update(res).ConfigureAwait(false);
         await _postOffice.EmailReservationUpdated(res).ConfigureAwait(false);
 
-        return new OkResult();
+        return new OkObjectResult(res.ToDto());
     }
 
     [HttpDelete("{id}")]
