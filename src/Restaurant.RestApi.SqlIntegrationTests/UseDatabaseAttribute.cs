@@ -91,7 +91,13 @@ public sealed class UseDatabaseAttribute : BeforeAfterTestAttribute
         //        IF EXISTS (SELECT name
         //            FROM master.dbo.sysdatabases
         //            WHERE name = N'RestaurantIntegrationTest')
-        //        DROP DATABASE[RestaurantIntegrationTest];";
+        //        BEGIN
+        //            -- This closes existing connections:
+        //            ALTER DATABASE[RestaurantIntegrationTest]
+        //            SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+
+        //        DROP DATABASE[RestaurantIntegrationTest]
+        //    END";
 
         //var builder = new SqliteConnectionStringBuilder(
         //    ConnectionStrings.Reservations);
