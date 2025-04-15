@@ -53,18 +53,28 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
 
         var cmd = new SqliteCommand(readByRangeSql, conn);
         await using var disposeCmd = cmd.ConfigureAwait(false);
-        cmd.Parameters.AddWithValue("@At", dateTime.Date);
+        var at = dateTime.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        cmd.Parameters.AddWithValue("@At", at);
 
         var rdr = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
         await using var disposeRdr = rdr.ConfigureAwait(false);
         while (await rdr.ReadAsync(ct).ConfigureAwait(false))
         {
+            var publicIdStr = (string)rdr["PublicId"];
+            var publicId = new Guid(publicIdStr);
+            var timeAtStr = (string)rdr["At"];
+            var timeAt = DateTime.Parse(timeAtStr, CultureInfo.InvariantCulture);
+            var email = new Email((string)rdr["Email"]);
+            var name = new Name((string)rdr["Name"]);
+            var quantityLong = (long)rdr["Quantity"];
+            var quantity = (int)quantityLong;
+
             var r = new Reservation(
-                (Guid)rdr["PublicId"],
-                (DateTime)rdr["At"],
-                new Email((string)rdr["Name"]),
-                new Name((string)rdr["Email"]),
-                (int)rdr["Quantity"]);
+                publicId,
+                timeAt,
+                email,
+                name,
+                quantity);
 
             result.Add(r);
         }

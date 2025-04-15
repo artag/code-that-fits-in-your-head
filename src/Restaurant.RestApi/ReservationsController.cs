@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
 
 namespace Restaurant.RestApi;
 
 [Route("reservations")]
 public class ReservationsController : ControllerBase
 {
+    private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+
     private static bool _ensuredTables;
     private readonly IReservationsRepository _repository;
     private readonly IPostOffice _postOffice;
@@ -40,15 +41,24 @@ public class ReservationsController : ControllerBase
         if (reservation is null)
             return new BadRequestResult();
 
-        var reservations = await _repository
-            .ReadReservations(reservation.At)
-            .ConfigureAwait(false);
+        await Semaphore.WaitAsync().ConfigureAwait(false);
 
-        if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
-            return NoTables500InternalServerError();
+        try
+        {
+            var reservations = await _repository
+                .ReadReservations(reservation.At)
+                .ConfigureAwait(false);
 
-        await _repository.Create(reservation).ConfigureAwait(false);
-        await _postOffice.EmailReservationCreated(reservation).ConfigureAwait(false);
+            if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
+                return NoTables500InternalServerError();
+
+            await _repository.Create(reservation).ConfigureAwait(false);
+            await _postOffice.EmailReservationCreated(reservation).ConfigureAwait(false);
+        }
+        finally
+        {
+            Semaphore.Release();
+        }
 
         return Reservation201Created(reservation);
     }
