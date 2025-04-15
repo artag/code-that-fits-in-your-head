@@ -30,4 +30,14 @@ public class RestaurantService : WebApplicationFactory<Program>
         var address = new Uri("reservations", UriKind.Relative);
         return await client.PostAsync(address, content);
     }
+
+    public async Task<Uri> PostReservation(DateTime date, int quantity)
+    {
+        var resp = await PostReservation(new ReservationDtoBuilder()
+            .WithDate(date)
+            .WithQuantity(quantity)
+            .Build());
+        resp.EnsureSuccessStatusCode();
+        return resp.Headers.Location!;
+    }
 }
