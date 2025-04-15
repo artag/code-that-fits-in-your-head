@@ -8,6 +8,27 @@ public class ReservationDto
     public string? Name { get; set; }
     public int Quantity { get; set; }
 
+    public static ReservationDto FromReservation(
+        Reservation reservation)
+    {
+        ArgumentNullException.ThrowIfNull(reservation);
+
+        return new ReservationDto
+        {
+            Id = reservation.Id.ToString("N"),
+            At = reservation.At.ToString("o"),
+            Email = reservation.Email.ToString(),
+            Name = reservation.Name.ToString(),
+            Quantity = reservation.Quantity
+        };
+    }
+
+    public static explicit operator ReservationDto(
+        Reservation reservation)
+    {
+        return FromReservation(reservation);
+    }
+
     internal Guid? ParseId()
     {
         if (Guid.TryParse(Id, out var id))

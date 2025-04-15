@@ -365,14 +365,9 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(dt);
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = new ReservationDto
-        {
-            Id = Guid.NewGuid().ToString("N"),
-            At = Some.Reservation.At.ToString("O"),
-            Email = Some.Reservation.Email.ToString(),
-            Name = "Qux",
-            Quantity = Some.Reservation.Quantity
-        };
+        var dto = (ReservationDto)Some.Reservation
+            .WithId(Guid.NewGuid())
+            .WithName(new Name("Qux"));
         var id = Some.Reservation.Id.ToString("N");
         await sut.Put(id, dto);
 
@@ -414,13 +409,7 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = new ReservationDto
-        {
-            At = r2.At.ToString("o"),
-            Email = r1.Email.ToString(),
-            Name = r1.Name.ToString(),
-            Quantity = r1.Quantity
-        };
+        var dto = (ReservationDto)r1.WithDate(r2.At);
         var actual = await sut.Put(r1.Id.ToString("N"), dto);
 
         var oRes = Assert.IsAssignableFrom<ObjectResult>(actual);
@@ -466,13 +455,7 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = new ReservationDto
-        {
-            At = r.At.ToString("O"),
-            Email = r.Email.ToString(),
-            Name = newName,
-            Quantity = r.Quantity
-        };
+        var dto = (ReservationDto)r.WithName(new Name(newName));
         await sut.Put(r.Id.ToString("N"), dto);
 
         var expected = new SpyPostOffice.Observation(
@@ -487,7 +470,7 @@ public class ReservationsTests
     [Theory]
     [InlineData("foo@example.com")]
     [InlineData("bar@example.gov")]
-    public async Task PutSendsEmailToOldAddresOnChange(string newEmail)
+    public async Task PutSendsEmailToOldAddressOnChange(string newEmail)
     {
         var r = Some.Reservation;
         var db = new FakeDatabase { r };
@@ -495,13 +478,7 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = new ReservationDto
-        {
-            At = r.At.ToString("O"),
-            Email = newEmail,
-            Name = r.Name.ToString(),
-            Quantity = r.Quantity
-        };
+        var dto = (ReservationDto)r.WithEmail(new Email(newEmail));
         await sut.Put(r.Id.ToString("N"), dto);
 
         var expected = new[] {
