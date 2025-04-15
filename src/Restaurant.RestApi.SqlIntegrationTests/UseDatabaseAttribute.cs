@@ -14,6 +14,8 @@ public sealed class UseDatabaseAttribute : BeforeAfterTestAttribute
 
     public override void Before(MethodInfo methodUnderTest)
     {
+        DeleteDatabase();
+
         using var conn = new SqliteConnection(ConnectionStrings.Reservations);
         conn.Open();
         const string createCmd = SqliteReservationsRepository.CreateReservationTableSql;
@@ -73,8 +75,12 @@ public sealed class UseDatabaseAttribute : BeforeAfterTestAttribute
     public override void After(MethodInfo methodUnderTest)
     {
         base.After(methodUnderTest);
+        DeleteDatabase();
+    }
 
-        const string dropCmd = "DROP TABLE Reservations";
+    private static void DeleteDatabase()
+    {
+        const string dropCmd = "DROP TABLE IF EXISTS Reservations";
         using var conn = new SqliteConnection(ConnectionStrings.Reservations);
         conn.Open();
         using var cmd = new SqliteCommand(dropCmd, conn);
