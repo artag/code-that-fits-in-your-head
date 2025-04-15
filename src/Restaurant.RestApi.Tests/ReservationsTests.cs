@@ -365,9 +365,10 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(dt);
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = (ReservationDto)Some.Reservation
+        var dto = Some.Reservation
             .WithId(Guid.NewGuid())
-            .WithName(new Name("Qux"));
+            .WithName(new Name("Qux"))
+            .ToDto();
         var id = Some.Reservation.Id.ToString("N");
         await sut.Put(id, dto);
 
@@ -409,7 +410,7 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = (ReservationDto)r1.WithDate(r2.At);
+        var dto = r1.WithDate(r2.At).ToDto();
         var actual = await sut.Put(r1.Id.ToString("N"), dto);
 
         var oRes = Assert.IsAssignableFrom<ObjectResult>(actual);
@@ -455,7 +456,7 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = (ReservationDto)r.WithName(new Name(newName));
+        var dto = r.WithName(new Name(newName)).ToDto();
         await sut.Put(r.Id.ToString("N"), dto);
 
         var expected = new SpyPostOffice.Observation(
@@ -478,7 +479,7 @@ public class ReservationsTests
         var dateTimeService = new SpyDateTimeService(new DateTime(2022, 03, 31, 19, 37, 45));
         var sut = new ReservationsController(db, postOffice, dateTimeService, Some.MaitreD);
 
-        var dto = (ReservationDto)r.WithEmail(new Email(newEmail));
+        var dto = r.WithEmail(new Email(newEmail)).ToDto();
         await sut.Put(r.Id.ToString("N"), dto);
 
         var expected = new[] {

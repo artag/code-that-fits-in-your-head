@@ -72,7 +72,7 @@ public class ReservationsController : ControllerBase
         if (r is null)
             return new NotFoundResult();
 
-        return new OkObjectResult((ReservationDto)r);
+        return new OkObjectResult(r.ToDto());
     }
 
     [HttpPut("{id}")]
