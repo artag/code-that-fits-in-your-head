@@ -9,6 +9,12 @@ namespace Restaurant.RestApi.Tests;
 
 internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
 {
+    private readonly static JsonSerializerOptions _jsonSerializerOptions =
+        new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -47,5 +53,30 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         using var content = new StringContent(json);
         content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
         return await client.PutAsync(address, content);
+    }
+
+    public async Task<HttpResponseMessage> GetCurrentYear()
+    {
+        var client = CreateClient();
+
+        var homeResponse =
+            await client.GetAsync(new Uri("", UriKind.Relative));
+        homeResponse.EnsureSuccessStatusCode();
+        var homeRepresentation = await ParseHomeContent(homeResponse);
+        var yearAddress =
+            homeRepresentation!.Links!.Single(l => l.Rel == "urn:year").Href;
+        if (yearAddress is null)
+            throw new InvalidOperationException(
+                "Address for current year not found.");
+
+        return await client.GetAsync(new Uri(yearAddress));
+    }
+
+    private static async Task<HomeDto?> ParseHomeContent(
+        HttpResponseMessage response)
+    {
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<HomeDto>(
+            json, _jsonSerializerOptions);
     }
 }

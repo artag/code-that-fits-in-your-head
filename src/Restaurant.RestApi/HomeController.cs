@@ -46,15 +46,15 @@ public class HomeController : ControllerBase
 
     private LinkDto CreateYearLink()
     {
-        const string controllerName = nameof(ReservationsController);
-        var actionName = controllerName.Remove(
+        const string controllerName = nameof(CalendarController);
+        var controller = controllerName.Remove(
             controllerName.LastIndexOf(
                 "Controller",
                 StringComparison.Ordinal));
 
         var href = Url.Action(
-            nameof(ReservationsController.Post),
-            actionName,
+            nameof(CalendarController.Get),
+            controller,
             null,
             Url.ActionContext.HttpContext.Request.Scheme,
             Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
