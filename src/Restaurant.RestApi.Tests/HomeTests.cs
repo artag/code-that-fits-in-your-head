@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
-using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace Restaurant.RestApi.Tests;
 
@@ -19,8 +18,8 @@ public class HomeTests
         Justification = "URL isn't passed as variable, but as literal.")]
     public async Task HomeReturnsJson()
     {
-        await using var factory = new WebApplicationFactory<Program>();
-        var client = factory.CreateClient();
+        await using var service = new RestaurantApiFactory();
+        var client = service.CreateClient();
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "");
         request.Headers.Accept.ParseAdd(MediaTypeNames.Application.Json);
