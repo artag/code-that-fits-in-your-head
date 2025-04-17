@@ -9,6 +9,12 @@ namespace Restaurant.RestApi.SqlIntegrationTests;
 
 public class RestaurantService : WebApplicationFactory<Program>
 {
+    private readonly JsonSerializerOptions _options =
+        new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -31,13 +37,37 @@ public class RestaurantService : WebApplicationFactory<Program>
         return await client.PostAsync(address, content);
     }
 
-    public async Task<Uri> PostReservation(DateTime date, int quantity)
+    public async Task<(Uri, ReservationDto)> PostReservation(
+        DateTime date,
+        int quantity)
     {
         var resp = await PostReservation(new ReservationDtoBuilder()
             .WithDate(date)
             .WithQuantity(quantity)
             .Build());
         resp.EnsureSuccessStatusCode();
-        return resp.Headers.Location!;
+        var dto = await ParseReservationContent(resp);
+
+        return (resp.Headers.Location!, dto!);
+    }
+
+    private async Task<ReservationDto?> ParseReservationContent(
+        HttpResponseMessage msg)
+    {
+        var json = await msg.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<ReservationDto?>(
+            json,
+            _options);
+    }
+
+    public async Task<HttpResponseMessage> PutReservation(
+        Uri address,
+        object reservation)
+    {
+        var client = CreateClient();
+        var json = JsonSerializer.Serialize(reservation);
+        using var content = new StringContent(json);
+        content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
+        return await client.PutAsync(address, content);
     }
 }

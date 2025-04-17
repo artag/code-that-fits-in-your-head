@@ -5,7 +5,8 @@ namespace Restaurant.RestApi;
 [Route("reservations")]
 public class ReservationsController : ControllerBase
 {
-    private static readonly SemaphoreSlim Semaphore = new SemaphoreSlim(1, 1);
+    private static readonly SemaphoreSlim Semaphore1 = new SemaphoreSlim(1, 1);
+    private static readonly SemaphoreSlim Semaphore2 = new SemaphoreSlim(1, 1);
 
     private static bool _ensuredTables;
     private readonly IReservationsRepository _repository;
@@ -41,7 +42,7 @@ public class ReservationsController : ControllerBase
         if (reservation is null)
             return new BadRequestResult();
 
-        await Semaphore.WaitAsync().ConfigureAwait(false);
+        await Semaphore1.WaitAsync().ConfigureAwait(false);
 
         try
         {
@@ -57,7 +58,7 @@ public class ReservationsController : ControllerBase
         }
         finally
         {
-            Semaphore.Release();
+            Semaphore1.Release();
         }
 
         return Reservation201Created(reservation);
@@ -97,27 +98,36 @@ public class ReservationsController : ControllerBase
         if (res is null)
             return new BadRequestResult();
 
-        var existing =
-            await _repository.ReadReservation(rid).ConfigureAwait(false);
-        if (existing is null)
-            return new NotFoundResult();
+        await Semaphore2.WaitAsync().ConfigureAwait(false);
 
-        var reservations = await _repository
-            .ReadReservations(res.At)
-            .ConfigureAwait(false);
-        reservations = reservations
-            .Where(r => r.Id != res.Id)
-            .ToList();
-        if (!_maitreD.WillAccept(_dateTime.Now, reservations, res))
-            return NoTables500InternalServerError();
+        try
+        {
+            var existing =
+                await _repository.ReadReservation(rid).ConfigureAwait(false);
+            if (existing is null)
+                return new NotFoundResult();
 
-        if (existing.Email != res.Email)
-            await _postOffice
-                .EmailReservationUpdating(existing)
+            var reservations = await _repository
+                .ReadReservations(res.At)
                 .ConfigureAwait(false);
+            reservations = reservations
+                .Where(r => r.Id != res.Id)
+                .ToList();
+            if (!_maitreD.WillAccept(_dateTime.Now, reservations, res))
+                return NoTables500InternalServerError();
 
-        await _repository.Update(res).ConfigureAwait(false);
-        await _postOffice.EmailReservationUpdated(res).ConfigureAwait(false);
+            if (existing.Email != res.Email)
+                await _postOffice
+                    .EmailReservationUpdating(existing)
+                    .ConfigureAwait(false);
+
+            await _repository.Update(res).ConfigureAwait(false);
+            await _postOffice.EmailReservationUpdated(res).ConfigureAwait(false);
+        }
+        finally
+        {
+            Semaphore2.Release();
+        }
 
         return new OkObjectResult(res.ToDto());
     }
