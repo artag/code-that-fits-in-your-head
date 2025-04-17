@@ -17,7 +17,8 @@ public class HomeController : ControllerBase
         {
             Links = new[]
             {
-                CreateReservationsLink()
+                CreateReservationsLink(),
+                CreateYearLink()
             }
         });
     }
@@ -39,6 +40,28 @@ public class HomeController : ControllerBase
         return new LinkDto
         {
             Rel = "urn:reservations",
+            Href = href
+        };
+    }
+
+    private LinkDto CreateYearLink()
+    {
+        const string controllerName = nameof(ReservationsController);
+        var actionName = controllerName.Remove(
+            controllerName.LastIndexOf(
+                "Controller",
+                StringComparison.Ordinal));
+
+        var href = Url.Action(
+            nameof(ReservationsController.Post),
+            actionName,
+            null,
+            Url.ActionContext.HttpContext.Request.Scheme,
+            Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+
+        return new LinkDto
+        {
+            Rel = "urn:year",
             Href = href
         };
     }

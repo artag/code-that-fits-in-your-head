@@ -49,7 +49,11 @@ public class HomeTests
         var response =
             await client.GetAsync(new Uri("", UriKind.Relative));
 
-        var rels = new[] { "urn:reservations" };
+        var rels = new[]
+        {
+            "urn:reservations",
+            "urn:year"
+        };
         var expectedRels = new HashSet<string?>(rels);
         var actual = await ParseHomeContent(response);
         var actualRels = actual!.Links!.Select(l => l.Rel).ToHashSet();
