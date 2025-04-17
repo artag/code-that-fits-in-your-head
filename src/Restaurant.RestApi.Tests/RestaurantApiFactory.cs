@@ -9,12 +9,6 @@ namespace Restaurant.RestApi.Tests;
 
 internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
 {
-    private readonly static JsonSerializerOptions _jsonSerializerOptions =
-        new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -76,7 +70,6 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         HttpResponseMessage response)
     {
         var json = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<HomeDto>(
-            json, _jsonSerializerOptions);
+        return CustomJsonSerializer.Deserialize<HomeDto>(json);
     }
 }

@@ -9,12 +9,6 @@ namespace Restaurant.RestApi.SqlIntegrationTests;
 
 public class RestaurantService : WebApplicationFactory<Program>
 {
-    private readonly JsonSerializerOptions _options =
-        new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -51,13 +45,11 @@ public class RestaurantService : WebApplicationFactory<Program>
         return (resp.Headers.Location!, dto!);
     }
 
-    private async Task<ReservationDto?> ParseReservationContent(
+    private static async Task<ReservationDto?> ParseReservationContent(
         HttpResponseMessage msg)
     {
         var json = await msg.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<ReservationDto?>(
-            json,
-            _options);
+        return CustomJsonSerializer.Deserialize<ReservationDto?>(json);
     }
 
     public async Task<HttpResponseMessage> PutReservation(

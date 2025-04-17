@@ -9,12 +9,6 @@ namespace Restaurant.RestApi.Tests;
 /// </summary>
 public class HomeTests
 {
-    private readonly JsonSerializerOptions _jsonSerializerOptions =
-        new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
     /// <summary>
     /// Home returns OK status code.
     /// </summary>
@@ -61,11 +55,11 @@ public class HomeTests
         Assert.All(actual.Links!, AssertHrefAbsoluteUrl);
     }
 
-    private async Task<HomeDto?> ParseHomeContent(
+    private static async Task<HomeDto?> ParseHomeContent(
         HttpResponseMessage response)
     {
         var json = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<HomeDto>(json, _jsonSerializerOptions);
+        return CustomJsonSerializer.Deserialize<HomeDto>(json);
     }
 
     private static void AssertHrefAbsoluteUrl(LinkDto dto)

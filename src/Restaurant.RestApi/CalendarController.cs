@@ -6,7 +6,9 @@ namespace Restaurant.RestApi;
 public class CalendarController : ControllerBase
 {
     [HttpGet]
-    public void Get()
+    public ActionResult Get()
     {
+        return new OkObjectResult(
+            new CalendarDto { Year = DateTime.Now.Year });
     }
 }

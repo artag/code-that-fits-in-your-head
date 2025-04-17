@@ -9,9 +9,6 @@ namespace Restaurant.RestApi.Tests;
 
 public class ReservationsTests
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions =
-        new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
     [Fact]
     public async Task PostValidReservation()
     {
@@ -505,7 +502,7 @@ public class ReservationsTests
         HttpResponseMessage actual)
     {
         var json = await actual.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<ReservationDto>(json, JsonSerializerOptions);
+        return CustomJsonSerializer.Deserialize<ReservationDto>(json);
     }
 
     private static string CreateAt(string time)
