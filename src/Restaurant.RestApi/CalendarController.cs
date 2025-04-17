@@ -5,10 +5,10 @@ namespace Restaurant.RestApi;
 [Route("calendar")]
 public class CalendarController : ControllerBase
 {
-    [HttpGet]
-    public ActionResult Get()
+    [HttpGet("{year}")]
+    public ActionResult Get(int year)
     {
         return new OkObjectResult(
-            new CalendarDto { Year = DateTime.Now.Year });
+            new CalendarDto { Year = year });
     }
 }

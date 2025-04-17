@@ -1,4 +1,6 @@
-﻿namespace Restaurant.RestApi.Tests;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Restaurant.RestApi.Tests;
 
 public class CalendarTests
 {
@@ -31,5 +33,20 @@ public class CalendarTests
          * most reasonable expectation, the next year should also pass the
          * test. */
         Assert.InRange(actual, expected, expected + 1);
+    }
+
+    [Theory]
+    [InlineData(2019)]
+    [InlineData(2020)]
+    [InlineData(2040)]
+    public void GetYear(int year)
+    {
+        var sut = new CalendarController();
+
+        var actual = sut.Get(year);
+
+        var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+        var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+        Assert.Equal(year, dto.Year);
     }
 }
