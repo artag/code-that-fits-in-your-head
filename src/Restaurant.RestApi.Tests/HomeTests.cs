@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net.Mime;
+using System.Text.Json;
 
 namespace Restaurant.RestApi.Tests;
 
@@ -8,6 +9,12 @@ namespace Restaurant.RestApi.Tests;
 /// </summary>
 public class HomeTests
 {
+    private readonly JsonSerializerOptions _jsonSerializerOptions =
+        new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
     /// <summary>
     /// Home returns OK status code.
     /// </summary>
@@ -31,5 +38,34 @@ public class HomeTests
         Assert.Equal(
             MediaTypeNames.Application.Json,
             response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task HomeReturnsCorrectLinks()
+    {
+        await using var service = new RestaurantApiFactory();
+        var client = service.CreateClient();
+
+        var response =
+            await client.GetAsync(new Uri("", UriKind.Relative));
+
+        var actual = await ParseHomeContent(response);
+        var rels = new[] { "urn:reservations" };
+        var expected = new HashSet<string?>(rels);
+        Assert.Superset(
+            expected,
+            actual!.Links!.Select(l => l.Rel).ToHashSet());
+        Assert.All(
+            actual!.Links!,
+            l => Assert.True(
+                Uri.TryCreate(l.Href, UriKind.Absolute, out var _),
+                $"Actual value: {l.Href}."));
+    }
+
+    private async Task<HomeDto?> ParseHomeContent(
+        HttpResponseMessage response)
+    {
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<HomeDto>(json, _jsonSerializerOptions);
     }
 }
