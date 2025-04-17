@@ -34,9 +34,8 @@ public class HomeController : ControllerBase
             nameof(ReservationsController.Post),
             controller,
             null,
-            Request.Scheme,
-            Request.Host.ToUriComponent());
-
+            Url.ActionContext.HttpContext.Request.Scheme,
+            Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
         return new LinkDto
         {
             Rel = "urn:reservations",
