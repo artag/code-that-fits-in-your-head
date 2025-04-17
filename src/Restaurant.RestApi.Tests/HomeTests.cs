@@ -51,10 +51,9 @@ public class HomeTests
 
         var actual = await ParseHomeContent(response);
         var rels = new[] { "urn:reservations" };
-        var expected = new HashSet<string?>(rels);
-        Assert.Superset(
-            expected,
-            actual!.Links!.Select(l => l.Rel).ToHashSet());
+        var expectedRels = new HashSet<string?>(rels);
+        var actualRels = actual!.Links!.Select(l => l.Rel).ToHashSet();
+        Assert.Superset(expectedRels, actualRels);
         Assert.All(actual.Links!, AssertHrefAbsoluteUrl);
     }
 
