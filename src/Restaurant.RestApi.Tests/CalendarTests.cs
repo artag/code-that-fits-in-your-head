@@ -20,6 +20,7 @@ public class CalendarTests
         AssertCurrentYear(currentYear, actual!.Year);
         Assert.Null(actual.Month);
         Assert.Null(actual.Day);
+        AssertLinks(actual);
     }
 
     [Fact]
@@ -40,6 +41,7 @@ public class CalendarTests
         AssertCurrentYear(currentYear, actual.Year);
         AssertCurrentMonth(currentMonth, actual.Month ?? 0);
         Assert.Null(actual.Day);
+        AssertLinks(actual);
     }
 
     [Fact]
@@ -60,6 +62,7 @@ public class CalendarTests
         AssertCurrentYear(currentYear, actual!.Year);
         AssertCurrentMonth(currentMonth, actual.Month);
         AssertCurrentDay(currentDay, actual.Day);
+        AssertLinks(actual);
     }
 
     private static void AssertCurrentYear(int expected, int actual)
@@ -114,6 +117,11 @@ public class CalendarTests
                 actual <= 31 || actual == 1,
                 $"Expected less than or equal to 31, or 1, but actual was: {actual}.");
         }
+    }
+
+    private static void AssertLinks(CalendarDto actual)
+    {
+        Assert.NotNull(actual.Links);
     }
 
     [SuppressMessage(

@@ -22,7 +22,12 @@ public class CalendarController : ControllerBase
             .Select(i => MakeDay(firstDay, i))
             .ToArray();
         return new OkObjectResult(
-            new CalendarDto { Year = year, Days = days });
+            new CalendarDto
+            {
+                Links = Array.Empty<LinkDto>(),
+                Year = year,
+                Days = days
+            });
     }
 
     [HttpGet("{year}/{month}")]
@@ -38,6 +43,7 @@ public class CalendarController : ControllerBase
         return new OkObjectResult(
             new CalendarDto
             {
+                Links = Array.Empty<LinkDto>(),
                 Year = year,
                 Month = month,
                 Days = days
@@ -51,6 +57,7 @@ public class CalendarController : ControllerBase
         return new OkObjectResult(
             new CalendarDto
             {
+                Links = Array.Empty<LinkDto>(),
                 Year = year,
                 Month = month,
                 Day = day,
