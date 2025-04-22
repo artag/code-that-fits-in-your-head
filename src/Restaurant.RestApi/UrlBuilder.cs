@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using static System.Collections.Specialized.BitVector32;
 
 namespace Restaurant.RestApi;
 
@@ -28,12 +30,12 @@ public sealed class UrlBuilder
     {
         ArgumentNullException.ThrowIfNull(newController);
         const string controllerSuffix = "controller";
-        return new UrlBuilder(
-            _action,
-            newController.Remove(newController.LastIndexOf(
-                controllerSuffix,
-                StringComparison.OrdinalIgnoreCase)),
-            _values);
+        var index = newController.LastIndexOf(
+            controllerSuffix,
+            StringComparison.OrdinalIgnoreCase);
+        if (0 <= index)
+            newController = newController.Remove(index);
+        return new UrlBuilder(_action, newController, _values);
     }
 
     public UrlBuilder WithValues(object newValues)
@@ -50,5 +52,18 @@ public sealed class UrlBuilder
             _values,
             url.ActionContext.HttpContext.Request.Scheme,
             url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is UrlBuilder builder &&
+               _action == builder._action &&
+               _controller == builder._controller &&
+               EqualityComparer<object?>.Default.Equals(_values, builder._values);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_action, _controller, _values);
     }
 }
