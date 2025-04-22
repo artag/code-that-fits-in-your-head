@@ -21,10 +21,14 @@ public class Program
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
         builder.Services.AddSingleton(restaurantSettings.ToMaitreD());
+        var maitreD = restaurantSettings.ToMaitreD();
+        builder.Services.AddSingleton(maitreD);
 
         var smtpSettings = new Settings.SmtpSettings();
         builder.Configuration.Bind("Smtp", smtpSettings);
         builder.Services.AddSingleton(smtpSettings.ToPostOffice());
+
+        builder.Services.AddSingleton(maitreD.Tables.First());
 
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {

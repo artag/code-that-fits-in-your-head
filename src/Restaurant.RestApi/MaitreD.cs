@@ -5,7 +5,6 @@ public class MaitreD
     private readonly TimeOfDay _opensAt;
     private readonly TimeOfDay _lastSeating;
     private readonly TimeSpan _seatingDuration;
-    private readonly IEnumerable<Table> _tables;
 
     public MaitreD(
         TimeOfDay opensAt,
@@ -25,8 +24,10 @@ public class MaitreD
         _opensAt = opensAt;
         _lastSeating = lastSeating;
         _seatingDuration = seatingDuration;
-        _tables = tables;
+        Tables = tables;
     }
+
+    public IEnumerable<Table> Tables { get; }
 
     public bool WillAccept(
         DateTime now,
@@ -60,7 +61,7 @@ public class MaitreD
     private List<Table> Allocate(
         IEnumerable<Reservation> reservations)
     {
-        var availableTables = _tables.ToList();
+        var availableTables = Tables.ToList();
         foreach (var r in reservations)
         {
             var table = availableTables.Find(t => t.Fits(r.Quantity));
