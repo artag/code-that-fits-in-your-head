@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restaurant.RestApi.Tests;
 
@@ -75,12 +76,23 @@ public class CalendarTests
         }
     }
 
-    [Theory]
-    [InlineData(2000, 366, 10)]
-    [InlineData(2019, 365, 20)]
-    [InlineData(2020, 366, 5)]
-    [InlineData(2040, 366, 10)]
-    [InlineData(2100, 365, 8)]
+    [SuppressMessage(
+        "Performance",
+        "CA1812: Avoid uninstantiated internal classes",
+        Justification = "This class is instantiated via Reflection.")]
+    private sealed class CalendarTestCases : TheoryData<int, int, int>
+    {
+        public CalendarTestCases()
+        {
+            Add(2000, 366, 10);
+            Add(2019, 365, 20);
+            Add(2020, 366, 5);
+            Add(2040, 366, 10);
+            Add(2100, 365, 8);
+        }
+    }
+
+    [Theory, ClassData(typeof(CalendarTestCases))]
     public void GetYear(int year, int expectedDays, int tableSize)
     {
         var sut = new CalendarController(Table.Communal(tableSize));
