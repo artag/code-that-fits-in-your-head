@@ -47,7 +47,8 @@ public class HomeTests
         {
             "urn:reservations",
             "urn:year",
-            "urn:month"
+            "urn:month",
+            "urn:day"
         };
         var expectedRels = new HashSet<string?>(rels);
         var actual = await ParseHomeContent(response);
