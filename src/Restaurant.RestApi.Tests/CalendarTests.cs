@@ -188,13 +188,12 @@ public class CalendarTests
         Assert.Equal(month, dto.Month);
         Assert.Equal(day, dto.Day);
         Assert.NotNull(dto.Days);
-        var days = dto.Days;
-        Assert.Equal(expectedDays, days?.Length);
+        Assert.Equal(expectedDays, dto.Days?.Length);
         Assert.Equal(
             expectedDays,
-            days!.Select(d => d.Date).Distinct().Count());
+            dto.Days!.Select(d => d.Date).Distinct().Count());
         Assert.All(
-            dto.Days.Select(d => d.MaximumPartySize),
+            dto.Days!.Select(d => d.MaximumPartySize),
             i => Assert.Equal(tableSize, i));
     }
 }
