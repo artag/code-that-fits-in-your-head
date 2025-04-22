@@ -45,14 +45,16 @@ public class CalendarController : ControllerBase
     }
 
     [HttpGet("{year}/{month}/{day}")]
-    public ActionResult Get(int _, int __, int ___)
+    public ActionResult Get(int year, int month, int day)
     {
+        var days = new[] { MakeDay(new DateTime(year, month, day), 0) };
         return new OkObjectResult(
             new CalendarDto
             {
-                Year = DateTime.Now.Year,
-                Month = DateTime.Now.Month,
-                Day = DateTime.Now.Day
+                Year = year,
+                Month = month,
+                Day = day,
+                Days = days
             });
     }
 

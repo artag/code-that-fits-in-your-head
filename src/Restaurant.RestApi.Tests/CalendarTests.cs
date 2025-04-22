@@ -141,6 +141,9 @@ public class CalendarTests
             AddMonth(2020, 6, 30, 12);
             AddMonth(2020, 2, 29, 10);
             AddMonth(2021, 2, 28, 11);
+            AddDay(2020, 7, 3, 8);
+            AddDay(2021, 8, 2, 2);
+            AddDay(2022, 2, 28, 7);
         }
 
         private void AddYear(
@@ -164,6 +167,21 @@ public class CalendarTests
                 month,
                 null,
                 expectedDays,
+                tableSize);
+        }
+
+        private void AddDay(
+            int year,
+            int month,
+            int day,
+            int tableSize)
+        {
+            Add(
+                sut => sut.Get(year, month, day),
+                year,
+                month,
+                day,
+                1,
                 tableSize);
         }
     }
