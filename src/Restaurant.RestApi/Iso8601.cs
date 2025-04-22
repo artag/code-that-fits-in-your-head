@@ -10,4 +10,9 @@ public static class Iso8601
             "yyyy'-'MM'-'dd",
             CultureInfo.InvariantCulture);
     }
+
+    public static string ToIso8601DateTimeString(this DateTime date)
+    {
+        return date.ToString("o", CultureInfo.InvariantCulture);
+    }
 }

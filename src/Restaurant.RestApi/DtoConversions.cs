@@ -9,7 +9,7 @@ public static class DtoConversions
         return new ReservationDto
         {
             Id = reservation.Id.ToString("N"),
-            At = reservation.At.ToString("O"),
+            At = reservation.At.ToIso8601DateTimeString(),
             Email = reservation.Email.ToString(),
             Name = reservation.Name.ToString(),
             Quantity = reservation.Quantity
