@@ -25,18 +25,10 @@ public class HomeController : ControllerBase
         links.Add(Url.LinkToReservations());
         if (_enableCalendar)
         {
-            links.Add(
-                Url.LinkToYear(
-                    DateTime.Now.Year));
-            links.Add(
-                Url.LinkToMonth(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month));
-            links.Add(
-                Url.LinkToDay(
-                    DateTime.Now.Year,
-                    DateTime.Now.Month,
-                    DateTime.Now.Day));
+            var now = DateTime.Now;
+            links.Add(Url.LinkToYear(now.Year));
+            links.Add(Url.LinkToMonth(now.Year, now.Month));
+            links.Add(Url.LinkToDay(now.Year, now.Month, now.Day));
         }
 
         return Ok(new HomeDto { Links = links.ToArray() });
