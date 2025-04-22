@@ -25,6 +25,17 @@ public class CalendarController : ControllerBase
             new CalendarDto { Year = year, Days = days });
     }
 
+    [HttpGet("{year}/{month}")]
+    public ActionResult Get(int _, int __)
+    {
+        return new OkObjectResult(
+            new CalendarDto
+            {
+                Year = DateTime.Now.Year,
+                Month = DateTime.Now.Month
+            });
+    }
+
     private DayDto MakeDay(DateTime origin, int days)
     {
         return new DayDto
