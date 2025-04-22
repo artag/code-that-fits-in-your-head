@@ -26,13 +26,21 @@ public class CalendarController : ControllerBase
     }
 
     [HttpGet("{year}/{month}")]
-    public ActionResult Get(int _, int __)
+    public ActionResult Get(int year, int month)
     {
+        var calendar = new GregorianCalendar();
+        var daysInMonth = calendar.GetDaysInMonth(year, month);
+        var firstDay = new DateTime(year, month, 1);
+        var days =
+            Enumerable.Range(0, daysInMonth)
+            .Select(i => MakeDay(firstDay, i))
+            .ToArray();
         return new OkObjectResult(
             new CalendarDto
             {
-                Year = DateTime.Now.Year,
-                Month = DateTime.Now.Month
+                Year = year,
+                Month = month,
+                Days = days
             });
     }
 
