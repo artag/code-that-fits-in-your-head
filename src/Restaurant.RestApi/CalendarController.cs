@@ -58,11 +58,12 @@ public class CalendarController : ControllerBase
             });
     }
 
-    private DayDto MakeDay(DateTime origin, int days)
+    private DayDto MakeDay(DateTime origin, int offset)
     {
         return new DayDto
         {
-            Date = origin.AddDays(days)
+            Date = origin
+                .AddDays(offset)
                 .ToString("o", CultureInfo.InvariantCulture),
             MaximumPartySize = _table.Seats
         };
