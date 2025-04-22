@@ -80,15 +80,21 @@ public class CalendarTests
         "Performance",
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
-    private sealed class CalendarTestCases : TheoryData<Func<CalendarController, ActionResult>, int, int, int>
+    private sealed class CalendarTestCases :
+        TheoryData<Func<CalendarController, ActionResult>, int, int?, int, int>
     {
         public CalendarTestCases()
         {
-            Add(sut => sut.Get(2000), 2000, 366, 10);
-            Add(sut => sut.Get(2019), 2019, 365, 20);
-            Add(sut => sut.Get(2020), 2020, 366, 5);
-            Add(sut => sut.Get(2040), 2040, 366, 10);
-            Add(sut => sut.Get(2100), 2100, 365, 8);
+            AddYear(2000, 366, 10);
+            AddYear(2019, 365, 20);
+            AddYear(2020, 366, 5);
+            AddYear(2040, 366, 10);
+            AddYear(2100, 365, 8);
+        }
+
+        private void AddYear(int year, int expectedDays, int tableSize)
+        {
+            Add(sut => sut.Get(year), year, null, expectedDays, tableSize);
         }
     }
 
@@ -96,6 +102,7 @@ public class CalendarTests
     public void GetYear(
         Func<CalendarController, ActionResult> act,
         int year,
+        int? month,
         int expectedDays,
         int tableSize)
     {
@@ -107,6 +114,7 @@ public class CalendarTests
         var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
         var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
         Assert.Equal(year, dto.Year);
+        Assert.Equal(month, dto.Month);
         Assert.NotNull(dto.Days);
         var days = dto.Days;
         Assert.Equal(expectedDays, days?.Length);
