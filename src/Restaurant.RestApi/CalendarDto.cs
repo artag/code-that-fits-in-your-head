@@ -6,6 +6,7 @@ public record CalendarDto
 {
     public int Year { get; init; }
     public int? Month { get; set; }
+    public int? Day { get; set; }
 
     [SuppressMessage(
         "Performance",

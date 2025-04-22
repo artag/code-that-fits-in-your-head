@@ -108,7 +108,12 @@ public class HomeController : ControllerBase
         var href = Url.Action(
             nameof(CalendarController.Get),
             controller,
-            new { year = DateTime.Now.Year, month = DateTime.Now.Month },
+            new
+            {
+                year = DateTime.Now.Year,
+                month = DateTime.Now.Month,
+                day = DateTime.Now.Day
+            },
             Url.ActionContext.HttpContext.Request.Scheme,
             Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
 

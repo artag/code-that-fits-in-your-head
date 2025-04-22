@@ -57,12 +57,12 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
     {
         var client = CreateClient();
 
-        var homeResponse =
-            await client.GetAsync(new Uri("", UriKind.Relative));
+        var requestUri = new Uri("", UriKind.Relative);
+        var homeResponse = await client.GetAsync(requestUri);
         homeResponse.EnsureSuccessStatusCode();
         var homeRepresentation = await ParseHomeContent(homeResponse);
-        var yearAddress =
-            homeRepresentation!.Links!.Single(l => l.Rel == "urn:year").Href;
+        var yearAddress = homeRepresentation!.Links!
+            .Single(l => l.Rel == "urn:year").Href;
         if (yearAddress is null)
             throw new InvalidOperationException(
                 "Address for current year not found.");
@@ -74,15 +74,32 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
     {
         var client = CreateClient();
 
-        var homeResponse =
-            await client.GetAsync(new Uri("", UriKind.Relative));
+        var requestUri = new Uri("", UriKind.Relative);
+        var homeResponse = await client.GetAsync(requestUri);
         homeResponse.EnsureSuccessStatusCode();
         var homeRepresentation = await ParseHomeContent(homeResponse);
-        var yearAddress =
-            homeRepresentation!.Links!.Single(l => l.Rel == "urn:month").Href;
+        var yearAddress = homeRepresentation!.Links!
+            .Single(l => l.Rel == "urn:month").Href;
         if (yearAddress is null)
             throw new InvalidOperationException(
                 "Address for current month not found.");
+
+        return await client.GetAsync(new Uri(yearAddress));
+    }
+
+    public async Task<HttpResponseMessage> GetCurrentDay()
+    {
+        var client = CreateClient();
+
+        var requestUri = new Uri("", UriKind.Relative);
+        var homeResponse = await client.GetAsync(requestUri);
+        homeResponse.EnsureSuccessStatusCode();
+        var homeRepresentation = await ParseHomeContent(homeResponse);
+        var yearAddress = homeRepresentation!.Links!
+            .Single(l => l.Rel == "urn:day").Href;
+        if (yearAddress is null)
+            throw new InvalidOperationException(
+                "Address for current day not found.");
 
         return await client.GetAsync(new Uri(yearAddress));
     }
