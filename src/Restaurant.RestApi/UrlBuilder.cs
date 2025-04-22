@@ -43,15 +43,16 @@ public sealed class UrlBuilder
         return new UrlBuilder(_action, _controller, newValues);
     }
 
-    public string? BuildAbsolute(IUrlHelper url)
+    public Uri BuildAbsolute(IUrlHelper url)
     {
         ArgumentNullException.ThrowIfNull(url);
-        return url.Action(
+        var actionUrl = url.Action(
             _action,
             _controller,
             _values,
             url.ActionContext.HttpContext.Request.Scheme,
             url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+        return new Uri(actionUrl!);
     }
 
     public override bool Equals(object? obj)

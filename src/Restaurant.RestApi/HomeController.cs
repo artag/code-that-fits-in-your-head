@@ -48,7 +48,7 @@ public class HomeController : ControllerBase
         return new LinkDto
         {
             Rel = "urn:reservations",
-            Href = href
+            Href = href.ToString()
         };
     }
 
@@ -63,7 +63,7 @@ public class HomeController : ControllerBase
         return new LinkDto
         {
             Rel = "urn:year",
-            Href = href
+            Href = href.ToString()
         };
     }
 
@@ -82,7 +82,7 @@ public class HomeController : ControllerBase
         return new LinkDto
         {
             Rel = "urn:month",
-            Href = href
+            Href = href.ToString()
         };
     }
 
@@ -102,7 +102,7 @@ public class HomeController : ControllerBase
         return new LinkDto
         {
             Rel = "urn:day",
-            Href = href
+            Href = href.ToString()
         };
     }
 }
