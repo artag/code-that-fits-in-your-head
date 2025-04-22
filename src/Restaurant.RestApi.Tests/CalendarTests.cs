@@ -16,7 +16,7 @@ public class CalendarTests
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
-        var actual = await ParseCalendarContent(response);
+        var actual = await response.ParseJsonContent<CalendarDto>();
         AssertCurrentYear(currentYear, actual!.Year);
         Assert.Null(actual.Month);
         Assert.Null(actual.Day);
@@ -35,7 +35,7 @@ public class CalendarTests
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
-        var actual = await ParseCalendarContent(response);
+        var actual = await response.ParseJsonContent<CalendarDto>();
         Assert.NotNull(actual);
         AssertCurrentYear(currentYear, actual.Year);
         AssertCurrentMonth(currentMonth, actual.Month ?? 0);
@@ -56,17 +56,10 @@ public class CalendarTests
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
-        var actual = await ParseCalendarContent(response);
+        var actual = await response.ParseJsonContent<CalendarDto>();
         AssertCurrentYear(currentYear, actual!.Year);
         AssertCurrentMonth(currentMonth, actual.Month);
         AssertCurrentDay(currentDay, actual.Day);
-    }
-
-    private static async Task<CalendarDto?> ParseCalendarContent(
-        HttpResponseMessage response)
-    {
-        var json = await response.Content.ReadAsStringAsync();
-        return CustomJsonSerializer.Deserialize<CalendarDto>(json);
     }
 
     private static void AssertCurrentYear(int expected, int actual)

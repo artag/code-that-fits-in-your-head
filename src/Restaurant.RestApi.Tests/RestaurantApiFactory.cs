@@ -60,7 +60,7 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         var requestUri = new Uri("", UriKind.Relative);
         var homeResponse = await client.GetAsync(requestUri);
         homeResponse.EnsureSuccessStatusCode();
-        var homeRepresentation = await ParseHomeContent(homeResponse);
+        var homeRepresentation = await homeResponse.ParseJsonContent<HomeDto>();
         var yearAddress = homeRepresentation!.Links!
             .Single(l => l.Rel == "urn:year").Href;
         if (yearAddress is null)
@@ -77,7 +77,7 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         var requestUri = new Uri("", UriKind.Relative);
         var homeResponse = await client.GetAsync(requestUri);
         homeResponse.EnsureSuccessStatusCode();
-        var homeRepresentation = await ParseHomeContent(homeResponse);
+        var homeRepresentation = await homeResponse.ParseJsonContent<HomeDto>();
         var yearAddress = homeRepresentation!.Links!
             .Single(l => l.Rel == "urn:month").Href;
         if (yearAddress is null)
@@ -94,7 +94,7 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
         var requestUri = new Uri("", UriKind.Relative);
         var homeResponse = await client.GetAsync(requestUri);
         homeResponse.EnsureSuccessStatusCode();
-        var homeRepresentation = await ParseHomeContent(homeResponse);
+        var homeRepresentation = await homeResponse.ParseJsonContent<HomeDto>();
         var yearAddress = homeRepresentation!.Links!
             .Single(l => l.Rel == "urn:day").Href;
         if (yearAddress is null)
@@ -102,12 +102,5 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
                 "Address for current day not found.");
 
         return await client.GetAsync(new Uri(yearAddress));
-    }
-
-    private static async Task<HomeDto?> ParseHomeContent(
-        HttpResponseMessage response)
-    {
-        var json = await response.Content.ReadAsStringAsync();
-        return CustomJsonSerializer.Deserialize<HomeDto>(json);
     }
 }

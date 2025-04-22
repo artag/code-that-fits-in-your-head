@@ -27,7 +27,7 @@ public class ReservationsTests
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}."
             );
-        var actual = await ParseReservationContent(response);
+        var actual = await response.ParseJsonContent<ReservationDto>();
         Assert.Equal(expected, actual, new ReservationDtoComparer()!);
     }
 
@@ -162,7 +162,7 @@ public class ReservationsTests
         Assert.True(
             getResp.IsSuccessStatusCode,
             $"Actual status code: {postResp.StatusCode}.");
-        var actual = await ParseReservationContent(getResp);
+        var actual = await getResp.ParseJsonContent<ReservationDto>();
 
         Assert.NotNull(actual);
         Assert.Equal(expected, actual, new ReservationDtoComparer());
@@ -295,9 +295,9 @@ public class ReservationsTests
             $"Actual status code: {putResp.StatusCode}");
         using var client = service.CreateClient();
         var getResp = await client.GetAsync(address);
-        var persisted = await ParseReservationContent(getResp);
+        var persisted = await getResp.ParseJsonContent<ReservationDto>();
         Assert.Equal(dto, persisted, new ReservationDtoComparer()!);
-        var actual = await ParseReservationContent(putResp);
+        var actual = await putResp.ParseJsonContent<ReservationDto>();
         Assert.NotNull(actual);
         Assert.Equal(persisted, actual, new ReservationDtoComparer()!);
     }
@@ -496,13 +496,6 @@ public class ReservationsTests
     private static Uri? FindReservationAddress(HttpResponseMessage response)
     {
         return response.Headers.Location;
-    }
-
-    private static async Task<ReservationDto?> ParseReservationContent(
-        HttpResponseMessage actual)
-    {
-        var json = await actual.Content.ReadAsStringAsync();
-        return CustomJsonSerializer.Deserialize<ReservationDto>(json);
     }
 
     private static string CreateAt(string time)

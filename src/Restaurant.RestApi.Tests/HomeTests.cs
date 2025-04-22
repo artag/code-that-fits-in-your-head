@@ -51,17 +51,10 @@ public class HomeTests
             "urn:day"
         };
         var expectedRels = new HashSet<string?>(rels);
-        var actual = await ParseHomeContent(response);
+        var actual = await response.ParseJsonContent<HomeDto>();
         var actualRels = actual!.Links!.Select(l => l.Rel).ToHashSet();
         Assert.Superset(expectedRels, actualRels);
         Assert.All(actual.Links!, AssertHrefAbsoluteUrl);
-    }
-
-    private static async Task<HomeDto?> ParseHomeContent(
-        HttpResponseMessage response)
-    {
-        var json = await response.Content.ReadAsStringAsync();
-        return CustomJsonSerializer.Deserialize<HomeDto>(json);
     }
 
     private static void AssertHrefAbsoluteUrl(LinkDto dto)
