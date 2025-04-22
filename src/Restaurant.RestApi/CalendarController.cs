@@ -62,9 +62,7 @@ public class CalendarController : ControllerBase
     {
         return new DayDto
         {
-            Date = origin
-                .AddDays(offset)
-                .ToString("o", CultureInfo.InvariantCulture),
+            Date = origin.AddDays(offset).ToIso8601DateString(),
             MaximumPartySize = _table.Seats
         };
     }
