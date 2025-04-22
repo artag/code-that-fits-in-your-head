@@ -8,19 +8,23 @@ namespace Restaurant.RestApi;
 [Route("")]
 public class HomeController : ControllerBase
 {
+    private readonly bool _enableCalendar;
+
+    public HomeController(CalendarFlag calendarFlag)
+    {
+        ArgumentNullException.ThrowIfNull(calendarFlag);
+        _enableCalendar = calendarFlag.Enabled;
+    }
+
     /// <summary>
     /// Get method.
     /// </summary>
     public IActionResult Get()
     {
-        return Ok(new HomeDto
-        {
-            Links = new[]
-            {
-                CreateReservationsLink(),
-                CreateYearLink()
-            }
-        });
+        var links = new List<LinkDto> { CreateReservationsLink() };
+        if (_enableCalendar)
+            links.Add(CreateYearLink());
+        return Ok(new HomeDto { Links = links.ToArray() });
     }
 
     private LinkDto CreateReservationsLink()

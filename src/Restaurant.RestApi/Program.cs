@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Configuration;
+
 namespace Restaurant.RestApi;
 
 /// <summary>
@@ -23,12 +25,18 @@ public class Program
         builder.Services.AddSingleton(restaurantSettings.ToMaitreD());
         var maitreD = restaurantSettings.ToMaitreD();
         builder.Services.AddSingleton(maitreD);
+        builder.Services.AddSingleton(maitreD.Tables.First());
 
         var smtpSettings = new Settings.SmtpSettings();
         builder.Configuration.Bind("Smtp", smtpSettings);
         builder.Services.AddSingleton(smtpSettings.ToPostOffice());
 
-        builder.Services.AddSingleton(maitreD.Tables.First());
+        builder.Services.AddSingleton(p =>
+        {
+            var configuration = p.GetRequiredService<IConfiguration>();
+            var flag = configuration.GetValue<bool>("EnableCalendar");
+            return new CalendarFlag(flag);
+        });
 
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {

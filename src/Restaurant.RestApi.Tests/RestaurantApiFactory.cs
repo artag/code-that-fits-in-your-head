@@ -3,6 +3,7 @@ using System.Net.Mime;
 using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Restaurant.RestApi.Tests;
@@ -23,6 +24,9 @@ internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
                 var date = new DateTime(now.Year, now.Month, now.Day, 19, 20, 00);
                 return new SpyDateTimeService(date);
             });
+
+            services.RemoveAll<CalendarFlag>();
+            services.AddSingleton(new CalendarFlag(true));
         });
     }
 
