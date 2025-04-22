@@ -34,42 +34,26 @@ public class HomeController : ControllerBase
 
     private LinkDto CreateReservationsLink()
     {
-        const string controllerName = nameof(ReservationsController);
-        var controller = controllerName.Remove(
-            controllerName.LastIndexOf(
-                "Controller",
-                StringComparison.Ordinal));
-
-        var href = new UrlBuilder()
+        return new UrlBuilder()
             .WithAction(nameof(ReservationsController.Post))
             .WithController(nameof(ReservationsController))
-            .BuildAbsolute(Url);
-
-        return new LinkDto
-        {
-            Rel = "urn:reservations",
-            Href = href.ToString()
-        };
+            .BuildAbsolute(Url)
+            .Link("urn:reservations");
     }
 
     private LinkDto CreateYearLink()
     {
-        var href = new UrlBuilder()
+        return new UrlBuilder()
             .WithAction(nameof(CalendarController.Get))
             .WithController(nameof(CalendarController))
             .WithValues(new { year = DateTime.Now.Year })
-            .BuildAbsolute(Url);
-
-        return new LinkDto
-        {
-            Rel = "urn:year",
-            Href = href.ToString()
-        };
+            .BuildAbsolute(Url)
+            .Link("urn:year");
     }
 
     private LinkDto CreateMonthLink()
     {
-        var href = new UrlBuilder()
+        return new UrlBuilder()
             .WithAction(nameof(CalendarController.Get))
             .WithController(nameof(CalendarController))
             .WithValues(new
@@ -77,18 +61,13 @@ public class HomeController : ControllerBase
                 year = DateTime.Now.Year,
                 month = DateTime.Now.Month
             })
-            .BuildAbsolute(Url);
-
-        return new LinkDto
-        {
-            Rel = "urn:month",
-            Href = href.ToString()
-        };
+            .BuildAbsolute(Url)
+            .Link("urn:month");
     }
 
     private LinkDto CreateDayLink()
     {
-        var href = new UrlBuilder()
+        return new UrlBuilder()
             .WithAction(nameof(CalendarController.Get))
             .WithController(nameof(CalendarController))
             .WithValues(new
@@ -97,12 +76,7 @@ public class HomeController : ControllerBase
                 month = DateTime.Now.Month,
                 day = DateTime.Now.Day
             })
-            .BuildAbsolute(Url);
-
-        return new LinkDto
-        {
-            Rel = "urn:day",
-            Href = href.ToString()
-        };
+            .BuildAbsolute(Url)
+            .Link("urn:day");
     }
 }
