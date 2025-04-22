@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Restaurant.RestApi.Tests;
 
-internal sealed class RestaurantApiFactory : WebApplicationFactory<Program>
+internal sealed class SelfHostedService : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

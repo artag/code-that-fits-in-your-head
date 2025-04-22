@@ -19,7 +19,7 @@ public class HomeTests
         Justification = "URL isn't passed as variable, but as literal.")]
     public async Task HomeReturnsJson()
     {
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var client = service.CreateClient();
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "");
@@ -37,7 +37,7 @@ public class HomeTests
     [Fact]
     public async Task HomeReturnsCorrectLinks()
     {
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var client = service.CreateClient();
 
         var response =

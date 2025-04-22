@@ -13,7 +13,7 @@ public class ReservationsTests
     public async Task PostValidReservation()
     {
         var at = CreateAt("19:00");
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var expected = new ReservationDto
         {
             At = at,
@@ -77,7 +77,7 @@ public class ReservationsTests
     public async Task PostInvalidReservation(
         string at, string email, string name, int quantity)
     {
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var response = await service.PostReservation(new { at, email, name, quantity });
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -86,7 +86,7 @@ public class ReservationsTests
     public async Task OverbookAttempt()
     {
         var now = DateTime.Now.AddDays(1);
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         await service.PostReservation(
             new
             {
@@ -115,7 +115,7 @@ public class ReservationsTests
     public async Task BoolTableWhenFreeSeatingIsAvailable()
     {
         var at = CreateAt("18:00");
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         await service.PostReservation(
             new
             {
@@ -146,7 +146,7 @@ public class ReservationsTests
         string time, string email, string name, int quantity)
     {
         var at = CreateAt(time);
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var expected = new ReservationDto
         {
             At = at,
@@ -178,7 +178,7 @@ public class ReservationsTests
     [InlineData("foo")]
     public async Task GetAbsentReservation(string id)
     {
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var client = service.CreateClient();
 
         var resp = await client.GetAsync($"/reservations/{id}");
@@ -196,7 +196,7 @@ public class ReservationsTests
         int quantity)
     {
         var at = CreateAt(time);
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var dto = new ReservationDto
         {
             At = at,
@@ -222,7 +222,7 @@ public class ReservationsTests
     [InlineData("25FBFF44-2837-4772-91D2-3BAC7CA1DB4C")]
     public async Task DeleteAbsentReservation(string id)
     {
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var url = new Uri($"/reservations/{id}", UriKind.Relative);
         var client = service.CreateClient();
 
@@ -276,7 +276,7 @@ public class ReservationsTests
         int newQuantity)
     {
         var at = CreateAt(time);
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var dto = new ReservationDto
         {
             At = at,
@@ -314,7 +314,7 @@ public class ReservationsTests
         string name,
         int quantity)
     {
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var dto = new ReservationDto
         {
             At = CreateAt("19:00"),
@@ -426,7 +426,7 @@ public class ReservationsTests
         const string time = "20:01";
         var at = CreateAt(time);
 
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
         var dto = new ReservationDto
         {
             At = at,

@@ -9,7 +9,7 @@ public class CalendarTests
     public async Task GetCurrentYear()
     {
         var currentYear = DateTime.Now.Year;
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
 
         var response = await service.GetCurrentYear();
 
@@ -28,7 +28,7 @@ public class CalendarTests
         var now = DateTime.Now;
         var currentYear = now.Year;
         var currentMonth = now.Month;
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
 
         var response = await service.GetCurrentMonth();
 
@@ -49,7 +49,7 @@ public class CalendarTests
         var currentYear = now.Year;
         var currentMonth = now.Month;
         var currentDay = now.Day;
-        await using var service = new RestaurantApiFactory();
+        await using var service = new SelfHostedService();
 
         var response = await service.GetCurrentDay();
 
