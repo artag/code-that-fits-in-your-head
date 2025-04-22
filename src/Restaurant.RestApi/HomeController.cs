@@ -40,12 +40,11 @@ public class HomeController : ControllerBase
                 "Controller",
                 StringComparison.Ordinal));
 
-        var href = Url.Action(
-            nameof(ReservationsController.Post),
-            controller,
-            null,
-            Url.ActionContext.HttpContext.Request.Scheme,
-            Url.ActionContext.HttpContext.Request.Host.ToUriComponent());
+        var href = new UrlBuilder()
+            .WithAction(nameof(ReservationsController.Post))
+            .WithController(nameof(ReservationsController))
+            .BuildAbsolute(Url);
+
         return new LinkDto
         {
             Rel = "urn:reservations",
