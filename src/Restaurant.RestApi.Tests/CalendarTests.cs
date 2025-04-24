@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Restaurant.RestApi.Tests;
 
@@ -113,6 +113,31 @@ public class CalendarTests
         AssertOneOf(
             before.AddMonths(-1).Month,
             after.AddMonths(-1).Month,
+            actual.Month);
+        Assert.Null(actual.Day);
+    }
+
+    [Fact]
+    public async Task GetNextMonth()
+    {
+        await using var service = new SelfHostedService();
+
+        var before = DateTime.Now;
+        var response = await service.GetNextMonth();
+        var after = DateTime.Now;
+
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"Actual status code: {response.StatusCode}.");
+        var actual = await response.ParseJsonContent<CalendarDto>();
+        Assert.NotNull(actual);
+        AssertOneOf(
+            before.AddMonths(1).Year,
+            after.AddMonths(1).Year,
+            actual.Year);
+        AssertOneOf(
+            before.AddMonths(1).Month,
+            after.AddMonths(1).Month,
             actual.Month);
         Assert.Null(actual.Day);
     }

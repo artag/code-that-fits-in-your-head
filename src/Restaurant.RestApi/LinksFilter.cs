@@ -66,7 +66,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
                 new LinkDto
                 {
                     Rel = "next",
-                    Href = url.LinkToYear(dto.Year + 1).Href
+                    Href = url.LinkToMonth(dto.Year, dto.Month.Value + 1).Href
                 }
             };
         }
