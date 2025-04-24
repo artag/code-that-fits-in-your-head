@@ -88,6 +88,47 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         return await client.GetAsync(new Uri(address));
     }
 
+    public async Task<HttpResponseMessage> GetYear(int year)
+    {
+        var resp = await GetCurrentYear();
+        resp.EnsureSuccessStatusCode();
+        var dto = await resp.ParseJsonContent<CalendarDto>();
+        if (dto!.Year == year)
+        {
+            return resp;
+        }
+        else if (dto.Year < year)
+        {
+            var client = CreateClient();
+            do
+            {
+                var address = dto.Links!.Single(l => l.Rel == "next").Href;
+                if (address is null)
+                    throw new InvalidOperationException(
+                        "Address for relationship type next not found.");
+                resp = await client.GetAsync(new Uri(address));
+                resp.EnsureSuccessStatusCode();
+                dto = await resp.ParseJsonContent<CalendarDto>();
+            } while (dto!.Year != year);
+            return resp;
+        }
+        else
+        {
+            var client = CreateClient();
+            do
+            {
+                var address = dto.Links!.Single(l => l.Rel == "previous").Href;
+                if (address is null)
+                    throw new InvalidOperationException(
+                        "Address for relationship type previous not found.");
+                resp = await client.GetAsync(new Uri(address));
+                resp.EnsureSuccessStatusCode();
+                dto = await resp.ParseJsonContent<CalendarDto>();
+            } while (dto!.Year != year);
+            return resp;
+        }
+    }
+
     public async Task<HttpResponseMessage> GetCurrentMonth()
     {
         var client = CreateClient();
