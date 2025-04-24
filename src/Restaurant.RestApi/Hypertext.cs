@@ -81,4 +81,34 @@ internal static class Hypertext
             .BuildAbsolute(url)
             .Link(rel);
     }
+
+    internal static LinkDto LinkToPeriod(
+        this IUrlHelper url,
+        IPeriod period,
+        string rel)
+    {
+        var values = period.Accept(new ValuesVisitor());
+        return Calendar
+            .WithValues(values)
+            .BuildAbsolute(url)
+            .Link(rel);
+    }
+
+    private sealed class ValuesVisitor : IPeriodVisitor<object>
+    {
+        public object VisitYear(int year)
+        {
+            return new { year };
+        }
+
+        public object VisitMonth(int year, int month)
+        {
+            return new { year, month };
+        }
+
+        public object VisitDay(int year, int month, int day)
+        {
+            return new { year, month, day };
+        }
+    }
 }
