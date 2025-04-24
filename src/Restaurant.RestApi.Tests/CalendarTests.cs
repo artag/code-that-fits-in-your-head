@@ -165,6 +165,29 @@ public class CalendarTests
         Assert.Null(actual.Day);
     }
 
+    [Theory]
+    [InlineData(1998, 12)]
+    [InlineData(2020, 4)]
+    [InlineData(2020, 7)]
+    [InlineData(2020, 9)]
+    [InlineData(2050, 8)]
+    public async Task GetSpecificMonth(int year, int month)
+    {
+        await using var service = new SelfHostedService();
+
+        var response = await service.GetMonth(year, month);
+
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"Actual status code: {response.StatusCode}.");
+        var actual = await response.ParseJsonContent<CalendarDto>();
+        Assert.NotNull(actual);
+        Assert.Equal(year, actual.Year);
+        Assert.Equal(month, actual.Month);
+        Assert.Null(actual.Day);
+        AssertLinks(actual);
+    }
+
     [Fact]
     public async Task GetCurrentDay()
     {

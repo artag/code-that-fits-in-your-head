@@ -55,20 +55,23 @@ internal sealed class LinksFilter : IAsyncActionFilter
         }
         else if (dto.Day is null)
         {
+            var firstDay = new DateTime(dto.Year, dto.Month.Value, 1);
+            var previousMonth = firstDay.AddMonths(-1);
+            var nextMonth = firstDay.AddMonths(1);
             dto.Links = new[]
             {
                     new LinkDto
                     {
                         Rel = "previous",
                         Href = url
-                            .LinkToMonth(dto.Year, dto.Month.Value - 1)
+                            .LinkToMonth(previousMonth.Year, previousMonth.Month)
                             .Href
                     },
                     new LinkDto
                     {
                         Rel = "next",
                         Href = url
-                            .LinkToMonth(dto.Year, dto.Month.Value + 1)
+                            .LinkToMonth(nextMonth.Year, nextMonth.Month)
                             .Href
                     }
                 };
@@ -77,27 +80,27 @@ internal sealed class LinksFilter : IAsyncActionFilter
         {
             dto.Links = new[]
             {
-                    new LinkDto
-                    {
-                        Rel = "previous",
-                        Href = url
-                            .LinkToDay(
-                                dto.Year,
-                                dto.Month.Value,
-                                dto.Day.Value - 1)
-                            .Href
-                    },
-                    new LinkDto
-                    {
-                        Rel = "next",
-                        Href = url
-                            .LinkToDay(
-                                dto.Year,
-                                dto.Month.Value,
-                                dto.Day.Value + 1)
-                            .Href
-                    }
-                };
+                new LinkDto
+                {
+                    Rel = "previous",
+                    Href = url
+                        .LinkToDay(
+                            dto.Year,
+                            dto.Month.Value,
+                            dto.Day.Value - 1)
+                        .Href
+                },
+                new LinkDto
+                {
+                    Rel = "next",
+                    Href = url
+                        .LinkToDay(
+                            dto.Year,
+                            dto.Month.Value,
+                            dto.Day.Value + 1)
+                        .Href
+                }
+            };
         }
     }
 }
