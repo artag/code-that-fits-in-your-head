@@ -46,6 +46,10 @@ internal sealed class LinksFilter : IAsyncActionFilter
             url.LinkToPeriod(previous, "previous"),
             url.LinkToPeriod(next, "next")
         };
+
+        if (dto.Days is { })
+            foreach (var day in dto.Days)
+                AddLinks(day, url);
     }
 
     private sealed class PreviousPeriodVisitor : IPeriodVisitor<IPeriod>
@@ -94,5 +98,14 @@ internal sealed class LinksFilter : IAsyncActionFilter
             var next = date.AddDays(1);
             return Period.Day(next.Year, next.Month, next.Day);
         }
+    }
+
+    private static void AddLinks(DayDto dto, IUrlHelper url)
+    {
+        if (DateTime.TryParse(dto.Date, out var date))
+            dto.Links = new[]
+            {
+                url.LinkToDay(date.Year, date.Month, date.Day)
+            };
     }
 }
