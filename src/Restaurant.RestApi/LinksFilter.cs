@@ -53,22 +53,50 @@ internal sealed class LinksFilter : IAsyncActionFilter
                 }
             };
         }
+        else if (dto.Day is null)
+        {
+            dto.Links = new[]
+            {
+                    new LinkDto
+                    {
+                        Rel = "previous",
+                        Href = url
+                            .LinkToMonth(dto.Year, dto.Month.Value - 1)
+                            .Href
+                    },
+                    new LinkDto
+                    {
+                        Rel = "next",
+                        Href = url
+                            .LinkToMonth(dto.Year, dto.Month.Value + 1)
+                            .Href
+                    }
+                };
+        }
         else
         {
             dto.Links = new[]
             {
-                new LinkDto
-                {
-                    Rel = "previous",
-                    Href =
-                        url.LinkToMonth(dto.Year, dto.Month.Value - 1).Href
-                },
-                new LinkDto
-                {
-                    Rel = "next",
-                    Href = url.LinkToMonth(dto.Year, dto.Month.Value + 1).Href
-                }
-            };
+                    new LinkDto
+                    {
+                        Rel = "previous",
+                        Href = url
+                            .LinkToDay(
+                                dto.Year,
+                                dto.Month.Value,
+                                dto.Day.Value - 1)
+                            .Href
+                    },
+                    new LinkDto
+                    {
+                        Rel = "next",
+                        Href = url
+                            .LinkToDay(
+                                dto.Year,
+                                dto.Month.Value,dto.Day.Value)
+                            .Href
+                    }
+                };
         }
     }
 }
