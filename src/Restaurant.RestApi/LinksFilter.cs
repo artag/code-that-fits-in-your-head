@@ -105,6 +105,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
         if (DateTime.TryParse(dto.Date, out var date))
             dto.Links = new[]
             {
+                url.LinkToYear(date.Year),
                 url.LinkToMonth(date.Year, date.Month),
                 url.LinkToDay(date.Year, date.Month, date.Day)
             };
