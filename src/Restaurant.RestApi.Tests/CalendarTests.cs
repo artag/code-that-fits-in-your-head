@@ -122,8 +122,18 @@ public class CalendarTests
     private static void AssertLinks(CalendarDto actual)
     {
         Assert.NotNull(actual.Links);
-        Assert.Single(actual.Links, l => l.Rel == "previous");
-        Assert.Single(actual.Links, l => l.Rel == "next");
+        var prev = Assert.Single(actual.Links, l => l.Rel == "previous");
+        AssertHrefAbsoluteUrl(prev);
+
+        var next = Assert.Single(actual.Links, l => l.Rel == "next");
+        AssertHrefAbsoluteUrl(next);
+    }
+
+    private static void AssertHrefAbsoluteUrl(LinkDto dto)
+    {
+        Assert.True(
+            Uri.TryCreate(dto.Href, UriKind.Absolute, out var _),
+            $"Not an absolute URL: {dto.Href}.");
     }
 
     [SuppressMessage(

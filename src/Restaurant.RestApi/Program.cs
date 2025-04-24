@@ -18,7 +18,7 @@ public class Program
     internal static Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(opts => opts.Filters.Add<LinksFilter>());
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);

@@ -24,11 +24,6 @@ public class CalendarController : ControllerBase
         return new OkObjectResult(
             new CalendarDto
             {
-                Links = new[]
-                {
-                    new LinkDto { Rel = "previous" },
-                    new LinkDto { Rel = "next" }
-                },
                 Year = year,
                 Days = days
             });
@@ -47,11 +42,6 @@ public class CalendarController : ControllerBase
         return new OkObjectResult(
             new CalendarDto
             {
-                Links = new[]
-                {
-                    new LinkDto { Rel = "previous" },
-                    new LinkDto { Rel = "next" }
-                },
                 Year = year,
                 Month = month,
                 Days = days
@@ -65,11 +55,6 @@ public class CalendarController : ControllerBase
         return new OkObjectResult(
             new CalendarDto
             {
-                Links = new[]
-                {
-                    new LinkDto { Rel = "previous" },
-                    new LinkDto { Rel = "next" }
-                },
                 Year = year,
                 Month = month,
                 Day = day,
