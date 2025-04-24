@@ -41,16 +41,8 @@ internal sealed class LinksFilter : IAsyncActionFilter
         {
             dto.Links = new[]
             {
-                new LinkDto
-                {
-                    Rel = "previous",
-                    Href = url.LinkToYear(dto.Year - 1).Href
-                },
-                new LinkDto
-                {
-                    Rel = "next",
-                    Href = url.LinkToYear(dto.Year + 1).Href
-                }
+                url.LinkToYear(dto.Year - 1, "previous"),
+                url.LinkToYear(dto.Year + 1, "next")
             };
         }
         else if (dto.Day is null)
@@ -60,20 +52,8 @@ internal sealed class LinksFilter : IAsyncActionFilter
             var nextMonth = firstDay.AddMonths(1);
             dto.Links = new[]
             {
-                    new LinkDto
-                    {
-                        Rel = "previous",
-                        Href = url
-                            .LinkToMonth(previousMonth.Year, previousMonth.Month)
-                            .Href
-                    },
-                    new LinkDto
-                    {
-                        Rel = "next",
-                        Href = url
-                            .LinkToMonth(nextMonth.Year, nextMonth.Month)
-                            .Href
-                    }
+                url.LinkToMonth(previousMonth.Year, previousMonth.Month, "previous"),
+                url.LinkToMonth(nextMonth.Year, nextMonth.Month, "next")
                 };
         }
         else
@@ -83,26 +63,8 @@ internal sealed class LinksFilter : IAsyncActionFilter
             var nextDay = date.AddDays(1);
             dto.Links = new[]
             {
-                new LinkDto
-                {
-                    Rel = "previous",
-                    Href = url
-                        .LinkToDay(
-                            previousDay.Year,
-                            previousDay.Month,
-                            previousDay.Day)
-                        .Href
-                },
-                new LinkDto
-                {
-                    Rel = "next",
-                    Href = url
-                        .LinkToDay(
-                            nextDay.Year,
-                            nextDay.Month,
-                            nextDay.Day)
-                        .Href
-                }
+                url.LinkToDay(previousDay.Year, previousDay.Month, previousDay.Day, "previous"),
+                url.LinkToDay(nextDay.Year, nextDay.Month, nextDay.Day, "next")
             };
         }
     }
