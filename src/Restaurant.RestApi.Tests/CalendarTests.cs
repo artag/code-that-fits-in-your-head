@@ -26,6 +26,28 @@ public class CalendarTests
     }
 
     [Fact]
+    public async Task GetPreviousYear()
+    {
+        await using var service = new SelfHostedService();
+
+        var before = DateTime.Now;
+        var response = await service.GetPreviousYear();
+        var after = DateTime.Now;
+
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"Actual status code: {response.StatusCode}.");
+        var actual = await response.ParseJsonContent<CalendarDto>();
+        Assert.NotNull(actual);
+        AssertOneOf(
+            before.AddYears(-1).Year,
+            after.AddYears(-1).Year,
+            actual.Year);
+        Assert.Null(actual.Month);
+        Assert.Null(actual.Day);
+    }
+
+    [Fact]
     public async Task GetNextYear()
     {
         await using var service = new SelfHostedService();

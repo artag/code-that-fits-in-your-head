@@ -42,7 +42,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
             new LinkDto
             {
                 Rel = "previous",
-                Href = url.LinkToYear(dto.Year).Href
+                Href = url.LinkToYear(dto.Year - 1).Href
             },
             new LinkDto
             {
