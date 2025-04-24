@@ -8,16 +8,18 @@ public class CalendarTests
     [Fact]
     public async Task GetCurrentYear()
     {
-        var currentYear = DateTime.Now.Year;
         await using var service = new SelfHostedService();
 
+        var before = DateTime.Now;
         var response = await service.GetCurrentYear();
+        var after = DateTime.Now;
 
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
         var actual = await response.ParseJsonContent<CalendarDto>();
-        AssertCurrentYear(currentYear, actual!.Year);
+        Assert.NotNull(actual);
+        AssertOneOf(before.Year, after.Year, actual.Year);
         Assert.Null(actual.Month);
         Assert.Null(actual.Day);
         AssertLinks(actual);
@@ -31,15 +33,17 @@ public class CalendarTests
         var currentMonth = now.Month;
         await using var service = new SelfHostedService();
 
+        var before = DateTime.Now;
         var response = await service.GetCurrentMonth();
+        var after = DateTime.Now;
 
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
         var actual = await response.ParseJsonContent<CalendarDto>();
         Assert.NotNull(actual);
-        AssertCurrentYear(currentYear, actual.Year);
-        AssertCurrentMonth(currentMonth, actual.Month ?? 0);
+        AssertOneOf(before.Year, after.Year, actual.Year);
+        AssertOneOf(before.Month, after.Month, actual.Month);
         Assert.Null(actual.Day);
         AssertLinks(actual);
     }
@@ -47,76 +51,31 @@ public class CalendarTests
     [Fact]
     public async Task GetCurrentDay()
     {
-        var now = DateTime.Now;
-        var currentYear = now.Year;
-        var currentMonth = now.Month;
-        var currentDay = now.Day;
         await using var service = new SelfHostedService();
 
+        var before = DateTime.Now;
         var response = await service.GetCurrentDay();
+        var after = DateTime.Now;
 
         Assert.True(
             response.IsSuccessStatusCode,
             $"Actual status code: {response.StatusCode}.");
         var actual = await response.ParseJsonContent<CalendarDto>();
-        AssertCurrentYear(currentYear, actual!.Year);
-        AssertCurrentMonth(currentMonth, actual.Month);
-        AssertCurrentDay(currentDay, actual.Day);
+        Assert.NotNull(actual);
+        AssertOneOf(before.Year, after.Year, actual.Year);
+        AssertOneOf(before.Month, after.Month, actual.Month);
+        AssertOneOf(before.Day, after.Day, actual.Day);
         AssertLinks(actual);
     }
 
-    private static void AssertCurrentYear(int expected, int actual)
+    private static void AssertOneOf(
+        int expected1,
+        int expected2,
+        int? actual)
     {
-        /* If a test runs just at midnight on December 31, the year could
-         * increment during execution. Thus, while the current year is the
-         * most reasonable expectation, the next year should also pass the
-         * test. */
-        Assert.InRange(actual, expected, expected + 1);
-    }
-
-    private static void AssertCurrentMonth(int expected, int? actual)
-    {
-        Assert.NotNull(actual);
-
-        /* If a test runs just at midnight on the last day of the month,
-         * the month could change during execution. Thus, while the current
-         * month is the most reasonable expectation, the next month should
-         * also pass the test.
-         * Note that the month could roll over from 12 one year to 1 the
-         * year after, so if currentMonth is 12, then 1 is also okay. */
-        if (expected < 12)
-        {
-            Assert.InRange(actual!.Value, expected, expected + 1);
-        }
-        else
-        {
-            Assert.True(
-                actual == 12 || actual == 1,
-                $"Expected 12 or 1, but actual was: {actual}.");
-        }
-    }
-
-    private static void AssertCurrentDay(int expected, int? actual)
-    {
-        Assert.NotNull(actual);
-
-        /* If a test runs just at midnight, the date could change during
-         * execution. Thus, while the current day is the most reasonable
-         * expectation, the next day should also passe the test.
-         * Note that the day could roll over from 30 or 31 one month to 1
-         * the month after. For February, this could happen already on the
-         * 28th or 29th. Thus, numbers less than or equal to 31, as well as
-         * 1, are also okay. */
-        if (expected < 28)
-        {
-            Assert.InRange(actual!.Value, expected, expected + 1);
-        }
-        else
-        {
-            Assert.True(
-                actual <= 31 || actual == 1,
-                $"Expected less than or equal to 31, or 1, but actual was: {actual}.");
-        }
+        Assert.True(
+            expected1 == actual || expected2 == actual,
+            $"Expected {expected1} or {expected2}, but actual was: {actual}.");
     }
 
     private static void AssertLinks(CalendarDto actual)
