@@ -114,4 +114,29 @@ public record Table
             return false;
         }
     }
+
+    private sealed class ReserveVisitor : ITableVisitor<Table>
+    {
+        private readonly Reservation reservation;
+
+        public ReserveVisitor(Reservation reservation)
+        {
+            this.reservation = reservation;
+        }
+
+        public Table VisitCommunal(
+            int seats,
+            IReadOnlyCollection<Reservation> reservations)
+        {
+            return new Table(
+                new CommunalTable(
+                    seats,
+                    reservations.Append(reservation).ToArray()));
+        }
+
+        public Table VisitStandard(int seats)
+        {
+            return new Table(new StandardTable(seats));
+        }
+    }
 }
