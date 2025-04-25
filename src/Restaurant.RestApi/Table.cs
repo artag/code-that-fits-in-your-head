@@ -42,7 +42,7 @@ public record Table
     private interface ITableVisitor<T>
     {
         T VisitStandard(int seats);
-        T VisitCommunal(int seats);
+        T VisitCommunal(int seats, IReadOnlyCollection<Reservation> reservations);
     }
 
     private sealed class StandardTable : ITable
@@ -62,16 +62,20 @@ public record Table
 
     private sealed class CommunalTable : ITable
     {
-        public CommunalTable(int seats)
+        private readonly IReadOnlyCollection<Reservation> _reservations;
+
+        public CommunalTable(
+            int seats, params Reservation[] reservations)
         {
             Seats = seats;
+            _reservations = reservations;
         }
 
         public int Seats { get; }
 
         public T Accept<T>(ITableVisitor<T> visitor)
         {
-            return visitor.VisitCommunal(Seats);
+            return visitor.VisitCommunal(Seats, _reservations);
         }
     }
 
@@ -89,9 +93,11 @@ public record Table
             return new Table(new StandardTable(_newSeats));
         }
 
-        public Table VisitCommunal(int seats)
+        public Table VisitCommunal(
+            int seats, IReadOnlyCollection<Reservation> reservations)
         {
-            return new Table(new CommunalTable(_newSeats));
+            var communal = new CommunalTable(_newSeats, reservations.ToArray());
+            return new Table(communal);
         }
     }
 
@@ -102,7 +108,8 @@ public record Table
             return true;
         }
 
-        public bool VisitCommunal(int seats)
+        public bool VisitCommunal(
+            int seats, IReadOnlyCollection<Reservation> reservations)
         {
             return false;
         }
