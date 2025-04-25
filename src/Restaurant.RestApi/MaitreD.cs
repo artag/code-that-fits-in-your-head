@@ -74,4 +74,12 @@ public class MaitreD
 
         return allocation;
     }
+
+    public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
+#pragma warning disable RCS1163 // Unused parameter
+        IEnumerable<Reservation> _)
+#pragma warning restore RCS1163 // Unused parameter
+    {
+        yield break;
+    }
 }

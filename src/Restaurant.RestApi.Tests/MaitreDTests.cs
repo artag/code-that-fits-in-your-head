@@ -170,4 +170,37 @@ public class MaitreDTests
                 Array.Empty<Reservation>());
         }
     }
+
+    [SuppressMessage(
+        "Performance",
+        "CA1812: Avoid uninstantiated internal classes",
+        Justification = "This class is instantiated via Reflection.")]
+    private sealed class ScheduleTestCases :
+        TheoryData<MaitreD, IEnumerable<Reservation>, IEnumerable<Occurrence<Table[]>>>
+    {
+        public ScheduleTestCases()
+        {
+            // No reservations, so no occurrences:
+            Add(new MaitreD(
+                    TimeSpan.FromHours(18),
+                    TimeSpan.FromHours(21),
+                    TimeSpan.FromHours(6),
+                    Table.Communal(12)),
+                Array.Empty<Reservation>(),
+                Array.Empty<Occurrence<Table[]>>());
+        }
+    }
+
+    [Theory, ClassData(typeof(ScheduleTestCases))]
+    public void Schedule(
+        MaitreD sut,
+        IEnumerable<Reservation> reservations,
+        IEnumerable<Occurrence<Table[]>> expected)
+    {
+        ArgumentNullException.ThrowIfNull(sut);
+        var actual = sut.Schedule(reservations);
+        Assert.Equal(
+            expected.Select(o => o.Select(ts => ts.AsEnumerable())),
+            actual);
+    }
 }
