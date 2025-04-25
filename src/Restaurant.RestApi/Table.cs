@@ -30,8 +30,8 @@ public record Table
     internal bool Fits(int quantity) =>
         quantity <= Seats;
 
-    internal Table Reserve(int seatsToReserve) =>
-        WithSeats(Seats - seatsToReserve);
+    internal Table Reserve(Reservation reservation) =>
+        WithSeats(Seats - reservation.Quantity);
 
     private interface ITable
     {

@@ -69,7 +69,7 @@ public class MaitreD
             {
                 availableTables.Remove(table);
                 if (table.IsCommunal)
-                    availableTables.Add(table.Reserve(r.Quantity));
+                    availableTables.Add(table.Reserve(r));
             }
         }
 
