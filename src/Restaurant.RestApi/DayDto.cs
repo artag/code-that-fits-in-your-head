@@ -10,5 +10,4 @@ public record DayDto
         Justification = "DTO.")]
     public LinkDto[]? Links { get; set; }
     public string? Date { get; set; }
-    public int MaximumPartySize { get; set; }
 }

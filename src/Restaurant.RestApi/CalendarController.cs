@@ -6,13 +6,6 @@ namespace Restaurant.RestApi;
 [Route("calendar")]
 public class CalendarController : ControllerBase
 {
-    private readonly Table _table;
-
-    public CalendarController(Table table)
-    {
-        _table = table;
-    }
-
     [HttpGet("{year}")]
     public ActionResult Get(int year)
     {
@@ -62,12 +55,11 @@ public class CalendarController : ControllerBase
             });
     }
 
-    private DayDto MakeDay(DateTime origin, int offset)
+    private static DayDto MakeDay(DateTime origin, int offset)
     {
         return new DayDto
         {
-            Date = origin.AddDays(offset).ToIso8601DateString(),
-            MaximumPartySize = _table.Seats
+            Date = origin.AddDays(offset).ToIso8601DateString()
         };
     }
 }
