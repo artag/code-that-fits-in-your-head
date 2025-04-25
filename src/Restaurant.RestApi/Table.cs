@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace Restaurant.RestApi;
 
-namespace Restaurant.RestApi;
-
-public record Table
+public sealed class Table
 {
     private readonly ITable _table;
 
@@ -11,33 +9,52 @@ public record Table
         _table = table;
     }
 
-    public static Table Standard(int seats) =>
-        new Table(new StandardTable(seats));
+    public static Table Standard(int seats)
+    {
+        return new Table(new StandardTable(seats));
+    }
 
-    public static Table Communal(int seats) =>
-        new Table(new CommunalTable(seats));
+    public static Table Communal(int seats)
+    {
+        return new Table(new CommunalTable(seats));
+    }
 
     internal bool Fits(int quantity)
     {
-        int remainingSeats = _table.Accept(new RemainingSeatsVisitor());
+        var remainingSeats = _table.Accept(new RemainingSeatsVisitor());
         return quantity <= remainingSeats;
     }
 
-    public Table Reserve(Reservation reservation) =>
-        _table.Accept(new ReserveVisitor(reservation));
+    public Table Reserve(Reservation reservation)
+    {
+        return _table.Accept(new ReserveVisitor(reservation));
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Table table &&
+               Equals(_table, table._table);
+    }
+
+    public override int GetHashCode()
+    {
+        return _table.GetHashCode();
+    }
 
     private interface ITable
     {
         T Accept<T>(ITableVisitor<T> visitor);
     }
 
-    private interface ITableVisitor<T>
+    private interface ITableVisitor<out T>
     {
         T VisitStandard(int seats, Reservation? reservation);
-        T VisitCommunal(int seats, IReadOnlyCollection<Reservation> reservations);
+        T VisitCommunal(
+            int seats,
+            IReadOnlyCollection<Reservation> reservations);
     }
 
-    private sealed record StandardTable : ITable
+    private sealed class StandardTable : ITable
     {
         private readonly int _seats;
         private readonly Reservation? _reservation;
@@ -57,15 +74,26 @@ public record Table
         {
             return visitor.VisitStandard(_seats, _reservation);
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is StandardTable table &&
+                   _seats == table._seats &&
+                   Equals(_reservation, table._reservation);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_seats, _reservation);
+        }
     }
 
-    private sealed record CommunalTable : ITable
+    private sealed class CommunalTable : ITable
     {
         private readonly int _seats;
         private readonly IReadOnlyCollection<Reservation> _reservations;
 
-        public CommunalTable(
-            int seats, params Reservation[] reservations)
+        public CommunalTable(int seats, params Reservation[] reservations)
         {
             _seats = seats;
             _reservations = reservations;
@@ -74,6 +102,18 @@ public record Table
         public T Accept<T>(ITableVisitor<T> visitor)
         {
             return visitor.VisitCommunal(_seats, _reservations);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is CommunalTable table &&
+                   _seats == table._seats &&
+                   _reservations.SequenceEqual(table._reservations);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(_seats, _reservations);
         }
     }
 
@@ -98,8 +138,7 @@ public record Table
 
         public Table VisitStandard(int seats, Reservation? reservation)
         {
-            var standard = new StandardTable(seats, _reservation);
-            return new Table(standard);
+            return new Table(new StandardTable(seats, _reservation));
         }
     }
 
