@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 namespace Restaurant.RestApi;
 
-internal static class Hypertext
+public static class Hypertext
 {
     private static readonly UrlBuilder Reservations =
         new UrlBuilder()
@@ -110,5 +109,17 @@ internal static class Hypertext
         {
             return new { year, month, day };
         }
+    }
+
+    public static Uri FindAddress(
+        this IEnumerable<LinkDto>? links,
+        string rel)
+    {
+        var address = links?.Single(l => l.Rel == rel).Href;
+        if (address is null)
+            throw new InvalidOperationException(
+                $"Address for relationship type \"{rel}\" not found.");
+
+        return new Uri(address);
     }
 }

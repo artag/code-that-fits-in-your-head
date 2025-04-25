@@ -65,13 +65,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var currentResp = await GetCurrentYear();
         currentResp.EnsureSuccessStatusCode();
         var dto = await currentResp.ParseJsonContent<CalendarDto>();
-        var address = dto!.Links!.Single(l => l.Rel == "previous").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type previous not found.");
+        var address = dto!.Links.FindAddress("previous");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetNextYear()
@@ -79,13 +76,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var currentResp = await GetCurrentYear();
         currentResp.EnsureSuccessStatusCode();
         var dto = await currentResp.ParseJsonContent<CalendarDto>();
-        var address = dto!.Links!.Single(l => l.Rel == "next").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type next not found.");
+        var address = dto!.Links.FindAddress("next");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetYear(int year)
@@ -102,11 +96,8 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
             var client = CreateClient();
             do
             {
-                var address = dto.Links!.Single(l => l.Rel == "next").Href;
-                if (address is null)
-                    throw new InvalidOperationException(
-                        "Address for relationship type next not found.");
-                resp = await client.GetAsync(new Uri(address));
+                var address = dto.Links.FindAddress("next");
+                resp = await client.GetAsync(address);
                 resp.EnsureSuccessStatusCode();
                 dto = await resp.ParseJsonContent<CalendarDto>();
             } while (dto!.Year != year);
@@ -117,11 +108,8 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
             var client = CreateClient();
             do
             {
-                var address = dto.Links!.Single(l => l.Rel == "previous").Href;
-                if (address is null)
-                    throw new InvalidOperationException(
-                        "Address for relationship type previous not found.");
-                resp = await client.GetAsync(new Uri(address));
+                var address = dto.Links.FindAddress("previous");
+                resp = await client.GetAsync(address);
                 resp.EnsureSuccessStatusCode();
                 dto = await resp.ParseJsonContent<CalendarDto>();
             } while (dto!.Year != year);
@@ -141,13 +129,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var currentResp = await GetCurrentMonth();
         currentResp.EnsureSuccessStatusCode();
         var dto = await currentResp.ParseJsonContent<CalendarDto>();
-        var address = dto!.Links!.Single(l => l.Rel == "previous").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type previous not found.");
+        var address = dto!.Links.FindAddress("previous");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetNextMonth()
@@ -155,13 +140,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var currentResp = await GetCurrentMonth();
         currentResp.EnsureSuccessStatusCode();
         var dto = await currentResp.ParseJsonContent<CalendarDto>();
-        var address = dto!.Links!.Single(l => l.Rel == "next").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type previous not found.");
+        var address = dto!.Links.FindAddress("next");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetMonth(int year, int month)
@@ -172,13 +154,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
 
         var target = new DateTime(year, month, 1).ToIso8601DateString();
         var monthCalendar = dto!.Days!.Single(d => d.Date == target);
-        var address = monthCalendar.Links!.Single(l => l.Rel == "urn:month").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type urn:day not found.");
+        var address = monthCalendar.Links.FindAddress("urn:month");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetCurrentDay()
@@ -193,13 +172,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var currentResp = await GetCurrentDay();
         currentResp.EnsureSuccessStatusCode();
         var dto = await currentResp.ParseJsonContent<CalendarDto>();
-        var address = dto!.Links!.Single(l => l.Rel == "previous").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type previous not found.");
+        var address = dto!.Links.FindAddress("previous");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetNextDay()
@@ -207,13 +183,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var currentResp = await GetCurrentDay();
         currentResp.EnsureSuccessStatusCode();
         var dto = await currentResp.ParseJsonContent<CalendarDto>();
-        var address = dto!.Links!.Single(l => l.Rel == "next").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type next not found.");
+        var address = dto!.Links.FindAddress("next");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetDay(
@@ -225,13 +198,10 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
 
         var target = new DateTime(year, month, day).ToIso8601DateString();
         var dayCalendar = dto!.Days!.Single(d => d.Date == target);
-        var address = dayCalendar.Links!.Single(l => l.Rel == "urn:day").Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                "Address for relationship type urn:day not found.");
+        var address = dayCalendar.Links.FindAddress("urn:day");
 
         var client = CreateClient();
-        return await client.GetAsync(new Uri(address));
+        return await client.GetAsync(address);
     }
 
     private async Task<Uri> FindAddress(string rel)
@@ -241,11 +211,6 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var homeResponse = await client.GetAsync(requestUri);
         homeResponse.EnsureSuccessStatusCode();
         var homeRepresentation = await homeResponse.ParseJsonContent<HomeDto>();
-        var address = homeRepresentation?.Links?.Single(l => l.Rel == rel).Href;
-        if (address is null)
-            throw new InvalidOperationException(
-                $"Address for relationship type {rel} not found.");
-
-        return new Uri(address);
+        return homeRepresentation!.Links.FindAddress(rel);
     }
 }
