@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using System.Text.Json.Serialization;
 
 namespace Restaurant.RestApi;
 
@@ -18,7 +19,10 @@ public class Program
     internal static Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddControllers(opts => opts.Filters.Add<LinksFilter>());
+        builder.Services
+            .AddControllers(opts => opts.Filters.Add<LinksFilter>())
+            .AddJsonOptions(opts =>
+                opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
