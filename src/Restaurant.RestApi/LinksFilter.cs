@@ -11,11 +11,16 @@ namespace Restaurant.RestApi;
     Justification = "This class is instantiated via Reflection.")]
 internal sealed class LinksFilter : IAsyncActionFilter
 {
+    private readonly bool _enableCalendar;
+
     public IUrlHelperFactory UrlHelperFactory { get; }
 
-    public LinksFilter(IUrlHelperFactory urlHelperFactory)
+    public LinksFilter(
+        IUrlHelperFactory urlHelperFactory,
+        CalendarFlag calendarFlag)
     {
         UrlHelperFactory = urlHelperFactory;
+        _enableCalendar = calendarFlag.Enabled;
     }
 
     public async Task OnActionExecutionAsync(
@@ -29,9 +34,31 @@ internal sealed class LinksFilter : IAsyncActionFilter
         var url = UrlHelperFactory.GetUrlHelper(ctxAfter);
         switch (ok.Value)
         {
+            case HomeDto homeDto:
+                AddLinks(homeDto, url);
+                break;
             case CalendarDto calendarDto:
                 AddLinks(calendarDto, url);
                 break;
+        }
+    }
+
+    private void AddLinks(HomeDto dto, IUrlHelper url)
+    {
+        if (_enableCalendar)
+        {
+            var now = DateTime.Now;
+            dto.Links = new[]
+            {
+                url.LinkToReservations(),
+                url.LinkToYear(now.Year),
+                url.LinkToMonth(now.Year, now.Month),
+                url.LinkToDay(now.Year, now.Month, now.Day)
+            };
+        }
+        else
+        {
+            dto.Links = new[] { url.LinkToReservations() };
         }
     }
 
