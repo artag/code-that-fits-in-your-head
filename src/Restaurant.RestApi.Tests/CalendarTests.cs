@@ -392,7 +392,7 @@ public class CalendarTests
     }
 
     [Theory, ClassData(typeof(CalendarTestCases))]
-    public void GetYear(
+    public void GetCalendar(
         Func<CalendarController, ActionResult> act,
         int year,
         int? month,
