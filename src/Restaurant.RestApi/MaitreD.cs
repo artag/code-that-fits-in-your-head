@@ -78,11 +78,9 @@ public class MaitreD
     public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
         IEnumerable<Reservation> reservations)
     {
-        var enumerable = reservations as Reservation[] ?? reservations.ToArray();
-        if (enumerable.Length > 0)
-        {
-            var r = enumerable[0];
-            yield return new[] { Table.Communal(12).Reserve(r) }.AsEnumerable().At(r.At);
-        }
+        return
+            from r in reservations
+            group Table.Communal(12).Reserve(r) by r.At into g
+            select g.AsEnumerable().At(g.Key);
     }
 }
