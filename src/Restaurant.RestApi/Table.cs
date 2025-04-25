@@ -17,12 +17,6 @@ public record Table
     public static Table Communal(int seats) =>
         new Table(new CommunalTable(seats));
 
-    public bool IsStandard =>
-        _table.Accept(new IsStandardVisitor());
-
-    public bool IsCommunal =>
-        !IsStandard;
-
     internal bool Fits(int quantity) =>
         quantity <= _table.Seats;
 
@@ -41,7 +35,7 @@ public record Table
         T VisitCommunal(int seats, IReadOnlyCollection<Reservation> reservations);
     }
 
-    private sealed class StandardTable : ITable
+    private sealed record StandardTable : ITable
     {
         private readonly int _seats;
         private readonly Reservation? _reservation;
@@ -66,7 +60,7 @@ public record Table
         }
     }
 
-    private sealed class CommunalTable : ITable
+    private sealed record CommunalTable : ITable
     {
         private readonly int _seats;
         private readonly IReadOnlyCollection<Reservation> _reservations;
@@ -83,20 +77,6 @@ public record Table
         public T Accept<T>(ITableVisitor<T> visitor)
         {
             return visitor.VisitCommunal(Seats, _reservations);
-        }
-    }
-
-    private sealed class IsStandardVisitor : ITableVisitor<bool>
-    {
-        public bool VisitStandard(int seats, Reservation? reservation)
-        {
-            return true;
-        }
-
-        public bool VisitCommunal(
-            int seats, IReadOnlyCollection<Reservation> reservations)
-        {
-            return false;
         }
     }
 
