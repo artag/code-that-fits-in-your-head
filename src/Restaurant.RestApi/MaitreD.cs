@@ -68,8 +68,7 @@ public class MaitreD
             if (table is { })
             {
                 availableTables.Remove(table);
-                if (table.IsCommunal)
-                    availableTables.Add(table.Reserve(r));
+                availableTables.Add(table.Reserve(r));
             }
         }
 
