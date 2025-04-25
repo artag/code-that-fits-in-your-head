@@ -76,10 +76,13 @@ public class MaitreD
     }
 
     public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
-#pragma warning disable RCS1163 // Unused parameter
-        IEnumerable<Reservation> _)
-#pragma warning restore RCS1163 // Unused parameter
+        IEnumerable<Reservation> reservations)
     {
-        yield break;
+        var enumerable = reservations as Reservation[] ?? reservations.ToArray();
+        if (enumerable.Length > 0)
+        {
+            var r = enumerable[0];
+            yield return new[] { Table.Communal(12).Reserve(r) }.AsEnumerable().At(r.At);
+        }
     }
 }

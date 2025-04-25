@@ -180,6 +180,12 @@ public class MaitreDTests
     {
         public ScheduleTestCases()
         {
+            NoReservations();
+            SingleReservationCommunalTable();
+        }
+
+        private void NoReservations()
+        {
             // No reservations, so no occurrences:
             Add(new MaitreD(
                     TimeSpan.FromHours(18),
@@ -188,6 +194,19 @@ public class MaitreDTests
                     Table.Communal(12)),
                 Array.Empty<Reservation>(),
                 Array.Empty<Occurrence<Table[]>>());
+        }
+
+        private void SingleReservationCommunalTable()
+        {
+            var table = Table.Communal(12);
+            var r = Some.Reservation;
+            Add(new MaitreD(
+                    TimeSpan.FromHours(18),
+                    TimeSpan.FromHours(21),
+                    TimeSpan.FromHours(6),
+                    table),
+                new[] { r },
+                new[] { new[] { table.Reserve(r) }.At(r.At) });
         }
     }
 
@@ -200,7 +219,7 @@ public class MaitreDTests
         ArgumentNullException.ThrowIfNull(sut);
         var actual = sut.Schedule(reservations);
         Assert.Equal(
-            expected.Select(o => o.Select(ts => ts.AsEnumerable())),
-            actual);
+            expected,
+            actual.Select(o => o.Select(ts => ts.ToArray())));
     }
 }

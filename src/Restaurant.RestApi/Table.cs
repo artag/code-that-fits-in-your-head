@@ -23,7 +23,7 @@ public record Table
         return quantity <= remainingSeats;
     }
 
-    internal Table Reserve(Reservation reservation) =>
+    public Table Reserve(Reservation reservation) =>
         _table.Accept(new ReserveVisitor(reservation));
 
     private interface ITable
