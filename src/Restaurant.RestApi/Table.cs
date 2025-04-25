@@ -1,4 +1,6 @@
-﻿namespace Restaurant.RestApi;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Restaurant.RestApi;
 
 public record Table
 {
@@ -41,22 +43,30 @@ public record Table
 
     private interface ITableVisitor<T>
     {
-        T VisitStandard(int seats);
+        T VisitStandard(int seats, Reservation? reservation);
         T VisitCommunal(int seats, IReadOnlyCollection<Reservation> reservations);
     }
 
     private sealed class StandardTable : ITable
     {
+        private readonly Reservation? _reservation;
+
         public StandardTable(int seats)
         {
             Seats = seats;
+        }
+
+        public StandardTable(int seats, Reservation reservation)
+        {
+            Seats = seats;
+            _reservation = reservation;
         }
 
         public int Seats { get; }
 
         public T Accept<T>(ITableVisitor<T> visitor)
         {
-            return visitor.VisitStandard(Seats);
+            return visitor.VisitStandard(Seats, _reservation);
         }
     }
 
@@ -88,7 +98,7 @@ public record Table
             _newSeats = newSeats;
         }
 
-        public Table VisitStandard(int seats)
+        public Table VisitStandard(int seats, Reservation? reservation)
         {
             return new Table(new StandardTable(_newSeats));
         }
@@ -103,7 +113,7 @@ public record Table
 
     private sealed class IsStandardVisitor : ITableVisitor<bool>
     {
-        public bool VisitStandard(int seats)
+        public bool VisitStandard(int seats, Reservation? reservation)
         {
             return true;
         }
@@ -115,13 +125,16 @@ public record Table
         }
     }
 
+    [SuppressMessage(
+        "Performance",
+        "CA1812: Avoid uninstantiated internal classes")]
     private sealed class ReserveVisitor : ITableVisitor<Table>
     {
-        private readonly Reservation reservation;
+        private readonly Reservation _reservation;
 
         public ReserveVisitor(Reservation reservation)
         {
-            this.reservation = reservation;
+            _reservation = reservation;
         }
 
         public Table VisitCommunal(
@@ -131,12 +144,13 @@ public record Table
             return new Table(
                 new CommunalTable(
                     seats,
-                    reservations.Append(reservation).ToArray()));
+                    reservations.Append(_reservation).ToArray()));
         }
 
-        public Table VisitStandard(int seats)
+        public Table VisitStandard(int seats, Reservation? reservation)
         {
-            return new Table(new StandardTable(seats));
+            var standard = new StandardTable(seats, _reservation);
+            return new Table(standard);
         }
     }
 }
