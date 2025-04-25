@@ -17,15 +17,17 @@ public record Table
     public static Table Communal(int seats) =>
         new Table(new CommunalTable(seats));
 
-    internal bool Fits(int quantity) =>
-        quantity <= _table.Seats;
+    internal bool Fits(int quantity)
+    {
+        int remainingSeats = _table.Accept(new RemainingSeatsVisitor());
+        return quantity <= remainingSeats;
+    }
 
     internal Table Reserve(Reservation reservation) =>
         _table.Accept(new ReserveVisitor(reservation));
 
     private interface ITable
     {
-        int Seats { get; }
         T Accept<T>(ITableVisitor<T> visitor);
     }
 
@@ -51,12 +53,9 @@ public record Table
             _reservation = reservation;
         }
 
-        public int Seats =>
-            _reservation is { } ? 0 : _seats;
-
         public T Accept<T>(ITableVisitor<T> visitor)
         {
-            return visitor.VisitStandard(Seats, _reservation);
+            return visitor.VisitStandard(_seats, _reservation);
         }
     }
 
@@ -72,11 +71,9 @@ public record Table
             _reservations = reservations;
         }
 
-        public int Seats => _seats - _reservations.Sum(r => r.Quantity);
-
         public T Accept<T>(ITableVisitor<T> visitor)
         {
-            return visitor.VisitCommunal(Seats, _reservations);
+            return visitor.VisitCommunal(_seats, _reservations);
         }
     }
 
@@ -103,6 +100,21 @@ public record Table
         {
             var standard = new StandardTable(seats, _reservation);
             return new Table(standard);
+        }
+    }
+
+    private sealed class RemainingSeatsVisitor : ITableVisitor<int>
+    {
+        public int VisitCommunal(
+            int seats,
+            IReadOnlyCollection<Reservation> reservations)
+        {
+            return seats - reservations.Sum(r => r.Quantity);
+        }
+
+        public int VisitStandard(int seats, Reservation? reservation)
+        {
+            return reservation is null ? seats : 0;
         }
     }
 }
