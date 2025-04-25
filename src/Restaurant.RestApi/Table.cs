@@ -26,14 +26,11 @@ public record Table
     public bool IsCommunal =>
         !IsStandard;
 
-    public Table WithSeats(int newSeats) =>
-        _table.Accept(new CopyAndUpdateSeatsVisitor(newSeats));
-
     internal bool Fits(int quantity) =>
         quantity <= Seats;
 
     internal Table Reserve(Reservation reservation) =>
-        WithSeats(Seats - reservation.Quantity);
+        _table.Accept(new ReserveVisitor(reservation));
 
     private interface ITable
     {
@@ -72,42 +69,21 @@ public record Table
 
     private sealed class CommunalTable : ITable
     {
+        private readonly int _seats;
         private readonly IReadOnlyCollection<Reservation> _reservations;
 
         public CommunalTable(
             int seats, params Reservation[] reservations)
         {
-            Seats = seats;
+            _seats = seats;
             _reservations = reservations;
         }
 
-        public int Seats { get; }
+        public int Seats => _seats - _reservations.Sum(r => r.Quantity);
 
         public T Accept<T>(ITableVisitor<T> visitor)
         {
             return visitor.VisitCommunal(Seats, _reservations);
-        }
-    }
-
-    private sealed class CopyAndUpdateSeatsVisitor : ITableVisitor<Table>
-    {
-        private readonly int _newSeats;
-
-        public CopyAndUpdateSeatsVisitor(int newSeats)
-        {
-            _newSeats = newSeats;
-        }
-
-        public Table VisitStandard(int seats, Reservation? reservation)
-        {
-            return new Table(new StandardTable(_newSeats));
-        }
-
-        public Table VisitCommunal(
-            int seats, IReadOnlyCollection<Reservation> reservations)
-        {
-            var communal = new CommunalTable(_newSeats, reservations.ToArray());
-            return new Table(communal);
         }
     }
 
@@ -125,9 +101,6 @@ public record Table
         }
     }
 
-    [SuppressMessage(
-        "Performance",
-        "CA1812: Avoid uninstantiated internal classes")]
     private sealed class ReserveVisitor : ITableVisitor<Table>
     {
         private readonly Reservation _reservation;
