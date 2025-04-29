@@ -26,6 +26,18 @@ internal sealed class FakeDatabase : Collection<Reservation>, IReservationsRepos
         return Task.FromResult<IReadOnlyCollection<Reservation>>(reservations);
     }
 
+    public Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        DateTime min,
+        DateTime max,
+        CancellationToken ct = default)
+    {
+        var reservations = this
+            .Where(r => min <= r.At && r.At <= max)
+            .ToList();
+
+        return Task.FromResult<IReadOnlyCollection<Reservation>>(reservations);
+    }
+
     public Task<Reservation?> ReadReservation(
         Guid id, CancellationToken ct = default)
     {

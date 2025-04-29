@@ -82,6 +82,48 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         return result.AsReadOnly();
     }
 
+    public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        DateTime min,
+        DateTime max,
+        CancellationToken ct = default)
+    {
+        var result = new List<Reservation>();
+
+        var conn = new SqliteConnection(_connectionString);
+        await using var disposeConn = conn.ConfigureAwait(false);
+        await conn.OpenAsync(ct).ConfigureAwait(false);
+
+        var cmd = new SqliteCommand(readByRangeSql2, conn);
+        await using var disposeCmd = cmd.ConfigureAwait(false);
+        cmd.Parameters.AddWithValue("@Min", min);
+        cmd.Parameters.AddWithValue("@Max", max);
+
+        var rdr = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
+        await using var disposeRdr = rdr.ConfigureAwait(false);
+        while (await rdr.ReadAsync(ct).ConfigureAwait(false))
+        {
+            var publicIdStr = (string)rdr["PublicId"];
+            var publicId = new Guid(publicIdStr);
+            var dateStr = (string)rdr["Date"];
+            var date = DateTime.Parse(dateStr, CultureInfo.InvariantCulture);
+            var email = new Email((string)rdr["Email"]);
+            var name = new Name((string)rdr["Name"]);
+            var quantityLong = (long)rdr["Quantity"];
+            var quantity = (int)quantityLong;
+
+            var r = new Reservation(
+                publicId,
+                date,
+                email,
+                name,
+                quantity);
+
+            result.Add(r);
+        }
+
+        return result.AsReadOnly();
+    }
+
     public async Task<Reservation?> ReadReservation(
         Guid id, CancellationToken ct = default)
     {
@@ -179,12 +221,19 @@ FROM Reservations
 WHERE DATE(At) = @At
 ";
 
-// MSSQL
-//@"
-//SELECT PublicId, At, Name, Email, Quantity
-//FROM Reservations
-//WHERE CONVERT(DATE, At) = @At
-//";
+    const string readByRangeSql2 =
+        @"
+SELECT PublicId, Date, Name, Email, Quantity
+FROM Reservations
+WHERE @Min <= Date AND Date <= @Max
+";
+
+    // MSSQL
+    //@"
+    //SELECT PublicId, At, Name, Email, Quantity
+    //FROM Reservations
+    //WHERE CONVERT(DATE, At) = @At
+    //";
 
     private const string readByIdSql =
         @"

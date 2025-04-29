@@ -10,6 +10,9 @@ public interface IReservationsRepository
     Task<IReadOnlyCollection<Reservation>> ReadReservations(
         DateTime dateTime, CancellationToken ct = default);
 
+    Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        DateTime min, DateTime max, CancellationToken ct = default);
+
     Task<Reservation?> ReadReservation(
         Guid id, CancellationToken ct = default);
 
