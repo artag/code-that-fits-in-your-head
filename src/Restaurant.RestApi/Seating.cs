@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.RestApi;
 
-internal sealed record Seating
+public sealed record Seating
 {
     public Seating(TimeSpan seatingDuration, Reservation reservation)
     {
