@@ -26,9 +26,24 @@ public class ScheduleTests
 
         var actual = sut.Schedule(reservations);
 
+        Assert.NotNull(actual);
         Assert.Equal(
             reservations.Select(r => r.At).Distinct().Count(),
             actual.Count());
+#pragma warning disable RCS1077 // Optimize LINQ method call
+        Assert.Equal(
+            actual.Select(o => o.At).OrderBy(d => d),
+            actual.Select(o => o.At));
+#pragma warning restore RCS1077 // Optimize LINQ method call
+
+        Assert.All(actual, o => AssertTables(tables, o.Value));
+    }
+
+    private static void AssertTables(
+        IEnumerable<Table> expected,
+        IEnumerable<Table> actual)
+    {
+        Assert.Equal(expected.Count(), actual.Count());
     }
 
     private static Gen<Email> GenEmail =>

@@ -78,10 +78,11 @@ public class MaitreD
     public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
         IEnumerable<Reservation> reservations)
     {
+        var tables = reservations.Select(r => Table.Communal(12).Reserve(r));
         return
             from r in reservations
-            group Table.Communal(12).Reserve(r) by r.At into g
-            //orderby g.Key
-            select g.AsEnumerable().At(g.Key);
+            group r by r.At into g
+            orderby g.Key
+            select tables.At(g.Key);
     }
 }
