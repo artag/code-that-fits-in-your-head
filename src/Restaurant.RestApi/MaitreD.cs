@@ -4,7 +4,6 @@ public class MaitreD
 {
     private readonly TimeOfDay _opensAt;
     private readonly TimeOfDay _lastSeating;
-    private readonly TimeSpan _seatingDuration;
 
     public MaitreD(
         TimeOfDay opensAt,
@@ -23,10 +22,11 @@ public class MaitreD
     {
         _opensAt = opensAt;
         _lastSeating = lastSeating;
-        _seatingDuration = seatingDuration;
+        SeatingDuration = seatingDuration;
         Tables = tables;
     }
 
+    public TimeSpan SeatingDuration { get; }
     public IEnumerable<Table> Tables { get; }
 
     public bool WillAccept(
@@ -45,7 +45,7 @@ public class MaitreD
         if (IsOutsideOfOpeningHours(candidate))
             return false;
 
-        var seating = new Seating(_seatingDuration, candidate.At);
+        var seating = new Seating(SeatingDuration, candidate.At);
         var relevantReservations =
             existingReservations.Where(seating.Overlaps);
         var availableTables = Allocate(relevantReservations);
@@ -82,6 +82,8 @@ public class MaitreD
             from r in reservations
             group r by r.At into g
             orderby g.Key
-            select Allocate(g).At(g.Key);
+            let seating = new Seating(SeatingDuration, g.Key)
+            let overlapping = reservations.Where(seating.Overlaps)
+            select Allocate(overlapping).At(g.Key);
     }
 }
