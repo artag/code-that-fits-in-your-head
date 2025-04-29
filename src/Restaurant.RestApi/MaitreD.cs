@@ -45,7 +45,7 @@ public class MaitreD
         if (IsOutsideOfOpeningHours(candidate))
             return false;
 
-        var seating = new Seating(_seatingDuration, candidate);
+        var seating = new Seating(_seatingDuration, candidate.At);
         var relevantReservations =
             existingReservations.Where(seating.Overlaps);
         var availableTables = Allocate(relevantReservations);

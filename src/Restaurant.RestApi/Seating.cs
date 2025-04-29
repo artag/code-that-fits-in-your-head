@@ -2,25 +2,32 @@
 
 public sealed record Seating
 {
-    public Seating(TimeSpan seatingDuration, Reservation reservation)
+    public Seating(TimeSpan seatingDuration, DateTime at)
     {
         SeatingDuration = seatingDuration;
-        Reservation = reservation;
+        At = at;
     }
 
     public TimeSpan SeatingDuration { get; }
 
-    public Reservation Reservation { get; }
+    public DateTime At { get; }
 
     public DateTime Start =>
-        Reservation.At;
+        At;
 
     public DateTime End =>
         Start + SeatingDuration;
 
     public bool Overlaps(Reservation other)
     {
-        var otherSeating = new Seating(SeatingDuration, other);
+        ArgumentNullException.ThrowIfNull(other);
+        var otherSeating = new Seating(SeatingDuration, other.At);
+        return Start < otherSeating.End && otherSeating.Start < End;
+    }
+
+    public bool Overlaps(Seating otherSeating)
+    {
+        ArgumentNullException.ThrowIfNull(otherSeating);
         return Start < otherSeating.End && otherSeating.Start < End;
     }
 }
