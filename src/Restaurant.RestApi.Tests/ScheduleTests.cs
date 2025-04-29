@@ -9,21 +9,17 @@ public class ScheduleTests
     public Property Schedule()
     {
         return Prop.ForAll(
-            GenReservation.ArrayOf().ToArbitrary(),
-            ScheduleImp);
+            GenReservation
+                .ArrayOf()
+                .SelectMany(rs => GenMaitreD(rs).Select(m => (m, rs)))
+                .ToArbitrary(),
+            t => ScheduleImp(t.m, t.rs));
     }
 
-    private static void ScheduleImp(Reservation[] reservations)
+    private static void ScheduleImp(
+        MaitreD sut,
+        Reservation[] reservations)
     {
-        // Create a table for each reservation, to ensure that all
-        // reservations can be allotted a table.
-        var tables = reservations.Select(r => Table.Standard(r.Quantity));
-        var sut = new MaitreD(
-            TimeSpan.FromHours(18),
-            TimeSpan.FromHours(21),
-            TimeSpan.FromHours(6),
-            tables);
-
         var actual = sut.Schedule(reservations);
 
         Assert.NotNull(actual);
@@ -36,7 +32,7 @@ public class ScheduleTests
             actual.Select(o => o.At));
 #pragma warning restore RCS1077 // Optimize LINQ method call
 
-        Assert.All(actual, o => AssertTables(tables, o.Value));
+        Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
     }
 
     private static void AssertTables(
@@ -68,4 +64,19 @@ public class ScheduleTests
         from n in GenName
         from q in Arb.Default.PositiveInt().Generator
         select new Reservation(id, d, e, n, q.Item);
+
+    private static Gen<MaitreD> GenMaitreD(
+        IEnumerable<Reservation> reservations)
+    {
+        // Create a table for each reservation, to ensure that all
+        // reservations can be allotted a table.
+        var tables = reservations.Select(r => Table.Standard(r.Quantity));
+        return
+            from seatingDuration in Gen.Choose(1, 6)
+            select new MaitreD(
+                TimeSpan.FromHours(18),
+                TimeSpan.FromHours(21),
+                TimeSpan.FromHours(seatingDuration),
+                tables);
+    }
 }
