@@ -29,6 +29,15 @@ public class MaitreD
     public TimeSpan SeatingDuration { get; }
     public IEnumerable<Table> Tables { get; }
 
+    public MaitreD WithTables(params Table[] newTables)
+    {
+        return new MaitreD(
+            _opensAt,
+            _lastSeating,
+            SeatingDuration,
+            newTables);
+    }
+
     public bool WillAccept(
         DateTime now,
         IEnumerable<Reservation> existingReservations,
