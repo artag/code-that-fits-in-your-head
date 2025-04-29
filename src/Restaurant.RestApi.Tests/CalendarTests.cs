@@ -333,7 +333,7 @@ public class CalendarTests
         "CA1812: Avoid uninstantiated internal classes",
         Justification = "This class is instantiated via Reflection.")]
     private sealed class CalendarTestCases :
-        TheoryData<Func<CalendarController, ActionResult>, int, int?, int?, int, int>
+        TheoryData<Func<CalendarController, Task<ActionResult>>, int, int?, int?, int, int>
     {
         public CalendarTestCases()
         {
@@ -397,8 +397,8 @@ public class CalendarTests
     }
 
     [Theory, ClassData(typeof(CalendarTestCases))]
-    public void GetCalendar(
-        Func<CalendarController, ActionResult> act,
+    public async Task GetCalendar(
+        Func<CalendarController, Task<ActionResult>> act,
         int year,
         int? month,
         int? day,
@@ -409,7 +409,7 @@ public class CalendarTests
         var sut = new CalendarController(
             Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
-        var actual = act(sut);
+        var actual = await act(sut);
 
         var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
         var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
