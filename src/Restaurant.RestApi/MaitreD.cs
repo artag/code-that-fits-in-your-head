@@ -78,7 +78,7 @@ public class MaitreD
     public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
         IEnumerable<Reservation> reservations)
     {
-        var tables = reservations.Select(r => Table.Communal(12).Reserve(r));
+        var tables = reservations.Zip(Tables, (r, t) => t.Reserve(r));
         return
             from r in reservations
             group r by r.At into g

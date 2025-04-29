@@ -19,6 +19,9 @@ public sealed class Table
         return new Table(new CommunalTable(seats));
     }
 
+    public int Capacity =>
+        _table.Accept(new CapacityVisitor());
+
     internal bool Fits(int quantity)
     {
         var remainingSeats = _table.Accept(new RemainingSeatsVisitor());
@@ -154,6 +157,21 @@ public sealed class Table
         public int VisitStandard(int seats, Reservation? reservation)
         {
             return reservation is null ? seats : 0;
+        }
+    }
+
+    private sealed class CapacityVisitor : ITableVisitor<int>
+    {
+        public int VisitCommunal(
+            int seats,
+            IReadOnlyCollection<Reservation> reservations)
+        {
+            return seats;
+        }
+
+        public int VisitStandard(int seats, Reservation? reservation)
+        {
+            return seats;
         }
     }
 }

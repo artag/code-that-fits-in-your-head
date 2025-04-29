@@ -43,7 +43,14 @@ public class ScheduleTests
         IEnumerable<Table> expected,
         IEnumerable<Table> actual)
     {
-        Assert.Equal(expected.Count(), actual.Count());
+        var exp = expected.ToArray();
+        var act = actual.ToArray();
+        Assert.Equal(
+            exp.Length,
+            act.Length);
+        Assert.Equal(
+            exp.Sum(t => t.Capacity),
+            act.Sum(t => t.Capacity));
     }
 
     private static Gen<Email> GenEmail =>
