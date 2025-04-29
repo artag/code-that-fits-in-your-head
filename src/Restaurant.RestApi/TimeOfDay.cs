@@ -21,6 +21,9 @@ public readonly struct TimeOfDay : IEquatable<TimeOfDay>
     public static TimeOfDay ToTimeOfDay(TimeSpan timeSpan) =>
         new TimeOfDay(timeSpan);
 
+    public string ToIso8601TimeString() =>
+        _durationSinceMidnight.ToIso8601TimeString();
+
     public bool Equals(TimeOfDay other)
     {
         return _durationSinceMidnight.Equals(other._durationSinceMidnight);

@@ -71,6 +71,7 @@ public class CalendarController : ControllerBase
             {
                 new TimeDto
                 {
+                    Time = MaitreD.OpensAt.ToIso8601TimeString(),
                     MaximumPartySize = MaitreD.Tables.First().Capacity
                 }
             }

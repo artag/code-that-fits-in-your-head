@@ -2,9 +2,6 @@
 
 public class MaitreD
 {
-    private readonly TimeOfDay _opensAt;
-    private readonly TimeOfDay _lastSeating;
-
     public MaitreD(
         TimeOfDay opensAt,
         TimeOfDay lastSeating,
@@ -20,20 +17,22 @@ public class MaitreD
         TimeSpan seatingDuration,
         IEnumerable<Table> tables)
     {
-        _opensAt = opensAt;
-        _lastSeating = lastSeating;
+        OpensAt = opensAt;
+        LastSeating = lastSeating;
         SeatingDuration = seatingDuration;
         Tables = tables;
     }
 
+    public TimeOfDay OpensAt { get; }
+    public TimeOfDay LastSeating { get; }
     public TimeSpan SeatingDuration { get; }
     public IEnumerable<Table> Tables { get; }
 
     public MaitreD WithTables(params Table[] newTables)
     {
         return new MaitreD(
-            _opensAt,
-            _lastSeating,
+            OpensAt,
+            LastSeating,
             SeatingDuration,
             newTables);
     }
@@ -63,8 +62,8 @@ public class MaitreD
 
     private bool IsOutsideOfOpeningHours(Reservation candidate)
     {
-        return candidate.At.TimeOfDay < _opensAt
-               || _lastSeating < candidate.At.TimeOfDay;
+        return candidate.At.TimeOfDay < OpensAt
+               || LastSeating < candidate.At.TimeOfDay;
     }
 
     private List<Table> Allocate(
