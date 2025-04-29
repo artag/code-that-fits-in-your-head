@@ -75,14 +75,13 @@ public class MaitreD
         return allocation;
     }
 
-    public IEnumerable<Occurrence<IEnumerable<Table>>> Schedule(
+    public IEnumerable<Occurrence<List<Table>>> Schedule(
         IEnumerable<Reservation> reservations)
     {
-        var tables = reservations.Zip(Tables, (r, t) => t.Reserve(r));
         return
             from r in reservations
             group r by r.At into g
             orderby g.Key
-            select tables.At(g.Key);
+            select Allocate(g).At(g.Key);
     }
 }
