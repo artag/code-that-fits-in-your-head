@@ -20,17 +20,22 @@ public sealed class Table
     }
 
     public int Capacity =>
-        _table.Accept(new CapacityVisitor());
+        Accept(new CapacityVisitor());
 
     internal bool Fits(int quantity)
     {
-        var remainingSeats = _table.Accept(new RemainingSeatsVisitor());
+        var remainingSeats = Accept(new RemainingSeatsVisitor());
         return quantity <= remainingSeats;
     }
 
     public Table Reserve(Reservation reservation)
     {
-        return _table.Accept(new ReserveVisitor(reservation));
+        return Accept(new ReserveVisitor(reservation));
+    }
+
+    public T Accept<T>(ITableVisitor<T> visitor)
+    {
+        return _table.Accept(visitor);
     }
 
     public override bool Equals(object? obj)
@@ -47,14 +52,6 @@ public sealed class Table
     private interface ITable
     {
         T Accept<T>(ITableVisitor<T> visitor);
-    }
-
-    private interface ITableVisitor<out T>
-    {
-        T VisitStandard(int seats, Reservation? reservation);
-        T VisitCommunal(
-            int seats,
-            IReadOnlyCollection<Reservation> reservations);
     }
 
     private sealed class StandardTable : ITable
