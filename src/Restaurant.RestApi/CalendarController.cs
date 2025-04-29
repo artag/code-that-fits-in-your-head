@@ -62,12 +62,18 @@ public class CalendarController : ControllerBase
             });
     }
 
-    private static DayDto MakeDay(DateTime origin, int offset)
+    private DayDto MakeDay(DateTime origin, int offset)
     {
         return new DayDto
         {
             Date = origin.AddDays(offset).ToIso8601DateString(),
-            Entries = new[] { new TimeDto() }
+            Entries = new[]
+            {
+                new TimeDto
+                {
+                    MaximumPartySize = MaitreD.Tables.First().Capacity
+                }
+            }
         };
     }
 }
