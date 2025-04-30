@@ -42,8 +42,9 @@ public class CalendarController : ControllerBase
         var calendar = new GregorianCalendar();
         var daysInMonth = calendar.GetDaysInMonth(year, month);
         var firstDay = new DateTime(year, month, 1);
+        var lastDay = firstDay.AddMonths(1).AddTicks(-1);
         var reservations = await Repository
-            .ReadReservations(firstDay)
+            .ReadReservations(firstDay, lastDay)
             .ConfigureAwait(false);
         var days = Enumerable.Range(0, daysInMonth)
             .Select(i => MakeDay(firstDay, i, reservations))
