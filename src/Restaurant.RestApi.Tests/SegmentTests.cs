@@ -22,7 +22,11 @@ public class SegmentTests
         Reservation[] reservations)
     {
         var actual = sut.Segment(date, reservations);
+
         Assert.NotEmpty(actual);
+        Assert.Equal(
+            date.Date.Add((TimeSpan)sut.OpensAt),
+            actual.First().At);
     }
 
     /// <summary>

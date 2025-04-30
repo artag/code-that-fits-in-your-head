@@ -96,11 +96,11 @@ public class MaitreD
     }
 
     public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
-        DateTime _,
+        DateTime date,
         Reservation[] __)
     {
         yield return new Occurrence<IEnumerable<Table>>(
-            new DateTime(1, 1, 1),
+            date.Date.Add((TimeSpan)OpensAt),
             Enumerable.Empty<Table>());
     }
 }
