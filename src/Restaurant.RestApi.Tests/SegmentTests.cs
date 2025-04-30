@@ -31,6 +31,7 @@ public class SegmentTests
             date.Date.Add((TimeSpan)sut.LastSeating),
             actual[^1].At);     // ^1 <=> Last()
         AssertFifteenMinuteDistances(actual);
+        Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
     }
 
     private static void AssertFifteenMinuteDistances(
@@ -39,6 +40,19 @@ public class SegmentTests
         var times = actual.Select(o => o.At).Order();
         var deltas = times.Zip(times.Skip(1), (x, y) => y - x);
         Assert.All(deltas, d => Assert.Equal(TimeSpan.FromMinutes(15), d));
+    }
+
+    private static void AssertTables(
+        IEnumerable<Table> expected,
+        IEnumerable<Table> actual)
+    {
+        var exp = expected.ToArray();
+        var act = actual.ToArray();
+
+        Assert.Equal(exp.Length, act.Length);
+        Assert.Equal(
+            exp.Sum(t => t.Capacity),
+            act.Sum(t => t.Capacity));
     }
 
     /// <summary>
