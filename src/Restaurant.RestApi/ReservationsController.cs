@@ -46,11 +46,8 @@ public class ReservationsController : ControllerBase
 
         try
         {
-            var min = reservation.At.Date;
-            var max = min.AddDays(1).AddTicks(-1);
-            var reservations = await _repository
-                .ReadReservations(min, max)
-                .ConfigureAwait(false);
+            var reservations =
+                await ReadReservations(reservation.At).ConfigureAwait(false);
 
             if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
                 return NoTables500InternalServerError();
@@ -109,11 +106,8 @@ public class ReservationsController : ControllerBase
             if (existing is null)
                 return new NotFoundResult();
 
-            var min = res.At.Date;
-            var max = min.AddDays(1).AddTicks(-1);
-            var reservations = await _repository
-                .ReadReservations(min, max)
-                .ConfigureAwait(false);
+            var reservations =
+                await ReadReservations(res.At).ConfigureAwait(false);
             reservations = reservations
                 .Where(r => r.Id != res.Id)
                 .ToList();
@@ -134,6 +128,14 @@ public class ReservationsController : ControllerBase
         }
 
         return new OkObjectResult(res.ToDto());
+    }
+
+    private Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        DateTime date)
+    {
+        var min = date.Date;
+        var max = min.AddDays(1).AddTicks(-1);
+        return _repository.ReadReservations(min, max);
     }
 
     [HttpDelete("{id}")]
