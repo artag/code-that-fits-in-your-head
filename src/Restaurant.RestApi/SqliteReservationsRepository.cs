@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Globalization;
 
 namespace Restaurant.RestApi;
@@ -95,8 +96,10 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
 
         var cmd = new SqliteCommand(readByRangeSql2, conn);
         await using var disposeCmd = cmd.ConfigureAwait(false);
-        cmd.Parameters.AddWithValue("@Min", min);
-        cmd.Parameters.AddWithValue("@Max", max);
+        var minDate = min.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var maxDate = max.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        cmd.Parameters.AddWithValue("@Min", minDate);
+        cmd.Parameters.AddWithValue("@Max", maxDate);
 
         var rdr = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
         await using var disposeRdr = rdr.ConfigureAwait(false);
@@ -104,8 +107,8 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         {
             var publicIdStr = (string)rdr["PublicId"];
             var publicId = new Guid(publicIdStr);
-            var dateStr = (string)rdr["Date"];
-            var date = DateTime.Parse(dateStr, CultureInfo.InvariantCulture);
+            var timeAtStr = (string)rdr["At"];
+            var timeAt = DateTime.Parse(timeAtStr, CultureInfo.InvariantCulture);
             var email = new Email((string)rdr["Email"]);
             var name = new Name((string)rdr["Name"]);
             var quantityLong = (long)rdr["Quantity"];
@@ -113,7 +116,7 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
 
             var r = new Reservation(
                 publicId,
-                date,
+                timeAt,
                 email,
                 name,
                 quantity);
@@ -223,9 +226,9 @@ WHERE DATE(At) = @At
 
     const string readByRangeSql2 =
         @"
-SELECT PublicId, Date, Name, Email, Quantity
+SELECT PublicId, At, Name, Email, Quantity
 FROM Reservations
-WHERE @Min <= Date AND Date <= @Max
+WHERE @Min <= DATE(At) AND DATE(At) <= @Max
 ";
 
     // MSSQL

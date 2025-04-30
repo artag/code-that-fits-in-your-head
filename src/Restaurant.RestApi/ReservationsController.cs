@@ -46,8 +46,10 @@ public class ReservationsController : ControllerBase
 
         try
         {
+            var min = reservation.At.Date;
+            var max = min.AddDays(1).AddTicks(-1);
             var reservations = await _repository
-                .ReadReservations(reservation.At)
+                .ReadReservations(min, max)
                 .ConfigureAwait(false);
 
             if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
