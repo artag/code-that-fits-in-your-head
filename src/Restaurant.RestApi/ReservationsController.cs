@@ -109,8 +109,10 @@ public class ReservationsController : ControllerBase
             if (existing is null)
                 return new NotFoundResult();
 
+            var min = res.At.Date;
+            var max = min.AddDays(1).AddTicks(-1);
             var reservations = await _repository
-                .ReadReservations(res.At)
+                .ReadReservations(min, max)
                 .ConfigureAwait(false);
             reservations = reservations
                 .Where(r => r.Id != res.Id)
