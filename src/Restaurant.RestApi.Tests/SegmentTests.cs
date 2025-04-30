@@ -32,6 +32,9 @@ public class SegmentTests
             actual[^1].At);     // ^1 <=> Last()
         AssertFifteenMinuteDistances(actual);
         Assert.All(actual, o => AssertTables(sut.Tables, o.Value));
+        Assert.All(
+            actual,
+            o => AssertRelevance(reservations, sut.SeatingDuration, o));
     }
 
     private static void AssertFifteenMinuteDistances(
@@ -53,6 +56,46 @@ public class SegmentTests
         Assert.Equal(
             exp.Sum(t => t.Capacity),
             act.Sum(t => t.Capacity));
+    }
+
+    private static void AssertRelevance(
+        IEnumerable<Reservation> reservations,
+        TimeSpan seatingDuration,
+        Occurrence<IEnumerable<Table>> occurrence)
+    {
+        var seating = new Seating(seatingDuration, occurrence.At);
+        var expected = reservations
+            .Select(r => (new Seating(seatingDuration, r.At), r))
+            .Where(t => seating.Overlaps(t.Item1))
+            .Select(t => t.r)
+            .ToHashSet();
+
+        var actual = occurrence.Value
+            .SelectMany(t => t.Accept(new ReservationsVisitor()))
+            .ToHashSet();
+
+        Assert.True(
+            expected.SetEquals(actual),
+            $"Expected: {expected}; actual {actual}.");
+    }
+
+    private sealed class ReservationsVisitor :
+        ITableVisitor<IEnumerable<Reservation>>
+    {
+        public IEnumerable<Reservation> VisitCommunal(
+            int seats,
+            IReadOnlyCollection<Reservation> reservations)
+        {
+            return reservations;
+        }
+
+        public IEnumerable<Reservation> VisitStandard(
+            int seats,
+            Reservation? reservation)
+        {
+            if (reservation is { })
+                yield return reservation;
+        }
     }
 
     /// <summary>

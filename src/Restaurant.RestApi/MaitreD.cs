@@ -95,18 +95,33 @@ public class MaitreD
             select Allocate(overlapping).At(g.Key);
     }
 
+    /// <summary>
+    /// Segment a day into 15-minute segments during the restaurant's
+    /// opening hours, with a table configuration for each segment.
+    /// </summary>
+    /// <param name="date">The day to segment.</param>
+    /// <param name="reservations">
+    /// Reservations relevant for <paramref name="date" />.
+    /// </param>
+    /// <returns>
+    /// 15-minute segments starting at the restaurant's opening hour, and
+    /// concluding at the restaurant's last seating time. Each segment
+    /// contains the table allocation at that time.
+    /// </returns>
     public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
         DateTime date,
-        Reservation[] __)
+        Reservation[] reservations)
     {
         for (var dur = (TimeSpan)OpensAt;
              dur <= (TimeSpan)LastSeating;
              dur = dur.Add(TimeSpan.FromMinutes(15)))
         {
             var at = date.Date.Add(dur);
-            yield return new Occurrence<IEnumerable<Table>>(
-                at,
-                Tables);
+            var seating = new Seating(SeatingDuration, at);
+            var relevantReservations =
+                reservations.Where(seating.Overlaps);
+            var allocation = Allocate(relevantReservations);
+            yield return new Occurrence<IEnumerable<Table>>(at, allocation);
         }
     }
 }
