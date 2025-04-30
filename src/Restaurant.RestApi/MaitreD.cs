@@ -94,4 +94,13 @@ public class MaitreD
             let overlapping = reservations.Where(seating.Overlaps)
             select Allocate(overlapping).At(g.Key);
     }
+
+    public IEnumerable<Occurrence<IEnumerable<Table>>> Segment(
+        DateTime _,
+        Reservation[] __)
+    {
+        yield return new Occurrence<IEnumerable<Table>>(
+            new DateTime(1, 1, 1),
+            Enumerable.Empty<Table>());
+    }
 }
