@@ -21,12 +21,15 @@ public class SegmentTests
         DateTime date,
         Reservation[] reservations)
     {
-        var actual = sut.Segment(date, reservations);
+        var actual = sut.Segment(date, reservations).ToArray();
 
         Assert.NotEmpty(actual);
         Assert.Equal(
             date.Date.Add((TimeSpan)sut.OpensAt),
-            actual.First().At);
+            actual[0].At);      // 0 <=> First()
+        Assert.Equal(
+            date.Date.Add((TimeSpan)sut.LastSeating),
+            actual[^1].At);     // ^1 <=> Last()
     }
 
     /// <summary>
