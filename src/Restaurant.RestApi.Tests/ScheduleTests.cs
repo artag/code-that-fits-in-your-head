@@ -9,9 +9,9 @@ public class ScheduleTests
     public Property Schedule()
     {
         return Prop.ForAll(
-            Gens.Reservations
-                .SelectMany(rs => Gens.MaitreD(rs).Select(m => (m, rs)))
-                .ToArbitrary(),
+                (from rs in Gens.Reservations
+                 from  m in Gens.MaitreD(rs)
+                 select (m, rs)).ToArbitrary(),
             t => ScheduleImp(t.m, t.rs));
     }
 
