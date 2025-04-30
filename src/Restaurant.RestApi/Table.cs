@@ -22,11 +22,11 @@ public sealed class Table
     public int Capacity =>
         Accept(new CapacityVisitor());
 
-    internal bool Fits(int quantity)
-    {
-        var remainingSeats = Accept(new RemainingSeatsVisitor());
-        return quantity <= remainingSeats;
-    }
+    public int RemainingSeats =>
+        Accept(new RemainingSeatsVisitor());
+
+    internal bool Fits(int quantity) =>
+        quantity <= RemainingSeats;
 
     public Table Reserve(Reservation reservation)
     {
