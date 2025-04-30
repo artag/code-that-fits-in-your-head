@@ -92,7 +92,7 @@ public class CalendarController : ControllerBase
         IEnumerable<Reservation> reservations)
     {
         var entries = MaitreD
-            .Schedule(reservations)
+            .Segment(origin.AddDays(offset), reservations)
             .Select(o => new TimeDto
             {
                 Time = o.At.TimeOfDay.ToIso8601TimeString(),
@@ -102,14 +102,7 @@ public class CalendarController : ControllerBase
         return new DayDto
         {
             Date = origin.AddDays(offset).ToIso8601DateString(),
-            Entries = new[]
-            {
-                new TimeDto
-                {
-                    Time = MaitreD.OpensAt.ToIso8601TimeString(),
-                    MaximumPartySize = MaitreD.Tables.First().Capacity
-                }
-            }.Concat(entries).ToArray()
+            Entries = entries
         };
     }
 }
