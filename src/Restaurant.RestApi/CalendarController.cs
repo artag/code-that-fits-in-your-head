@@ -6,11 +6,15 @@ namespace Restaurant.RestApi;
 [Route("calendar")]
 public class CalendarController : ControllerBase
 {
-    public CalendarController(MaitreD maitreD)
+    public CalendarController(
+        IReservationsRepository repository,
+        MaitreD maitreD)
     {
+        Repository = repository;
         MaitreD = maitreD;
     }
 
+    public IReservationsRepository Repository { get; }
     public MaitreD MaitreD { get; }
 
     [HttpGet("{year}")]
@@ -49,17 +53,22 @@ public class CalendarController : ControllerBase
     }
 
     [HttpGet("{year}/{month}/{day}")]
-    public Task<ActionResult> Get(int year, int month, int day)
+    public async Task<ActionResult> Get(int year, int month, int day)
     {
-        var days = new[] { MakeDay(new DateTime(year, month, day), 0) };
-        return Task.FromResult<ActionResult>(new OkObjectResult(
+        var firstDay = new DateTime(year, month, day);
+        var min = firstDay.Date;
+        var max = min.AddDays(1).AddTicks(-1);
+        var reservations = await Repository.ReadReservations(min, max)
+            .ConfigureAwait(false);
+        var days = new[] { MakeDay(new DateTime(year, month, day), 0, reservations) };
+        return new OkObjectResult(
             new CalendarDto
             {
                 Year = year,
                 Month = month,
                 Day = day,
                 Days = days
-            }));
+            });
     }
 
     private DayDto MakeDay(DateTime origin, int offset)
@@ -75,6 +84,33 @@ public class CalendarController : ControllerBase
                     MaximumPartySize = MaitreD.Tables.First().Capacity
                 }
             }
+        };
+    }
+
+    private DayDto MakeDay(
+        DateTime origin,
+        int offset,
+        IEnumerable<Reservation> reservations)
+    {
+        var entries = MaitreD
+            .Schedule(reservations)
+            .Select(o => new TimeDto
+            {
+                Time = o.At.TimeOfDay.ToIso8601TimeString(),
+                MaximumPartySize = o.Value.Max(t => t.RemainingSeats)
+            })
+            .ToArray();
+        return new DayDto
+        {
+            Date = origin.AddDays(offset).ToIso8601DateString(),
+            Entries = new[]
+            {
+                new TimeDto
+                {
+                    Time = MaitreD.OpensAt.ToIso8601TimeString(),
+                    MaximumPartySize = MaitreD.Tables.First().Capacity
+                }
+            }.Concat(entries).ToArray()
         };
     }
 }
