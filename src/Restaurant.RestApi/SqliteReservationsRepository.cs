@@ -44,46 +44,6 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
     }
 
     public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
-        DateTime dateTime, CancellationToken ct = default)
-    {
-        var result = new List<Reservation>();
-
-        var conn = new SqliteConnection(_connectionString);
-        await using var disposeConn = conn.ConfigureAwait(false);
-        await conn.OpenAsync(ct).ConfigureAwait(false);
-
-        var cmd = new SqliteCommand(readByRangeSql, conn);
-        await using var disposeCmd = cmd.ConfigureAwait(false);
-        var at = dateTime.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-        cmd.Parameters.AddWithValue("@At", at);
-
-        var rdr = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
-        await using var disposeRdr = rdr.ConfigureAwait(false);
-        while (await rdr.ReadAsync(ct).ConfigureAwait(false))
-        {
-            var publicIdStr = (string)rdr["PublicId"];
-            var publicId = new Guid(publicIdStr);
-            var timeAtStr = (string)rdr["At"];
-            var timeAt = DateTime.Parse(timeAtStr, CultureInfo.InvariantCulture);
-            var email = new Email((string)rdr["Email"]);
-            var name = new Name((string)rdr["Name"]);
-            var quantityLong = (long)rdr["Quantity"];
-            var quantity = (int)quantityLong;
-
-            var r = new Reservation(
-                publicId,
-                timeAt,
-                email,
-                name,
-                quantity);
-
-            result.Add(r);
-        }
-
-        return result.AsReadOnly();
-    }
-
-    public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
         DateTime min,
         DateTime max,
         CancellationToken ct = default)
@@ -94,7 +54,7 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         await using var disposeConn = conn.ConfigureAwait(false);
         await conn.OpenAsync(ct).ConfigureAwait(false);
 
-        var cmd = new SqliteCommand(readByRangeSql2, conn);
+        var cmd = new SqliteCommand(readByRangeSql, conn);
         await using var disposeCmd = cmd.ConfigureAwait(false);
         var minDate = min.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         var maxDate = max.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -218,13 +178,6 @@ VALUES (@Id, @At, @Name, @Email, @Quantity)
 ";
 
     private const string readByRangeSql =
-        @"
-SELECT PublicId, At, Name, Email, Quantity
-FROM Reservations
-WHERE DATE(At) = @At
-";
-
-    const string readByRangeSql2 =
         @"
 SELECT PublicId, At, Name, Email, Quantity
 FROM Reservations
