@@ -99,11 +99,14 @@ public class MaitreD
         DateTime date,
         Reservation[] __)
     {
-        yield return new Occurrence<IEnumerable<Table>>(
-            date.Date.Add((TimeSpan)OpensAt),
-            Enumerable.Empty<Table>());
-        yield return new Occurrence<IEnumerable<Table>>(
-            date.Date.Add((TimeSpan)LastSeating),
-            Enumerable.Empty<Table>());
+        for (var dur = (TimeSpan)OpensAt;
+             dur <= (TimeSpan)LastSeating;
+             dur = dur.Add(TimeSpan.FromMinutes(15)))
+        {
+            var at = date.Date.Add(dur);
+            yield return new Occurrence<IEnumerable<Table>>(
+                at,
+                Enumerable.Empty<Table>());
+        }
     }
 }
