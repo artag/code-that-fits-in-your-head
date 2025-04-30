@@ -46,8 +46,9 @@ public class ReservationsController : ControllerBase
 
         try
         {
-            var reservations =
-                await ReadReservations(reservation.At).ConfigureAwait(false);
+            var reservations = await _repository
+                .ReadReservations(reservation.At)
+                .ConfigureAwait(false);
 
             if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
                 return NoTables500InternalServerError();
