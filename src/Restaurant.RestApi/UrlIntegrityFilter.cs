@@ -26,13 +26,7 @@ internal sealed class UrlIntegrityFilter : IAsyncActionFilter
         var sig = context.HttpContext.Request.Query["sig"];
         var sigBytes =
             Convert.FromBase64String(sig.ToString());
-        var query = QueryString.Create(
-            context.HttpContext.Request.Query.Where(kvp => kvp.Key != "sig"));
-
-        var url = context.HttpContext.Request.GetEncodedUrl();
-        var ub = new UriBuilder(url);
-        ub.Query = query.ToString();
-        var strippedUrl = ub.Uri.AbsoluteUri;
+        var strippedUrl = GetUrlWithoutSignature(context);
 
         using var hmac =
             new HMACSHA256(Encoding.ASCII.GetBytes(SigningUrlHelper.Secret));
@@ -52,5 +46,17 @@ internal sealed class UrlIntegrityFilter : IAsyncActionFilter
     {
         return context.HttpContext.Request.Path == "/"
                && context.HttpContext.Request.Method == "GET";
+    }
+
+    private static string GetUrlWithoutSignature(
+        ActionExecutingContext context)
+    {
+        var restOfQuery = QueryString.Create(
+            context.HttpContext.Request.Query.Where(x => x.Key != "sig"));
+
+        var url = context.HttpContext.Request.GetEncodedUrl();
+        var ub = new UriBuilder(url);
+        ub.Query = restOfQuery.ToString();
+        return ub.Uri.AbsoluteUri;
     }
 }
