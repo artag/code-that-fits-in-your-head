@@ -2,8 +2,7 @@
 
 public static class Some
 {
-    public static readonly DateTime Now =
-        new DateTime(2022, 4, 1, 20, 15, 0);
+    public static DateTime Now => GetDummyNow();
 
     public static readonly Reservation Reservation =
         new Reservation(
@@ -19,4 +18,10 @@ public static class Some
             TimeSpan.FromHours(21),
             TimeSpan.FromHours(6),
             Table.Communal(10));
+
+    private static DateTime GetDummyNow()
+    {
+        var now = DateTime.Now;
+        return new DateTime(now.Year, now.Month, now.Day, 20, 15, 0);
+    }
 }

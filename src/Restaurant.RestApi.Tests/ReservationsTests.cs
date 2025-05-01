@@ -254,7 +254,6 @@ public class ReservationsTests
         postResp.EnsureSuccessStatusCode();
         var url = FindReservationAddress(postResp);
 
-        await service.CreateClient().DeleteAsync(url);
         var resp = await service.CreateClient().DeleteAsync(url);
 
         Assert.True(
