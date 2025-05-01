@@ -32,13 +32,6 @@ public class Program
         builder.Configuration.Bind("Smtp", smtpSettings);
         builder.Services.AddSingleton(smtpSettings.ToPostOffice());
 
-        builder.Services.AddSingleton(p =>
-        {
-            var configuration = p.GetRequiredService<IConfiguration>();
-            var flag = configuration.GetValue<bool>("EnableCalendar");
-            return new CalendarFlag(flag);
-        });
-
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {
             var config = p.GetRequiredService<IConfiguration>();

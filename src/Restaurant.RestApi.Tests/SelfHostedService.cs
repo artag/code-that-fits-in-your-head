@@ -24,9 +24,6 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
                 var date = new DateTime(now.Year, now.Month, now.Day, 19, 20, 00);
                 return new SpyDateTimeService(date);
             });
-
-            services.RemoveAll<CalendarFlag>();
-            services.AddSingleton(new CalendarFlag(true));
         });
     }
 
