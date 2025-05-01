@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Restaurant.RestApi.Tests;
 
@@ -40,5 +41,19 @@ public class ScheduleTests
         Assert.Equal(
             new DateTime(year, month, day).ToIso8601DateString(),
             dayDto.Date);
+    }
+
+    [Fact]
+    public void GetScheduleForDateWithoutReservations()
+    {
+        var db = new FakeDatabase();
+        var sut = new ScheduleController(db);
+
+        var actual = sut.Get(2020, 8, 26);
+
+        var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
+        var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
+        var day = Assert.Single(calendar.Days!);
+        Assert.Empty(day.Entries!);
     }
 }
