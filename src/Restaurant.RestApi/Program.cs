@@ -27,25 +27,7 @@ public class Program
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
-        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-        builder.Services.AddAuthentication(opts =>
-        {
-            opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(opts =>
-        {
-#pragma warning disable CA5404 // Do not disable token validation checks
-            opts.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                RoleClaimType = "role"
-            };
-            opts.RequireHttpsMetadata = false;
-#pragma warning restore CA5404 // Do not disable token validation checks
-        });
+        ConfigureAuthorization(builder.Services);
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
@@ -71,5 +53,30 @@ public class Program
         app.MapControllers();
 
         return app.RunAsync();
+    }
+
+    private static void ConfigureAuthorization(IServiceCollection services)
+    {
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+        services.AddAuthentication(opts =>
+        {
+            opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(opts =>
+        {
+#pragma warning disable CA5404 // Do not disable token validation checks
+            opts.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RoleClaimType = "role"
+            };
+            opts.RequireHttpsMetadata = false;
+#pragma warning restore CA5404 // Do not disable token validation checks
+        });
     }
 }
