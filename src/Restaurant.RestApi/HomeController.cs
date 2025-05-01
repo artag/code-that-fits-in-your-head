@@ -13,6 +13,10 @@ public class HomeController : ControllerBase
     /// </summary>
     public IActionResult Get()
     {
-        return new OkObjectResult(new HomeDto());
+        return new OkObjectResult(
+            new HomeDto
+            {
+                Restaurants = new[] { new RestaurantDto() }
+            });
     }
 }

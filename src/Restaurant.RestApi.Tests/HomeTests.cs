@@ -63,4 +63,17 @@ public class HomeTests
             Uri.TryCreate(dto.Href, UriKind.Absolute, out var _),
             $"Not an absolute URL: {dto.Href}.");
     }
+
+    [Fact]
+    public async Task HomeReturnsRestaurants()
+    {
+        await using var service = new SelfHostedService();
+        var client = service.CreateClient();
+
+        var response =
+            await client.GetAsync(new Uri("", UriKind.Relative));
+
+        var dto = await response.ParseJsonContent<HomeDto>();
+        Assert.NotEmpty(dto!.Restaurants!);
+    }
 }

@@ -2,11 +2,12 @@
 
 namespace Restaurant.RestApi;
 
+[SuppressMessage(
+    "Performance",
+    "CA1819:Properties should not return arrays",
+    Justification = "DTO.")]
 public record HomeDto
 {
-    [SuppressMessage(
-        "Performance",
-        "CA1819:Properties should not return arrays",
-        Justification = "DTO.")]
     public LinkDto[]? Links { get; set; }
+    public RestaurantDto[]? Restaurants { get; set; }
 }
