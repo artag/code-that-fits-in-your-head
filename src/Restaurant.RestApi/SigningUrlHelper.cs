@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Restaurant.RestApi;
@@ -6,6 +9,7 @@ namespace Restaurant.RestApi;
 internal sealed class SigningUrlHelper : IUrlHelper
 {
     private readonly IUrlHelper _inner;
+    private const string secret = "The very secret secret that's checked into source contro.";
 
     public SigningUrlHelper(IUrlHelper inner)
     {
@@ -20,9 +24,14 @@ internal sealed class SigningUrlHelper : IUrlHelper
     public string? Action(UrlActionContext actionContext)
     {
         var url = _inner.Action(actionContext);
-
         var ub = new UriBuilder(url!);
-        ub.Query = new QueryString(ub.Query).Add("sig", "foo").ToString();
+        using var hmac = new HMACSHA256(Encoding.ASCII.GetBytes(secret));
+        var sig = Encoding.ASCII.GetString(
+            hmac.ComputeHash(Encoding.ASCII.GetBytes(url!)));
+
+        ub.Query = new QueryString(ub.Query)
+            .Add("sig", WebUtility.UrlEncode(sig))
+            .ToString();
         return ub.ToString();
     }
 
