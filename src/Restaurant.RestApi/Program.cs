@@ -27,7 +27,7 @@ public class Program
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
-        ConfigureAuthorization(builder.Services);
+        ConfigureAuthorization(builder);
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
@@ -55,22 +55,22 @@ public class Program
         return app.RunAsync();
     }
 
-    private static void ConfigureAuthorization(IServiceCollection services)
+    private static void ConfigureAuthorization(WebApplicationBuilder builder)
     {
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
-        services.AddAuthentication(opts =>
+        builder.Services.AddAuthentication(opts =>
         {
             opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(opts =>
         {
 #pragma warning disable CA5404 // Do not disable token validation checks
+            var secret = builder.Configuration["JwtIssuerSigningKey"];
             opts.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(
-                        Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.ASCII.GetBytes(secret!)),
                 ValidateIssuer = false,
                 ValidateAudience = false,
                 RoleClaimType = "role"

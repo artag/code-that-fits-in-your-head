@@ -54,7 +54,8 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
     private static string GenerateJwtToken()
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...");
+        var key = Encoding.ASCII.GetBytes(
+            "This is not the secret used in production.");
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[] { new Claim("role", "MaitreD") }),
