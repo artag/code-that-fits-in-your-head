@@ -18,7 +18,9 @@ public class HomeController : ControllerBase
             {
                 Restaurants = new[]
                 {
-                    new RestaurantDto { Name = "Hipgnosta" }
+                    new RestaurantDto { Name = "Hipgnosta" },
+                    new RestaurantDto { Name = "Nono" },
+                    new RestaurantDto { Name = "The Vatican Cellar" }
                 }
             });
     }
