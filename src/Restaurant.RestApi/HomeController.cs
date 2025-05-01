@@ -8,20 +8,24 @@ namespace Restaurant.RestApi;
 [Route("")]
 public class HomeController : ControllerBase
 {
+    private readonly IRestaurantDatabase _database;
+
+    public HomeController(IRestaurantDatabase database)
+    {
+        _database = database;
+    }
+
     /// <summary>
     /// Get method.
     /// </summary>
-    public IActionResult Get()
+    public async Task<ActionResult> Get()
     {
+        var names = await _database.GetAllNames().ConfigureAwait(false);
+        var restaurants = names
+            .Select(n => new RestaurantDto { Name = n })
+            .ToArray();
+
         return new OkObjectResult(
-            new HomeDto
-            {
-                Restaurants = new[]
-                {
-                    new RestaurantDto { Name = "Hipgnosta" },
-                    new RestaurantDto { Name = "Nono" },
-                    new RestaurantDto { Name = "The Vatican Cellar" }
-                }
-            });
+            new HomeDto { Restaurants = restaurants });
     }
 }
