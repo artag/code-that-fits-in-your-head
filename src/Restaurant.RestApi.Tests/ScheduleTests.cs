@@ -70,6 +70,8 @@ public class ScheduleTests
         var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
         var calendar = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
         var day = Assert.Single(calendar.Days!);
-        Assert.NotEmpty(day.Entries!);
+        Assert.Contains(
+            day.Entries!.SelectMany(e => e.Reservations!),
+            rdto => rdto.Id == r.Id.ToString("N"));
     }
 }
