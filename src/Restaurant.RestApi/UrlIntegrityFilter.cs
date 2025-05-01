@@ -13,6 +13,13 @@ namespace Restaurant.RestApi;
     Justification = "This class is instantiated via Reflection.")]
 internal sealed class UrlIntegrityFilter : IAsyncActionFilter
 {
+    private readonly byte[] _urlSigningKey;
+
+    public UrlIntegrityFilter(byte[] urlSigningKey)
+    {
+        _urlSigningKey = urlSigningKey;
+    }
+
     public async Task OnActionExecutionAsync(
         ActionExecutingContext context,
         ActionExecutionDelegate next)
@@ -28,8 +35,7 @@ internal sealed class UrlIntegrityFilter : IAsyncActionFilter
             Convert.FromBase64String(sig.ToString());
         var strippedUrl = GetUrlWithoutSignature(context);
 
-        using var hmac =
-            new HMACSHA256(Encoding.ASCII.GetBytes(SigningUrlHelper.Secret));
+        using var hmac = new HMACSHA256(_urlSigningKey);
         var expectedSignature =
             hmac.ComputeHash(Encoding.ASCII.GetBytes(strippedUrl));
         var signaturesMatch = expectedSignature.SequenceEqual(sigBytes);
