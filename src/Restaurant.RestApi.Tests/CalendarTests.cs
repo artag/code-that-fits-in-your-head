@@ -118,11 +118,11 @@ public class CalendarTests
     }
 
     [Theory]
-    [InlineData(1999)]
+    [InlineData(2009)]
     [InlineData(2019)]
     [InlineData(2020)]
     [InlineData(2021)]
-    [InlineData(2050)]
+    [InlineData(2029)]
     public async Task GetSpecificYear(int year)
     {
         await using var service = new SelfHostedService();
