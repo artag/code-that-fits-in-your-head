@@ -41,6 +41,9 @@ public class Program
         ConfigureUrSigning(builder.Services, urlSigningKey);
         ConfigureAuthorization(builder);
 
+        builder.Services
+            .AddSingleton<IRestaurantDatabase, OptionsRestaurantDatabase>();
+
         var restaurantOptions = new RestaurantOptions();
         builder.Configuration.Bind("Restaurant", restaurantOptions);
         builder.Services.AddSingleton(restaurantOptions.ToMaitreD());

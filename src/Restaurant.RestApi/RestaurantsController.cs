@@ -5,15 +5,17 @@ namespace Restaurant.RestApi;
 [Route("restaurants")]
 public sealed class RestaurantsController : ControllerBase
 {
-    [HttpGet("{id}")]
-    public ActionResult Get(int id)
-    {
-        var name = "Hipgnosta";
-        if (id == 4)
-            name = "Nono";
-        if (id == 18)
-            name = "The Vatican Cellar";
+    private readonly IRestaurantDatabase _database;
 
+    public RestaurantsController(IRestaurantDatabase database)
+    {
+        _database = database;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult> Get(int id)
+    {
+        var name = await _database.GetName(id).ConfigureAwait(false);
         return new OkObjectResult(new RestaurantDto { Name = name });
     }
 }
