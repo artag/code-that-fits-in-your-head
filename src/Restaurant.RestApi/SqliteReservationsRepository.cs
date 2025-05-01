@@ -36,6 +36,7 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         var cmd = new SqliteCommand(createReservationSql, conn);
         await using var disposeCmd2 = cmd.ConfigureAwait(false);
         cmd.Parameters.AddWithValue("@Id", reservation.Id);
+        cmd.Parameters.AddWithValue("@RestaurantId", 1);
         cmd.Parameters.AddWithValue("@At", reservation.At);
         cmd.Parameters.AddWithValue("@Name", reservation.Name.Value);
         cmd.Parameters.AddWithValue("@Email", reservation.Email.Value);
@@ -162,6 +163,7 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         @"
 CREATE TABLE IF NOT EXISTS Reservations (
     Id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    RestaurantId INTEGER NOT NULL,
     At NUMERIC NOT NULL,
     Name TEXT NOT NULL,
     Email TEXT NOT NULL,
@@ -173,8 +175,8 @@ CREATE TABLE IF NOT EXISTS Reservations (
 
     private const string createReservationSql =
         @"
-INSERT INTO Reservations (PublicId, At, Name, Email, Quantity)
-VALUES (@Id, @At, @Name, @Email, @Quantity)
+INSERT INTO Reservations (PublicId, RestaurantId, At, Name, Email, Quantity)
+VALUES (@Id, @RestaurantId, @At, @Name, @Email, @Quantity)
 ";
 
     private const string readByRangeSql =
