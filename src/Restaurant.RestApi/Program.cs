@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Restaurant.RestApi.Options;
+using Restaurant.RestApi.Settings;
 
 namespace Restaurant.RestApi;
 
@@ -41,14 +42,13 @@ public class Program
         ConfigureUrSigning(builder.Services, urlSigningKey);
         ConfigureAuthorization(builder);
 
-        builder.Services
-            .AddSingleton<IRestaurantDatabase, OptionsRestaurantDatabase>();
+        var restaurantsOptions = builder.Configuration.GetSection("Restaurants")
+            .Get<RestaurantOptions[]>();
+        builder.Services.AddSingleton(restaurantsOptions![0].ToMaitreD());
+        builder.Services.AddSingleton<IRestaurantDatabase>(
+            new OptionsRestaurantDatabase(restaurantsOptions));
 
-        var restaurantOptions = new RestaurantOptions();
-        builder.Configuration.Bind("Restaurant", restaurantOptions);
-        builder.Services.AddSingleton(restaurantOptions.ToMaitreD());
-
-        var smtpOptions = new Settings.SmtpOptions();
+        var smtpOptions = new SmtpOptions();
         builder.Configuration.Bind("Smtp", smtpOptions);
         builder.Services.AddSingleton(smtpOptions.ToPostOffice());
 

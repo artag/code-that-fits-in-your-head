@@ -5,6 +5,10 @@ namespace Restaurant.RestApi.Options;
 
 public class RestaurantOptions
 {
+    public int Id { get; set; }
+
+    public string? Name { get; set; }
+
     public TimeSpan OpensAt { get; set; }
 
     public TimeSpan LastSeating { get; set; }
