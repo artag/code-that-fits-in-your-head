@@ -123,7 +123,8 @@ internal sealed class LinksFilter : IAsyncActionFilter
             {
                 url.LinkToYear(date.Year),
                 url.LinkToMonth(date.Year, date.Month),
-                url.LinkToDay(date.Year, date.Month, date.Day)
+                url.LinkToDay(date.Year, date.Month, date.Day),
+                url.LinkToSchedule(date.Year, date.Month, date.Day)
             };
     }
 }
