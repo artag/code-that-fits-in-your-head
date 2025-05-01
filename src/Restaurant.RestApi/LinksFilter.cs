@@ -49,6 +49,18 @@ internal sealed class LinksFilter : IAsyncActionFilter
             url.LinkToMonth(now.Year, now.Month),
             url.LinkToDay(now.Year, now.Month, now.Day)
         };
+
+        if (dto.Restaurants is { })
+            foreach (var restaurant in dto.Restaurants)
+                AddLinks(restaurant);
+    }
+
+    private static void AddLinks(RestaurantDto restaurant)
+    {
+        restaurant.Links = new[]
+        {
+            new LinkDto { Rel = "urn:restaurant" }
+        };
     }
 
     private static void AddLinks(CalendarDto dto, IUrlHelper url)
