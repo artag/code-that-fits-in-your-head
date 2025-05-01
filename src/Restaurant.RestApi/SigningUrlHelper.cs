@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Microsoft.AspNetCore.DataProtection;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -8,11 +9,12 @@ namespace Restaurant.RestApi;
 internal sealed class SigningUrlHelper : IUrlHelper
 {
     private readonly IUrlHelper _inner;
-    public const string Secret = "The very secret secret that's checked into source contro.";
+    private readonly byte[] _urlSigningKey;
 
-    public SigningUrlHelper(IUrlHelper inner)
+    public SigningUrlHelper(IUrlHelper inner, byte[] urlSigningKey)
     {
         _inner = inner;
+        _urlSigningKey = urlSigningKey;
     }
 
     public ActionContext ActionContext
@@ -24,7 +26,7 @@ internal sealed class SigningUrlHelper : IUrlHelper
     {
         var url = _inner.Action(actionContext);
         var ub = new UriBuilder(url!);
-        using var hmac = new HMACSHA256(Encoding.ASCII.GetBytes(Secret));
+        using var hmac = new HMACSHA256(_urlSigningKey);
         var sig = Convert.ToBase64String(
             hmac.ComputeHash(Encoding.ASCII.GetBytes(url!)));
 

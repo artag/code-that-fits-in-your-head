@@ -30,7 +30,7 @@ public class Program
                 opts.Filters.Add<LinksFilter>();
                 opts.Filters.Add(
                     new UrlIntegrityFilter(
-                        Encoding.ASCII.GetBytes(SigningUrlHelper.Secret)));
+                        Encoding.ASCII.GetBytes(SigningUrlHelperFactory.Secret)));
             })
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
