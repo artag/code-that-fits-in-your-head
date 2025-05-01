@@ -31,7 +31,7 @@ public class ScheduleController : ControllerBase
         {
             Time = o.At.TimeOfDay.ToIso8601TimeString(),
             Reservations = o.Value
-                .SelectMany(t => t.Accept(new ReservationsVisitor()))
+                .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
                 .Select(r => r.ToDto())
                 .ToArray()
         }).ToArray();
