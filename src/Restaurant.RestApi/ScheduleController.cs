@@ -27,14 +27,7 @@ public class ScheduleController : ControllerBase
             .ReadReservations(firstTick, lastTick)
             .ConfigureAwait(false);
         var schedule = _maitreD.Schedule(reservations);
-        var entries = schedule.Select(o => new TimeDto
-        {
-            Time = o.At.TimeOfDay.ToIso8601TimeString(),
-            Reservations = o.Value
-                .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
-                .Select(r => r.ToDto())
-                .ToArray()
-        }).ToArray();
+        var entries = schedule.Select(MakeEntry).ToArray();
 
         return new OkObjectResult(
             new CalendarDto
@@ -51,5 +44,17 @@ public class ScheduleController : ControllerBase
                     }
                 }
             });
+    }
+
+    private static TimeDto MakeEntry(Occurrence<List<Table>> occurrence)
+    {
+        return new TimeDto
+        {
+            Time = occurrence.At.TimeOfDay.ToIso8601TimeString(),
+            Reservations = occurrence.Value
+                .SelectMany(t => t.Accept(ReservationsVisitor.Instance))
+                .Select(r => r.ToDto())
+                .ToArray()
+        };
     }
 }
