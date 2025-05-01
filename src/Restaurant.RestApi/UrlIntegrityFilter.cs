@@ -1,0 +1,50 @@
+﻿using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace Restaurant.RestApi;
+
+[SuppressMessage(
+    "Performance",
+    "CA1812: Avoid uninstantiated internal classes",
+    Justification = "This class is instantiated via Reflection.")]
+internal sealed class UrlIntegrityFilter : IAsyncActionFilter
+{
+    public async Task OnActionExecutionAsync(
+        ActionExecutingContext context,
+        ActionExecutionDelegate next)
+    {
+        if (context.HttpContext.Request.Path == "/" && context.HttpContext.Request.Method == "GET")
+        {
+            await next().ConfigureAwait(false);
+            return;
+        }
+
+        var sig = context.HttpContext.Request.Query["sig"];
+        var sigBytes =
+            Convert.FromBase64String(sig.ToString());
+        var query = QueryString.Create(
+            context.HttpContext.Request.Query.Where(kvp => kvp.Key != "sig"));
+
+        var url = context.HttpContext.Request.GetEncodedUrl();
+        var ub = new UriBuilder(url);
+        ub.Query = query.ToString();
+        var strippedUrl = ub.Uri.AbsoluteUri;
+
+        using var hmac =
+            new HMACSHA256(Encoding.ASCII.GetBytes(SigningUrlHelper.Secret));
+        var expectedSignature =
+            hmac.ComputeHash(Encoding.ASCII.GetBytes(strippedUrl));
+        var signaturesMatch = expectedSignature.SequenceEqual(sigBytes);
+        if (!signaturesMatch)
+        {
+            context.Result = new NotFoundResult();
+            return;
+        }
+
+        await next().ConfigureAwait(false);
+    }
+}

@@ -27,8 +27,19 @@ public class RestaurantService : WebApplicationFactory<Program>
         var json = JsonSerializer.Serialize(reservation);
         using var content = new StringContent(json);
         content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
-        var address = new Uri("reservations", UriKind.Relative);
+        var address = await FindAddress("urn:reservations");
         return await client.PostAsync(address, content);
+    }
+
+    private async Task<Uri> FindAddress(string rel)
+    {
+        var homeResponse =
+            await CreateClient().GetAsync(new Uri("", UriKind.Relative));
+        homeResponse.EnsureSuccessStatusCode();
+        var homeRepresentation =
+            await homeResponse.ParseJsonContent<HomeDto>();
+
+        return homeRepresentation!.Links.FindAddress(rel);
     }
 
     public async Task<(Uri, ReservationDto)> PostReservation(
@@ -40,16 +51,9 @@ public class RestaurantService : WebApplicationFactory<Program>
             .WithQuantity(quantity)
             .Build());
         resp.EnsureSuccessStatusCode();
-        var dto = await ParseReservationContent(resp);
+        var dto = await resp.ParseJsonContent<ReservationDto>();
 
         return (resp.Headers.Location!, dto!);
-    }
-
-    private static async Task<ReservationDto?> ParseReservationContent(
-        HttpResponseMessage msg)
-    {
-        var json = await msg.Content.ReadAsStringAsync();
-        return CustomJsonSerializer.Deserialize<ReservationDto?>(json);
     }
 
     public async Task<HttpResponseMessage> PutReservation(

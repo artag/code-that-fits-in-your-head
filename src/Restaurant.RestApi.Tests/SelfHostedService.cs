@@ -78,7 +78,8 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         var json = JsonSerializer.Serialize(reservation);
         using var content = new StringContent(json);
         content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
-        return await client.PostAsync("reservations", content);
+        var address = await FindAddress("urn:reservations");
+        return await CreateClient().PostAsync(address, content);
     }
 
     public async Task<HttpResponseMessage> PutReservation(

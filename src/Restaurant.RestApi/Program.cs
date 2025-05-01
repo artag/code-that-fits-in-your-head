@@ -2,6 +2,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Restaurant.RestApi;
@@ -23,11 +25,20 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services
-            .AddControllers(opts => opts.Filters.Add<LinksFilter>())
+            .AddControllers(opts =>
+            {
+                opts.Filters.Add<LinksFilter>();
+                opts.Filters.Add<UrlIntegrityFilter>();
+            })
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
         ConfigureAuthorization(builder);
+
+        builder.Services.RemoveAll<IUrlHelperFactory>();
+        builder.Services.AddSingleton<IUrlHelperFactory>(
+            new SigningUrlHelperFactory(
+                new UrlHelperFactory()));
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
