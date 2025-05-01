@@ -17,4 +17,23 @@ public class ScheduleTests
         var response = await service.GetSchedule(year, month, day);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
+
+    [Theory]
+    [InlineData(2022, 2, 2)]
+    [InlineData(2020, 8, 25)]
+    [InlineData(2016, 10, 9)]
+    public async Task GetScheduleWhileAuthorized(
+        int year,
+        int month,
+        int day)
+    {
+        await using var service = new SelfHostedService();
+        service.AuthorizeClient();
+
+        var response = await service.GetSchedule(year, month, day);
+
+        Assert.True(
+            response.IsSuccessStatusCode,
+            $"Actual status code: {response.StatusCode}.");
+    }
 }

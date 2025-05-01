@@ -1,5 +1,8 @@
-using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Restaurant.RestApi;
 
@@ -24,6 +27,26 @@ public class Program
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
+        JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
+        builder.Services.AddAuthentication(opts =>
+        {
+            opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(opts =>
+        {
+#pragma warning disable CA5404 // Do not disable token validation checks
+            opts.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...")),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RoleClaimType = "role"
+            };
+            opts.RequireHttpsMetadata = false;
+#pragma warning restore CA5404 // Do not disable token validation checks
+        });
+
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
         builder.Services.AddSingleton(restaurantSettings.ToMaitreD());
@@ -42,7 +65,9 @@ public class Program
         builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
 
         var app = builder.Build();
+        app.UseAuthentication();
         app.UseRouting();
+        app.UseAuthorization();
         app.MapControllers();
 
         return app.RunAsync();

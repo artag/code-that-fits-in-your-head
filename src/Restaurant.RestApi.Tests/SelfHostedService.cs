@@ -1,15 +1,21 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Net.Mime;
-using System.Text.Json;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.CodeAnalysis;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Net.Mime;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace Restaurant.RestApi.Tests;
 
 internal sealed class SelfHostedService : WebApplicationFactory<Program>
 {
+    private bool _authorizeClient;
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -25,6 +31,40 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
                 return new SpyDateTimeService(date);
             });
         });
+    }
+
+    internal void AuthorizeClient()
+    {
+        _authorizeClient = true;
+    }
+
+    protected override void ConfigureClient(HttpClient client)
+    {
+        base.ConfigureClient(client);
+        ArgumentNullException.ThrowIfNull(client);
+
+        if (!_authorizeClient)
+            return;
+
+        var token = GenerateJwtToken();
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+    }
+
+    private static string GenerateJwtToken()
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes("Let's hope that this generates more than 128 bytes...");
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] { new Claim("role", "MaitreD") }),
+            Expires = DateTime.UtcNow.AddDays(7),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(key),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
     }
 
     [SuppressMessage(
