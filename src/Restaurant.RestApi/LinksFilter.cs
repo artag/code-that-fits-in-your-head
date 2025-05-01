@@ -52,14 +52,14 @@ internal sealed class LinksFilter : IAsyncActionFilter
 
         if (dto.Restaurants is { })
             foreach (var restaurant in dto.Restaurants)
-                AddLinks(restaurant);
+                AddLinks(restaurant, url);
     }
 
-    private static void AddLinks(RestaurantDto restaurant)
+    private static void AddLinks(RestaurantDto restaurant, IUrlHelper url)
     {
         restaurant.Links = new[]
         {
-            new LinkDto { Rel = "urn:restaurant" }
+            url.LinkToYear(1900, "urn:restaurant")
         };
     }
 
