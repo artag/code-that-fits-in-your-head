@@ -12,6 +12,10 @@ public static class Hypertext
         new UrlBuilder()
             .WithAction(nameof(CalendarController.Get))
             .WithController(nameof(CalendarController));
+    private readonly static UrlBuilder Schedule =
+        new UrlBuilder()
+            .WithAction(nameof(ScheduleController.Get))
+            .WithController(nameof(ScheduleController));
 
     internal static LinkDto Link(this Uri uri, string rel)
     {
@@ -117,7 +121,10 @@ public static class Hypertext
         int month,
         int day)
     {
-        return url.LinkToDay(year, month, day, "urn:schedule");
+        return Schedule
+            .WithValues(new { year, month, day })
+            .BuildAbsolute(url)
+            .Link("urn:schedule");
     }
 
     public static Uri FindAddress(

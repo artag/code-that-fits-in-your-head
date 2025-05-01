@@ -1,0 +1,20 @@
+﻿using System.Net;
+
+namespace Restaurant.RestApi.Tests;
+
+public class ScheduleTests
+{
+    [Theory]
+    [InlineData(2022, 3, 11)]
+    [InlineData(2018, 11, 25)]
+    [InlineData(2025, 12, 31)]
+    public async Task GetScheduleWhileUnauthorized(
+        int year,
+        int month,
+        int day)
+    {
+        await using var service = new SelfHostedService();
+        var response = await service.GetSchedule(year, month, day);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+}
