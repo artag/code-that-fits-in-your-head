@@ -15,7 +15,14 @@ public class ScheduleController : ControllerBase
                 Year = year,
                 Month = month,
                 Day = day,
-                Days = new[] { new DayDto() }
+                Days = new[]
+                {
+                    new DayDto
+                    {
+                        Date = new DateTime(year, month, day)
+                            .ToIso8601DateString()
+                    }
+                }
             });
     }
 }
