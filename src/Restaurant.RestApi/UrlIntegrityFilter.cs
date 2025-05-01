@@ -30,16 +30,8 @@ internal sealed class UrlIntegrityFilter : IAsyncActionFilter
             return;
         }
 
-        var sig = context.HttpContext.Request.Query["sig"];
-        var sigBytes =
-            Convert.FromBase64String(sig.ToString());
         var strippedUrl = GetUrlWithoutSignature(context);
-
-        using var hmac = new HMACSHA256(_urlSigningKey);
-        var expectedSignature =
-            hmac.ComputeHash(Encoding.ASCII.GetBytes(strippedUrl));
-        var signaturesMatch = expectedSignature.SequenceEqual(sigBytes);
-        if (!signaturesMatch)
+        if (!SignatureIsValid(strippedUrl, context))
         {
             context.Result = new NotFoundResult();
             return;
@@ -64,5 +56,20 @@ internal sealed class UrlIntegrityFilter : IAsyncActionFilter
         var ub = new UriBuilder(url);
         ub.Query = restOfQuery.ToString();
         return ub.Uri.AbsoluteUri;
+    }
+
+    private bool SignatureIsValid(
+        string candidate,
+        ActionExecutingContext context)
+    {
+        var sig = context.HttpContext.Request.Query["sig"];
+        var receivedSignature = Convert.FromBase64String(sig.ToString());
+
+        using var hmac = new HMACSHA256(_urlSigningKey);
+        var computedSignature =
+            hmac.ComputeHash(Encoding.ASCII.GetBytes(candidate));
+
+        return
+            computedSignature.SequenceEqual(receivedSignature);
     }
 }
