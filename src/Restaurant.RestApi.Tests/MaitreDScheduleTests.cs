@@ -3,7 +3,7 @@ using FsCheck.Xunit;
 
 namespace Restaurant.RestApi.Tests;
 
-public class ScheduleTests
+public class MaitreDScheduleTests
 {
     [Property]
     public Property Schedule()
