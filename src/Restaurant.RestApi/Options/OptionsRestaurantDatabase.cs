@@ -4,9 +4,14 @@ public class OptionsRestaurantDatabase : IRestaurantDatabase
 {
     public Task<IEnumerable<string>> GetAllNames()
     {
-        return Task.FromResult(
-            new[] { "Hipgnosta", "Nono", "The Vatican Cellar" }
-                .AsEnumerable());
+        var rs = new[] { "Hipgnosta", "Nono", "The Vatican Cellar" };
+        return Task.FromResult(rs.AsEnumerable());
+    }
+
+    public Task<int?> GetId(string name)
+    {
+        ArgumentNullException.ThrowIfNull(name);
+        return Task.FromResult((int?)name.Length);
     }
 
     public Task<string?> GetName(int id)
