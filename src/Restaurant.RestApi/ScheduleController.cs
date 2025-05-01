@@ -7,8 +7,15 @@ namespace Restaurant.RestApi;
 public class ScheduleController : ControllerBase
 {
     [HttpGet("{year}/{month}/{day}"), Authorize(Roles = "MaitreD")]
-    public ActionResult Get(int _, int __, int ___)
+    public ActionResult Get(int year, int month, int day)
     {
-        return new OkResult();
+        return new OkObjectResult(
+            new CalendarDto
+            {
+                Year = year,
+                Month = month,
+                Day = day,
+                Days = new[] { new DayDto() }
+            });
     }
 }
