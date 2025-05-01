@@ -2,7 +2,7 @@
 
 namespace Restaurant.RestApi.Tests;
 
-public class SmtpSettingsTests
+public class SmtpOptionsTests
 {
     [Theory]
     [InlineData("", 587, "foo", "bar", "w@example.com")]
@@ -20,7 +20,7 @@ public class SmtpSettingsTests
         string password,
         string fromAddress)
     {
-        var sut = new SmtpSettings
+        var sut = new SmtpOptions
         {
             Host = host,
             Port = port,
@@ -42,7 +42,7 @@ public class SmtpSettingsTests
         string password,
         string fromAddress)
     {
-        var sut = new SmtpSettings
+        var sut = new SmtpOptions
         {
             Host = host,
             Port = port,

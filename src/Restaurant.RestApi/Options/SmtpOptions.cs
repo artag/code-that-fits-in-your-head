@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.RestApi.Settings;
 
-public class SmtpSettings
+public class SmtpOptions
 {
     public string? Host { get; set; }
     public int Port { get; set; }

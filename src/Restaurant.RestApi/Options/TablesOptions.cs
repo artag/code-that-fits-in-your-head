@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.RestApi.Settings;
 
-public class TableSettings
+public class TablesOptions
 {
     public TableType TableType { get; set; }
     public int Seats { get; set; }

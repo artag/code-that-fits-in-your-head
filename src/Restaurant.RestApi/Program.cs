@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Restaurant.RestApi.Options;
 
 namespace Restaurant.RestApi;
 
@@ -40,13 +41,13 @@ public class Program
         ConfigureUrSigning(builder.Services, urlSigningKey);
         ConfigureAuthorization(builder);
 
-        var restaurantSettings = new Settings.RestaurantSettings();
-        builder.Configuration.Bind("Restaurant", restaurantSettings);
-        builder.Services.AddSingleton(restaurantSettings.ToMaitreD());
+        var restaurantOptions = new RestaurantOptions();
+        builder.Configuration.Bind("Restaurant", restaurantOptions);
+        builder.Services.AddSingleton(restaurantOptions.ToMaitreD());
 
-        var smtpSettings = new Settings.SmtpSettings();
-        builder.Configuration.Bind("Smtp", smtpSettings);
-        builder.Services.AddSingleton(smtpSettings.ToPostOffice());
+        var smtpOptions = new Settings.SmtpOptions();
+        builder.Configuration.Bind("Smtp", smtpOptions);
+        builder.Services.AddSingleton(smtpOptions.ToPostOffice());
 
         builder.Services.AddSingleton<IReservationsRepository>(p =>
         {
