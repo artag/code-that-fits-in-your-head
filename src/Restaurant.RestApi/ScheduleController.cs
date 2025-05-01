@@ -27,14 +27,21 @@ public class ScheduleController : ControllerBase
             .ReadReservations(firstTick, lastTick)
             .ConfigureAwait(false);
         var schedule = _maitreD.Schedule(reservations);
+        return MakeCalendar(date, schedule);
+    }
+
+    private static OkObjectResult MakeCalendar(
+        DateTime date,
+        IEnumerable<Occurrence<List<Table>>> schedule)
+    {
         var entries = schedule.Select(MakeEntry).ToArray();
 
         return new OkObjectResult(
             new CalendarDto
             {
-                Year = year,
-                Month = month,
-                Day = day,
+                Year = date.Year,
+                Month = date.Month,
+                Day = date.Day,
                 Days = new[]
                 {
                     new DayDto
@@ -46,7 +53,8 @@ public class ScheduleController : ControllerBase
             });
     }
 
-    private static TimeDto MakeEntry(Occurrence<List<Table>> occurrence)
+    private static TimeDto MakeEntry(
+        Occurrence<List<Table>> occurrence)
     {
         return new TimeDto
         {
