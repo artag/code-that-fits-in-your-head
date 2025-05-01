@@ -19,7 +19,11 @@ internal sealed class SigningUrlHelper : IUrlHelper
 
     public string? Action(UrlActionContext actionContext)
     {
-        return _inner.Action(actionContext);
+        var url = _inner.Action(actionContext);
+
+        var ub = new UriBuilder(url!);
+        ub.Query = new QueryString(ub.Query).Add("sig", "foo").ToString();
+        return ub.ToString();
     }
 
     public string? Content(string? contentPath)
