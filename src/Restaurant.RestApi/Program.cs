@@ -37,12 +37,8 @@ public class Program
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
 
+        ConfigureUrSigning(builder.Services, urlSigningKey);
         ConfigureAuthorization(builder);
-
-        builder.Services.RemoveAll<IUrlHelperFactory>();
-        builder.Services.AddSingleton<IUrlHelperFactory>(
-            new SigningUrlHelperFactory(
-                new UrlHelperFactory(), urlSigningKey));
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
@@ -68,6 +64,17 @@ public class Program
         app.MapControllers();
 
         return app.RunAsync();
+    }
+
+    private static void ConfigureUrSigning(
+        IServiceCollection services,
+        byte[] urlSigningKey)
+    {
+        services.RemoveAll<IUrlHelperFactory>();
+        services.AddSingleton<IUrlHelperFactory>(
+            new SigningUrlHelperFactory(
+                new UrlHelperFactory(),
+                urlSigningKey));
     }
 
     private static void ConfigureAuthorization(WebApplicationBuilder builder)
