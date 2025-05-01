@@ -21,18 +21,18 @@ namespace Restaurant.RestApi;
     Justification = "Class Program is not static for testing purposes")]
 public class Program
 {
-    private const string Secret = "The very secret secret that's checked into source contro.";
-
     internal static Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var urlSigningKey = Encoding.ASCII.GetBytes(
+            builder.Configuration.GetValue<string>("UrlSigningKey")!);
+
         builder.Services
             .AddControllers(opts =>
             {
                 opts.Filters.Add<LinksFilter>();
                 opts.Filters.Add(
-                    new UrlIntegrityFilter(
-                        Encoding.ASCII.GetBytes(Secret)));
+                    new UrlIntegrityFilter(urlSigningKey));
             })
             .AddJsonOptions(opts =>
                 opts.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
@@ -42,8 +42,7 @@ public class Program
         builder.Services.RemoveAll<IUrlHelperFactory>();
         builder.Services.AddSingleton<IUrlHelperFactory>(
             new SigningUrlHelperFactory(
-                new UrlHelperFactory(),
-                Encoding.ASCII.GetBytes(Secret)));
+                new UrlHelperFactory(), urlSigningKey));
 
         var restaurantSettings = new Settings.RestaurantSettings();
         builder.Configuration.Bind("Restaurant", restaurantSettings);
