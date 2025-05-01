@@ -18,4 +18,35 @@ public class RestaurantTests
         var content = await response.ParseJsonContent<RestaurantDto>();
         Assert.Equal(name, content!.Name);
     }
+
+    [Theory]
+    [InlineData("Hipgnosta")]
+    [InlineData("Nono")]
+    [InlineData("The Vatican Cellar")]
+    public async Task RestaurantReturnsCorrectLinks(string name)
+    {
+        await using var service = new SelfHostedService();
+
+        var response = await service.GetRestaurant(name);
+
+        var urls = new[]
+        {
+            "urn:reservations",
+            "urn:year",
+            "urn:month",
+            "urn:day"
+        };
+        var expected = new HashSet<string?>(urls);
+        var actual = await response.ParseJsonContent<RestaurantDto>();
+        var actualRels = actual!.Links!.Select(l => l.Rel).ToHashSet();
+        Assert.Superset(expected, actualRels);
+        Assert.All(actual.Links!, AssertHrefAbsoluteUrl);
+    }
+
+    private static void AssertHrefAbsoluteUrl(LinkDto dto)
+    {
+        Assert.True(
+            Uri.TryCreate(dto.Href, UriKind.Absolute, out var _),
+            $"Not an absolute URL: {dto.Href}.");
+    }
 }
