@@ -8,6 +8,10 @@ public static class Hypertext
         new UrlBuilder()
             .WithAction(nameof(ReservationsController.Post))
             .WithController(nameof(ReservationsController));
+    private readonly static UrlBuilder Restaurants =
+        new UrlBuilder()
+            .WithAction(nameof(RestaurantsController.Get))
+            .WithController(nameof(RestaurantsController));
     private static readonly UrlBuilder Calendar =
         new UrlBuilder()
             .WithAction(nameof(CalendarController.Get))
@@ -25,6 +29,14 @@ public static class Hypertext
     internal static LinkDto LinkToReservations(this IUrlHelper url)
     {
         return Reservations.BuildAbsolute(url).Link("urn:reservations");
+    }
+
+    internal static LinkDto LinkToRestaurant(this IUrlHelper url, int id)
+    {
+        return Restaurants
+            .WithValues(new { id })
+            .BuildAbsolute(url)
+            .Link("urn:restaurant");
     }
 
     internal static LinkDto LinkToYear(this IUrlHelper url, int year)
