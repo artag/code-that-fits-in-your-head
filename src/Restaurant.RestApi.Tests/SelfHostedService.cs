@@ -79,7 +79,7 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         using var content = new StringContent(json);
         content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
         var address = await FindAddress("urn:reservations");
-        return await CreateClient().PostAsync(address, content);
+        return await client.PostAsync(address, content);
     }
 
     public async Task<HttpResponseMessage> PutReservation(
