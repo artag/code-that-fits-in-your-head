@@ -1,10 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace Restaurant.RestApi;
 
-namespace Restaurant.RestApi;
-
-[SuppressMessage(
-    "Roslynator",
-    "RCS1251:Remove unnecessary braces from record declaration")]
 public class RestaurantDto
 {
+    public string? Name { get; set; }
 }

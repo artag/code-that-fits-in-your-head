@@ -16,7 +16,10 @@ public class HomeController : ControllerBase
         return new OkObjectResult(
             new HomeDto
             {
-                Restaurants = new[] { new RestaurantDto() }
+                Restaurants = new[]
+                {
+                    new RestaurantDto { Name = "Hipgnosta" }
+                }
             });
     }
 }
