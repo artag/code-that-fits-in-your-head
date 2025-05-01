@@ -3,5 +3,5 @@
 public class TimeDto
 {
     public string? Time { get; set; }
-    public int MaximumPartySize { get; set; }
+    public int? MaximumPartySize { get; set; }
 }
