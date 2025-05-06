@@ -8,9 +8,6 @@ public interface IReservationsRepository
     Task Create(
         int restaurantId, Reservation reservation, CancellationToken ct = default);
 
-    Task Create(
-        Reservation reservation, CancellationToken ct = default);
-
     Task<IReadOnlyCollection<Reservation>> ReadReservations(
         DateTime min, DateTime max, CancellationToken ct = default);
 

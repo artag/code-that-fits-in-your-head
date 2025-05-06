@@ -53,7 +53,7 @@ public class ReservationsController : ControllerBase
             if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
                 return NoTables500InternalServerError();
 
-            await _repository.Create(reservation).ConfigureAwait(false);
+            await _repository.Create(Grandfather.Id, reservation).ConfigureAwait(false);
             await _postOffice.EmailReservationCreated(reservation).ConfigureAwait(false);
         }
         finally
