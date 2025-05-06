@@ -44,14 +44,6 @@ public class FakeDatabase :
     }
 
     public Task<IReadOnlyCollection<Reservation>> ReadReservations(
-        DateTime min,
-        DateTime max,
-        CancellationToken ct = default)
-    {
-        return ReadReservations(RestApi.Grandfather.Id, min, max, ct);
-    }
-
-    public Task<IReadOnlyCollection<Reservation>> ReadReservations(
         int restaurantId,
         DateTime min,
         DateTime max,
