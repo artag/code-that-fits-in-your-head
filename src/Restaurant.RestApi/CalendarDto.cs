@@ -10,6 +10,8 @@ public record CalendarDto
 {
     public LinkDto[]? Links { get; set; }
 
+    public string? Name { get; set; }
+
     public int Year { get; init; }
 
     public int? Month { get; set; }

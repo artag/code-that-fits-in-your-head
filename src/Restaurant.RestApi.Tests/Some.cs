@@ -1,4 +1,6 @@
-﻿namespace Restaurant.RestApi.Tests;
+﻿using Restaurant.RestApi.Options;
+
+namespace Restaurant.RestApi.Tests;
 
 public static class Some
 {
@@ -18,6 +20,10 @@ public static class Some
             TimeSpan.FromHours(21),
             TimeSpan.FromHours(6),
             Table.Communal(10));
+
+    public static IRestaurantDatabase RestaurantDatabase =>
+        new OptionsRestaurantDatabase(
+            new RestaurantOptions { Id = 1, Name = "Hipgnosta" });
 
     private static DateTime GetDummyNow()
     {

@@ -4,7 +4,7 @@ public class OptionsRestaurantDatabase : IRestaurantDatabase
 {
     private readonly RestaurantOptions[] _restaurants;
 
-    internal OptionsRestaurantDatabase(RestaurantOptions[] restaurants)
+    public OptionsRestaurantDatabase(params RestaurantOptions[] restaurants)
     {
         _restaurants = restaurants;
     }

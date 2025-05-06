@@ -68,6 +68,22 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         return tokenHandler.WriteToken(token);
     }
 
+    public async Task<HttpResponseMessage> PostReservation(
+        string name,
+        object reservation)
+    {
+        var json = JsonSerializer.Serialize(reservation);
+        using var content = new StringContent(json);
+        content.Headers.ContentType!.MediaType = MediaTypeNames.Application.Json;
+
+        var resp = await GetRestaurant(name);
+        resp.EnsureSuccessStatusCode();
+        var rest = await resp.ParseJsonContent<RestaurantDto>();
+        var address = rest!.Links.FindAddress("urn:reservations");
+
+        return await CreateClient().PostAsync(address, content);
+    }
+
     [SuppressMessage(
         "Usage",
         "CA2234:Pass system uri objects instead of strings",
@@ -115,6 +131,15 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         return await client.GetAsync(yearAddress);
     }
 
+    public async Task<HttpResponseMessage> GetCurrentYear(string name)
+    {
+        var resp = await GetRestaurant(name);
+        resp.EnsureSuccessStatusCode();
+        var rest = await resp.ParseJsonContent<RestaurantDto>();
+        var address = rest!.Links.FindAddress("urn:year");
+        return await CreateClient().GetAsync(address);
+    }
+
     public async Task<HttpResponseMessage> GetPreviousYear()
     {
         var currentResp = await GetCurrentYear();
@@ -143,11 +168,31 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
         resp.EnsureSuccessStatusCode();
         var dto = await resp.ParseJsonContent<CalendarDto>();
         if (dto!.Year == year)
-        {
             return resp;
-        }
 
         var rel = dto.Year < year ? "next" : "previous";
+        var client = CreateClient();
+        do
+        {
+            var address = dto.Links.FindAddress(rel);
+            resp = await client.GetAsync(address);
+            resp.EnsureSuccessStatusCode();
+            dto = await resp.ParseJsonContent<CalendarDto>();
+        } while (dto!.Year != year);
+
+        return resp;
+    }
+
+    public async Task<HttpResponseMessage> GetYear(string name, int year)
+    {
+        var resp = await GetCurrentYear(name);
+        resp.EnsureSuccessStatusCode();
+        var dto = await resp.ParseJsonContent<CalendarDto>();
+        if (dto!.Year == year)
+            return resp;
+
+        var rel = dto.Year < year ? "next" : "previous";
+
         var client = CreateClient();
         do
         {
@@ -245,6 +290,22 @@ internal sealed class SelfHostedService : WebApplicationFactory<Program>
 
         var client = CreateClient();
         return await client.GetAsync(address);
+    }
+
+    public async Task<HttpResponseMessage> GetDay(
+        string name,
+        int year,
+        int month,
+        int day)
+    {
+        var resp = await GetYear(name, year);
+        resp.EnsureSuccessStatusCode();
+        var dto = await resp.ParseJsonContent<CalendarDto>();
+
+        var target = new DateTime(year, month, day).ToIso8601DateString();
+        var dayCalendar = dto!.Days!.Single(d => d.Date == target);
+        var address = dayCalendar.Links.FindAddress("urn:day");
+        return await CreateClient().GetAsync(address);
     }
 
     public async Task<HttpResponseMessage> GetSchedule(

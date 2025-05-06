@@ -358,7 +358,7 @@ public class CalendarTests
             int tableSize)
         {
             Add(
-                sut => sut.Get(year),
+                sut => sut.GetYear(year),
                 year,
                 null,
                 null,
@@ -373,7 +373,7 @@ public class CalendarTests
             int tableSize)
         {
             Add(
-                sut => sut.Get(year, month),
+                sut => sut.GetMonth(year, month),
                 year,
                 month,
                 null,
@@ -388,7 +388,7 @@ public class CalendarTests
             int tableSize)
         {
             Add(
-                sut => sut.Get(year, month, day),
+                sut => sut.GetDay(year, month, day),
                 year,
                 month,
                 day,
@@ -408,6 +408,7 @@ public class CalendarTests
     {
         ArgumentNullException.ThrowIfNull(act);
         var sut = new CalendarController(
+            Some.RestaurantDatabase,
             new FakeDatabase(),
             Some.MaitreD.WithTables(Table.Communal(tableSize)));
 
@@ -460,9 +461,10 @@ public class CalendarTests
             Some.Reservation
                 .WithQuantity(3)
                 .WithDate(new DateTime(2020, 8, 21, 19, 0, 0)));
-        var sut = new CalendarController(db, maitreD);
+        var sut = new CalendarController(
+            Some.RestaurantDatabase, db, maitreD);
 
-        var actual = await sut.Get(date.Year, date.Month, date.Day);
+        var actual = await sut.GetDay(date.Year, date.Month, date.Day);
 
         var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
         var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -496,9 +498,10 @@ public class CalendarTests
             Some.Reservation
                 .WithQuantity(3)
                 .WithDate(new DateTime(2020, 8, 22, 20, 30, 0)));
-        var sut = new CalendarController(db, maitreD);
+        var sut = new CalendarController(
+            Some.RestaurantDatabase, db, maitreD);
 
-        var actual = await sut.Get(2020, 8);
+        var actual = await sut.GetMonth(2020, 8);
 
         var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
         var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);
@@ -533,9 +536,10 @@ public class CalendarTests
             Some.Reservation
                 .WithQuantity(5)
                 .WithDate(new DateTime(2020, 9, 23, 20, 15, 0)));
-        var sut = new CalendarController(db, maitreD);
+        var sut = new CalendarController(
+            Some.RestaurantDatabase, db, maitreD);
 
-        var actual = await sut.Get(2020);
+        var actual = await sut.GetYear(2020);
 
         var ok = Assert.IsAssignableFrom<OkObjectResult>(actual);
         var dto = Assert.IsAssignableFrom<CalendarDto>(ok.Value);

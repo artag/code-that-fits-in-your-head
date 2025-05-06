@@ -37,7 +37,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
                 await AddLinks(homeDto, url).ConfigureAwait(false);
                 break;
             case CalendarDto calendarDto:
-                AddLinks(calendarDto, url);
+                await AddLinks(calendarDto, url).ConfigureAwait(false);
                 break;
             case RestaurantDto restaurantDto:
                 await AddLinks(restaurantDto, url).ConfigureAwait(false);
@@ -51,9 +51,9 @@ internal sealed class LinksFilter : IAsyncActionFilter
         dto.Links = new[]
         {
             url.LinkToReservations(Grandfather.Id),
-            url.LinkToYear(now.Year),
-            url.LinkToMonth(now.Year, now.Month),
-            url.LinkToDay(now.Year, now.Month, now.Day)
+            url.LinkToYear(Grandfather.Id, now.Year),
+            url.LinkToMonth(Grandfather.Id, now.Year, now.Month),
+            url.LinkToDay(Grandfather.Id, now.Year, now.Month, now.Day)
         };
 
         if (dto.Restaurants is { })
@@ -76,14 +76,23 @@ internal sealed class LinksFilter : IAsyncActionFilter
         {
             url.LinkToRestaurant(restaurantId.Value),
             url.LinkToReservations(restaurantId.Value),
-            url.LinkToYear(now.Year),
-            url.LinkToMonth(now.Year, now.Month),
-            url.LinkToDay(now.Year, now.Month, now.Day)
+            url.LinkToYear(restaurantId.Value, now.Year),
+            url.LinkToMonth(restaurantId.Value, now.Year, now.Month),
+            url.LinkToDay(restaurantId.Value, now.Year, now.Month, now.Day)
         };
     }
 
-    private static void AddLinks(CalendarDto dto, IUrlHelper url)
+    private async Task AddLinks(CalendarDto dto, IUrlHelper url)
     {
+        if (dto.Name is null)
+            return;
+
+        var restaurantId = await Database
+            .GetId(dto.Name)
+            .ConfigureAwait(false);
+        if (restaurantId is null)
+            return;
+
         var period = dto.ToPeriod();
         var previous = period.Accept(new PreviousPeriodVisitor());
         var next = period.Accept(new NextPeriodVisitor());
@@ -96,7 +105,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
 
         if (dto.Days is { })
             foreach (var day in dto.Days)
-                AddLinks(day, url);
+                AddLinks(restaurantId.Value, day, url);
     }
 
     private sealed class PreviousPeriodVisitor : IPeriodVisitor<IPeriod>
@@ -147,15 +156,30 @@ internal sealed class LinksFilter : IAsyncActionFilter
         }
     }
 
-    private static void AddLinks(DayDto dto, IUrlHelper url)
+    private static void AddLinks(
+        int restaurantId,
+        DayDto dto,
+        IUrlHelper url)
     {
         if (DateTime.TryParse(dto.Date, out var date))
             dto.Links = new[]
             {
-                url.LinkToYear(date.Year),
-                url.LinkToMonth(date.Year, date.Month),
-                url.LinkToDay(date.Year, date.Month, date.Day),
-                url.LinkToSchedule(date.Year, date.Month, date.Day)
+                url.LinkToYear(
+                    restaurantId,
+                    date.Year),
+                url.LinkToMonth(
+                    restaurantId,
+                    date.Year,
+                    date.Month),
+                url.LinkToDay(
+                    restaurantId,
+                    date.Year,
+                    date.Month,
+                    date.Day),
+                url.LinkToSchedule(
+                    date.Year,
+                    date.Month,
+                    date.Day)
             };
     }
 }
