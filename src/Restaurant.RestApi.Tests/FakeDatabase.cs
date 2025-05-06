@@ -27,13 +27,6 @@ public class FakeDatabase :
         Task.CompletedTask;
 
     public Task Create(
-        Reservation reservation,
-        CancellationToken ct = default)
-    {
-        return Create(RestApi.Grandfather.Id, reservation, ct);
-    }
-
-    public Task Create(
         int restaurantId,
         Reservation reservation,
         CancellationToken ct = default)
@@ -71,7 +64,7 @@ public class FakeDatabase :
     {
         ArgumentNullException.ThrowIfNull(reservation);
         await Delete(reservation.Id, ct);
-        await Create(reservation, ct);
+        await Create(RestApi.Grandfather.Id, reservation, ct);
     }
 
     public Task Delete(Guid id, CancellationToken ct = default)
