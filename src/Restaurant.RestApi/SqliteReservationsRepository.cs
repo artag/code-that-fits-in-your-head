@@ -44,14 +44,6 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
 
-    public Task<IReadOnlyCollection<Reservation>> ReadReservations(
-        DateTime min,
-        DateTime max,
-        CancellationToken ct = default)
-    {
-        return ReadReservations(Grandfather.Id, min, max, ct);
-    }
-
     public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
         int restaurantId,
         DateTime min,
