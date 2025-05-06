@@ -13,7 +13,7 @@ public class ReservationsTests
     public async Task PostValidReservation()
     {
         var at = CreateAt("19:00");
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var expected = new ReservationDto
         {
             At = at,
@@ -77,7 +77,7 @@ public class ReservationsTests
     public async Task PostInvalidReservation(
         string at, string email, string name, int quantity)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var response = await service.PostReservation(new { at, email, name, quantity });
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
@@ -86,7 +86,7 @@ public class ReservationsTests
     public async Task OverbookAttempt()
     {
         var now = DateTime.Now.AddDays(1);
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         await service.PostReservation(
             new
             {
@@ -115,7 +115,7 @@ public class ReservationsTests
     public async Task BoolTableWhenFreeSeatingIsAvailable()
     {
         var at = CreateAt("18:00");
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         await service.PostReservation(
             new
             {
@@ -146,7 +146,7 @@ public class ReservationsTests
         string time, string email, string name, int quantity)
     {
         var at = CreateAt(time);
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var expected = new ReservationDto
         {
             At = at,
@@ -180,7 +180,7 @@ public class ReservationsTests
     [InlineData("foo")]
     public async Task GetAbsentReservation(string id)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var client = service.CreateClient();
 
         var resp = await client.GetAsync($"/reservations/{id}");
@@ -193,7 +193,7 @@ public class ReservationsTests
     [InlineData("d4fec75f8d054299975515f757f1223e")]
     public async Task NoHackingOfUrlsAllowed(string id)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = Some.Reservation.ToDto();
         dto.Id = id;
         var postResp = await service.PostReservation(dto);
@@ -221,7 +221,7 @@ public class ReservationsTests
         int quantity)
     {
         var at = CreateAt(time);
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = new ReservationDto
         {
             At = at,
@@ -247,7 +247,7 @@ public class ReservationsTests
     [InlineData("25FBFF44-2837-4772-91D2-3BAC7CA1DB4C")]
     public async Task DeleteIsIdempotent(string id)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = Some.Reservation.ToDto();
         dto.Id = id;
         var postResp = await service.PostReservation(dto);
@@ -305,7 +305,7 @@ public class ReservationsTests
         int newQuantity)
     {
         var at = CreateAt(time);
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = new ReservationDto
         {
             At = at,
@@ -343,7 +343,7 @@ public class ReservationsTests
         string name,
         int quantity)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = new ReservationDto
         {
             At = CreateAt("19:00"),
@@ -458,7 +458,7 @@ public class ReservationsTests
         const string time = "20:01";
         var at = CreateAt(time);
 
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = new ReservationDto
         {
             At = at,

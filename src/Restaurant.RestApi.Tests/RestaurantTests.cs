@@ -8,7 +8,7 @@ public class RestaurantTests
     [InlineData("The Vatican Cellar")]
     public async Task GetRestaurant(string name)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var response = await service.GetRestaurant(name);
 
@@ -25,7 +25,7 @@ public class RestaurantTests
     [InlineData("The Vatican Cellar")]
     public async Task RestaurantReturnsCorrectLinks(string name)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var response = await service.GetRestaurant(name);
 
@@ -53,7 +53,7 @@ public class RestaurantTests
     [Fact]
     public async Task ReserveTableAtNono()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var dto = Some.Reservation.ToDto();
         dto.Quantity = 6;
 
@@ -65,7 +65,7 @@ public class RestaurantTests
     }
 
     private static async Task AssertRemainingCapacity(
-        SelfHostedService service,
+        SelfHostedApi service,
         DateTime date,
         string name,
         int expected)

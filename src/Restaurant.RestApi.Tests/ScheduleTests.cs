@@ -14,7 +14,7 @@ public class ScheduleTests
         int month,
         int day)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         var response = await service.GetSchedule(year, month, day);
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -28,7 +28,7 @@ public class ScheduleTests
         int month,
         int day)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
         service.AuthorizeClient();
 
         var response = await service.GetSchedule(year, month, day);

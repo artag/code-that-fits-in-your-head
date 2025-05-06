@@ -12,7 +12,7 @@ using System.Text.Json;
 
 namespace Restaurant.RestApi.Tests;
 
-internal sealed class SelfHostedService : WebApplicationFactory<Program>
+internal sealed class SelfHostedApi : WebApplicationFactory<Program>
 {
     private bool _authorizeClient;
 

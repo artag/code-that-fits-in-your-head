@@ -8,7 +8,7 @@ public class CalendarTests
     [Fact]
     public async Task GetCurrentYear()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetCurrentYear();
@@ -28,7 +28,7 @@ public class CalendarTests
     [Fact]
     public async Task GetPreviousYear()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetPreviousYear();
@@ -50,7 +50,7 @@ public class CalendarTests
     [Fact]
     public async Task GetNextYear()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetNextYear();
@@ -75,7 +75,7 @@ public class CalendarTests
         var now = DateTime.Now;
         var currentYear = now.Year;
         var currentMonth = now.Month;
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetCurrentMonth();
@@ -95,7 +95,7 @@ public class CalendarTests
     [Fact]
     public async Task GetPreviousMonth()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetPreviousMonth();
@@ -125,7 +125,7 @@ public class CalendarTests
     [InlineData(2029)]
     public async Task GetSpecificYear(int year)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var response = await service.GetYear(year);
 
@@ -143,7 +143,7 @@ public class CalendarTests
     [Fact]
     public async Task GetNextMonth()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetNextMonth();
@@ -173,7 +173,7 @@ public class CalendarTests
     [InlineData(2050, 8)]
     public async Task GetSpecificMonth(int year, int month)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var response = await service.GetMonth(year, month);
 
@@ -191,7 +191,7 @@ public class CalendarTests
     [Fact]
     public async Task GetCurrentDay()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetCurrentDay();
@@ -211,7 +211,7 @@ public class CalendarTests
     [Fact]
     public async Task GetPreviousDay()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetPreviousDay();
@@ -239,7 +239,7 @@ public class CalendarTests
     [Fact]
     public async Task GetNextDay()
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var before = DateTime.Now;
         var response = await service.GetNextDay();
@@ -272,7 +272,7 @@ public class CalendarTests
     [InlineData(2050, 2, 9)]
     public async Task GetSpecificDay(int year, int month, int day)
     {
-        await using var service = new SelfHostedService();
+        await using var service = new SelfHostedApi();
 
         var response = await service.GetDay(year, month, day);
 
