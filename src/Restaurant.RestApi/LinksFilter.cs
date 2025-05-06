@@ -50,7 +50,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
         var now = DateTime.Now;
         dto.Links = new[]
         {
-            url.LinkToReservations(),
+            url.LinkToReservations(Grandfather.Id),
             url.LinkToYear(now.Year),
             url.LinkToMonth(now.Year, now.Month),
             url.LinkToDay(now.Year, now.Month, now.Day)
@@ -75,7 +75,7 @@ internal sealed class LinksFilter : IAsyncActionFilter
         restaurant.Links = new[]
         {
             url.LinkToRestaurant(restaurantId.Value),
-            url.LinkToReservations(),
+            url.LinkToReservations(restaurantId.Value),
             url.LinkToYear(now.Year),
             url.LinkToMonth(now.Year, now.Month),
             url.LinkToDay(now.Year, now.Month, now.Day)

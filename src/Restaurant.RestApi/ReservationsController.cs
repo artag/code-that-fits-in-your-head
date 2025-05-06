@@ -27,7 +27,15 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Post([FromBody] ReservationDto dto)
+    public Task<ActionResult> Post([FromBody] ReservationDto dto)
+    {
+        return Post(Grandfather.Id, dto);
+    }
+
+    [HttpPost("{restaurantId}")]
+    public async Task<ActionResult> Post(
+        int restaurantId,
+        [FromBody] ReservationDto dto)
     {
         if (!_ensuredTables)
         {
@@ -53,7 +61,7 @@ public class ReservationsController : ControllerBase
             if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
                 return NoTables500InternalServerError();
 
-            await _repository.Create(Grandfather.Id, reservation).ConfigureAwait(false);
+            await _repository.Create(restaurantId, reservation).ConfigureAwait(false);
             await _postOffice.EmailReservationCreated(reservation).ConfigureAwait(false);
         }
         finally

@@ -26,9 +26,14 @@ public static class Hypertext
         return new LinkDto { Rel = rel, Href = uri.ToString() };
     }
 
-    internal static LinkDto LinkToReservations(this IUrlHelper url)
+    internal static LinkDto LinkToReservations(
+        this IUrlHelper url,
+        int restaurantId)
     {
-        return Reservations.BuildAbsolute(url).Link("urn:reservations");
+        return Reservations
+            .WithValues(new { restaurantId })
+            .BuildAbsolute(url)
+            .Link("urn:reservations");
     }
 
     internal static LinkDto LinkToRestaurant(this IUrlHelper url, int id)
