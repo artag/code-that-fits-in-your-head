@@ -29,16 +29,7 @@ public class CalendarController : ControllerBase
     public async Task<ActionResult> Get(int year)
     {
         var period = Period.Year(year);
-        var firstTick = period.Accept(new FirstTickVisitor());
-        var lastTick = period.Accept(new LastTickVisitor());
-        var reservations = await Repository
-            .ReadReservations(firstTick, lastTick)
-            .ConfigureAwait(false);
-
-        var days = period.Accept(new DaysVisitor())
-            .Select(d => MakeDay(d, reservations))
-            .ToArray();
-
+        var days = await MakeDays(period).ConfigureAwait(false);
         return new OkObjectResult(
             new CalendarDto
             {
@@ -52,16 +43,7 @@ public class CalendarController : ControllerBase
     public async Task<ActionResult> Get(int year, int month)
     {
         var period = Period.Month(year, month);
-        var firstTick = period.Accept(new FirstTickVisitor());
-        var lastTick = period.Accept(new LastTickVisitor());
-        var reservations = await Repository
-            .ReadReservations(firstTick, lastTick)
-            .ConfigureAwait(false);
-
-        var days = period.Accept(new DaysVisitor())
-            .Select(d => MakeDay(d, reservations))
-            .ToArray();
-
+        var days = await MakeDays(period).ConfigureAwait(false);
         return new OkObjectResult(
             new CalendarDto
             {
@@ -91,7 +73,7 @@ public class CalendarController : ControllerBase
         var firstTick = period.Accept(new FirstTickVisitor());
         var lastTick = period.Accept(new LastTickVisitor());
         var reservations = await Repository
-            .ReadReservations(firstTick, lastTick)
+            .ReadReservations(Grandfather.Id, firstTick, lastTick)
             .ConfigureAwait(false);
 
         return period.Accept(new DaysVisitor())

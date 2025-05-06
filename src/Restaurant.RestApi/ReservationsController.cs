@@ -55,7 +55,7 @@ public class ReservationsController : ControllerBase
         try
         {
             var reservations = await _repository
-                .ReadReservations(reservation.At)
+                .ReadReservations(restaurantId, reservation.At)
                 .ConfigureAwait(false);
 
             if (!_maitreD.WillAccept(_dateTime.Now, reservations, reservation))
@@ -114,9 +114,9 @@ public class ReservationsController : ControllerBase
                 await _repository.ReadReservation(rid).ConfigureAwait(false);
             if (existing is null)
                 return new NotFoundResult();
-
-            var reservations =
-                await ReadReservations(res.At).ConfigureAwait(false);
+            var reservations = await _repository
+                .ReadReservations(Grandfather.Id, res.At)
+                .ConfigureAwait(false);
             reservations = reservations
                 .Where(r => r.Id != res.Id)
                 .ToList();
@@ -137,14 +137,6 @@ public class ReservationsController : ControllerBase
         }
 
         return new OkObjectResult(res.ToDto());
-    }
-
-    private Task<IReadOnlyCollection<Reservation>> ReadReservations(
-        DateTime date)
-    {
-        var min = date.Date;
-        var max = min.AddDays(1).AddTicks(-1);
-        return _repository.ReadReservations(min, max);
     }
 
     [HttpDelete("{id}")]

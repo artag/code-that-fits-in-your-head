@@ -24,7 +24,7 @@ public class ScheduleController : ControllerBase
         var firstTick = date;
         var lastTick = firstTick.AddDays(1).AddTicks(-1);
         var reservations = await _repository
-            .ReadReservations(firstTick, lastTick)
+            .ReadReservations(Grandfather.Id, firstTick, lastTick)
             .ConfigureAwait(false);
         var schedule = _maitreD.Schedule(reservations);
         return MakeCalendar(date, schedule);
