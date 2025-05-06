@@ -44,7 +44,16 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
         await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
 
+    public Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        DateTime min,
+        DateTime max,
+        CancellationToken ct = default)
+    {
+        return ReadReservations(Grandfather.Id, min, max, ct);
+    }
+
     public async Task<IReadOnlyCollection<Reservation>> ReadReservations(
+        int restaurantId,
         DateTime min,
         DateTime max,
         CancellationToken ct = default)
@@ -57,6 +66,7 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
 
         var cmd = new SqliteCommand(readByRangeSql, conn);
         await using var disposeCmd = cmd.ConfigureAwait(false);
+        cmd.Parameters.AddWithValue("@RestaurantId", restaurantId);
         var minDate = min.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         var maxDate = max.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         cmd.Parameters.AddWithValue("@Min", minDate);
@@ -183,7 +193,9 @@ VALUES (@Id, @RestaurantId, @At, @Name, @Email, @Quantity)
         @"
 SELECT PublicId, At, Name, Email, Quantity
 FROM Reservations
-WHERE @Min <= DATE(At) AND DATE(At) <= @Max
+WHERE RestaurantId = @RestaurantId
+    AND @Min <= DATE(At)
+    AND DATE(At) <= @Max
 ";
 
     // MSSQL
