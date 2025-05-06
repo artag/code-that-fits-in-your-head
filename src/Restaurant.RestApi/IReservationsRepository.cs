@@ -2,7 +2,11 @@
 
 public interface IReservationsRepository
 {
-    Task EnsureTables(CancellationToken ct = default);
+    Task EnsureTables(
+        CancellationToken ct = default);
+
+    Task Create(
+        int restaurantId, Reservation reservation, CancellationToken ct = default);
 
     Task Create(
         Reservation reservation, CancellationToken ct = default);
