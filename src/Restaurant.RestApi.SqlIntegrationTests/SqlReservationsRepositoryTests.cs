@@ -23,7 +23,7 @@ public class SqlReservationsRepositoryTests
         const string connectionString = ConnectionStrings.Reservations;
         var sut = new SqliteReservationsRepository(connectionString);
 
-        await sut.Create(expected);
+        await sut.Create(Grandfather.Id, expected);
         var actual = await sut.ReadReservation(expected.Id);
 
         Assert.Equal(expected, actual);
@@ -47,7 +47,7 @@ public class SqlReservationsRepositoryTests
             quantity);
         const string connectionString = ConnectionStrings.Reservations;
         var sut = new SqliteReservationsRepository(connectionString);
-        await sut.Create(r);
+        await sut.Create(Grandfather.Id, r);
 
         var expected = r.WithName(new Name(newName));
         await sut.Update(expected);

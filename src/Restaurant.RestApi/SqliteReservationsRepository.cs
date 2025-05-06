@@ -25,26 +25,6 @@ public sealed class SqliteReservationsRepository : IReservationsRepository
     }
 
     public async Task Create(
-        Reservation reservation, CancellationToken ct = default)
-    {
-        ArgumentNullException.ThrowIfNull(reservation);
-
-        var conn = new SqliteConnection(_connectionString);
-        await using var disposeConn = conn.ConfigureAwait(false);
-        await conn.OpenAsync(ct).ConfigureAwait(false);
-
-        var cmd = new SqliteCommand(createReservationSql, conn);
-        await using var disposeCmd = cmd.ConfigureAwait(false);
-        cmd.Parameters.AddWithValue("@Id", reservation.Id);
-        cmd.Parameters.AddWithValue("@RestaurantId", 1);
-        cmd.Parameters.AddWithValue("@At", reservation.At);
-        cmd.Parameters.AddWithValue("@Name", reservation.Name.Value);
-        cmd.Parameters.AddWithValue("@Email", reservation.Email.Value);
-        cmd.Parameters.AddWithValue("@Quantity", reservation.Quantity);
-        await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
-    }
-
-    public async Task Create(
         int restaurantId, Reservation reservation, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(reservation);
